@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">LiveBack</string>
+
+    // Main Activity
+    <string name="search">Search</string>
+    <string name="search_button">Search Button</string>
+    <string name="filter_button">Filter button</string>
 </resources>

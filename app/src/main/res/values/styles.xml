@@ -8,4 +8,45 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
+
+    <!-- Make the status bar translucent -->
+    <style name="AppTheme.NoActionBar.Translucent">
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
+    <style name="Selectable">
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+    </style>
+
+    <style name="ToolbarButton" parent="Selectable">
+        <item name="android:layout_width">@dimen/icon48</item>
+        <item name="android:layout_height">@dimen/icon48</item>
+        <item name="android:scaleType">centerInside</item>
+    </style>
+    <style name="AppTheme.NoActionBar.Dark">
+        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="colorControlActivated">@color/colorPrimary</item>
+    </style>
+
+    <style name="OnBoardingTheme" parent="AppTheme.NoActionBar.Translucent">
+        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="colorControlActivated">@color/colorPrimary</item>
+    </style>
+
+    <style name="AppTheme.SeekBar" parent="Widget.AppCompat.SeekBar">
+        <item name="colorControlActivated">@color/colorPrimary</item>
+    </style>
+
+    <!-- hamburger menu icon color -->
+    <style name="DrawerIconStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@color/colorPrimary</item>
+    </style>
 </resources>
