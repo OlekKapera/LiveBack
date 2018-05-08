@@ -1,17 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/toolbar"
+    android:id="@+id/appBar"
     android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize"
-    app:title="@string/app_name"
-    app:titleTextColor="@android:color/white"
+    android:layout_height="wrap_content"
     android:background="@android:color/transparent"
-    app:popupTheme="@style/AppTheme.PopupOverlay">
+    android:theme="@style/AppTheme.AppBarOverlay"
+    app:elevation="0dp">
 
-    <com.miguelcatalan.materialsearchview.MaterialSearchView
-        android:id="@+id/searchBar"
-        android:visibility="gone"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</android.support.v7.widget.Toolbar>
+        android:layout_height="?attr/actionBarSize"
+        app:contentInsetEnd="0dp"
+        app:contentInsetLeft="0dp"
+        app:contentInsetRight="0dp"
+        app:contentInsetStart="0dp"
+        app:popupTheme="@style/AppTheme.PopupOverlay">
+        
+        <TextView
+            android:id="@+id/menu_title"
+            android:text="@string/app_name"
+            style="@style/AppTheme.Toolbar.Title"/>
+
+        <com.miguelcatalan.materialsearchview.MaterialSearchView
+            android:id="@+id/searchBar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/menuFilter"
+            style="@style/AppTheme.Toolbar.Button"
+            app:srcCompat="@drawable/ic_filter"
+            android:layout_gravity="end"/>
+
+        <ImageView
+            android:id="@+id/menuSearch"
+            style="@style/AppTheme.Toolbar.Button"
+            app:srcCompat="@drawable/ic_magnifying_glass"
+            android:layout_gravity="end"/>
+    </android.support.v7.widget.Toolbar>
+</android.support.design.widget.AppBarLayout>

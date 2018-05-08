@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.IdRes
 import android.support.annotation.Nullable
+import android.support.v7.widget.Toolbar
+import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import butterknife.Optional
@@ -12,6 +14,10 @@ import com.aleksanderkapera.liveback.R
 
 abstract class BaseActivity: PermissionsAskingActivity() {
 
+    // @format:off
+    @BindView(R.id.toolbar) lateinit var mToolbar: Toolbar
+    // @format:on
+
     abstract fun getLayoutRes(): Int
 
     override  fun onCreate(@Nullable savedInstanceState: Bundle?){
@@ -19,19 +25,20 @@ abstract class BaseActivity: PermissionsAskingActivity() {
         setContentView(getLayoutRes())
         ButterKnife.bind(this)
         getExtras(intent)
+
+        // set toolbar
+        setSupportActionBar(mToolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setHomeAsUpIndicator(resources.getDrawable(R.drawable.ic_menu))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
     }
 
     protected fun getExtras(intent: Intent){}
 
-    @Optional
-    @OnClick(R.id.back)
-    fun onBackClick() = onBackPressed()
-
-    @Optional
-    @OnClick(R.id.menu)
-    fun onMenuClick(){
+    override fun onSupportNavigateUp(): Boolean {
         //TODO make implementation for opening side menu
-        print("mada")
+        return true
     }
 
     /**

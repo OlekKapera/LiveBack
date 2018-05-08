@@ -4,13 +4,11 @@
 
     <item
         android:id="@+id/searchButton"
-        style="@style/ToolbarButton"
         android:title="@string/search_button"
         app:showAsAction="always"
         android:icon="@drawable/ic_magnifying_glass" />
 
     <item android:id="@+id/filterButton"
-        style="@style/ToolbarButton"
         android:title="@string/filter_button"
         app:showAsAction="always"
         android:icon="@drawable/ic_filter"/>
