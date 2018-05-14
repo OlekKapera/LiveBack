@@ -17,4 +17,8 @@
 
     <!--font sizes-->
     <dimen name="text24">24sp</dimen>
+
+    <!--card view-->
+    <dimen name="card_image_height">200dp</dimen>
+    <dimen name="card_profile_size">100dp</dimen>
 </resources>
