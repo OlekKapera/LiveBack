@@ -17,11 +17,16 @@
         app:contentInsetRight="0dp"
         app:contentInsetStart="0dp"
         app:popupTheme="@style/AppTheme.PopupOverlay">
-        
+
+        <ImageView
+            android:id="@+id/menu"
+            style="@style/AppTheme.Toolbar.Button"
+            app:srcCompat="@drawable/ic_menu" />
+
         <TextView
             android:id="@+id/menu_title"
-            android:text="@string/app_name"
-            style="@style/AppTheme.Toolbar.Title"/>
+            style="@style/AppTheme.Toolbar.Title"
+            android:text="@string/app_name" />
 
         <com.miguelcatalan.materialsearchview.MaterialSearchView
             android:id="@+id/searchBar"
@@ -32,13 +37,13 @@
         <ImageView
             android:id="@+id/menuFilter"
             style="@style/AppTheme.Toolbar.Button"
-            app:srcCompat="@drawable/ic_filter"
-            android:layout_gravity="end"/>
+            android:layout_gravity="end"
+            app:srcCompat="@drawable/ic_filter" />
 
         <ImageView
             android:id="@+id/menuSearch"
             style="@style/AppTheme.Toolbar.Button"
-            app:srcCompat="@drawable/ic_magnifying_glass"
-            android:layout_gravity="end"/>
+            android:layout_gravity="end"
+            app:srcCompat="@drawable/ic_magnifying_glass" />
     </android.support.v7.widget.Toolbar>
 </android.support.design.widget.AppBarLayout>

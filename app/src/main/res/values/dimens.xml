@@ -16,9 +16,12 @@
     <dimen name="icon64">64dp</dimen>
 
     <!--font sizes-->
+    <dimen name="text12">12sp</dimen>
+    <dimen name="text16">16sp</dimen>
+    <dimen name="text18">18sp</dimen>
     <dimen name="text24">24sp</dimen>
 
     <!--card view-->
-    <dimen name="card_image_height">200dp</dimen>
-    <dimen name="card_profile_size">100dp</dimen>
+    <dimen name="card_image_height">150dp</dimen>
+    <dimen name="card_profile_size">75dp</dimen>
 </resources>

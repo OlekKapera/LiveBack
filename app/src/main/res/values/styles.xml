@@ -7,6 +7,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:fontFamily">sans-serif-thin</item>
+        <item name="android:textColor">@android:color/black</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -60,5 +61,16 @@
     <style name="DrawerIconStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
         <item name="spinBars">true</item>
         <item name="color">@color/colorPrimary</item>
+    </style>
+
+    <style name="cardIconText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_marginLeft">@dimen/spacing16</item>
+        <item name="android:drawablePadding">@dimen/spacing4</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textSize">@dimen/text12</item>
     </style>
 </resources>
