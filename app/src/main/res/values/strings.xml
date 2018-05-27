@@ -1,3 +1,16 @@
 <resources>
-    <string name="app_name">LiveBack</string>
+    <string name="app_name" translatable="false">LiveBack</string>
+
+    <!--Main Activity-->
+    <string name="search">Search</string>
+    <string name="search_button">Search Button</string>
+    <string name="filter_button">Filter button</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    
+    <!--Navigation drawer-->
+    <string name="events">Events</string>
+    <string name="your_profile">Your Profile</string>
+    <string name="settings">Settings</string>
+    <string name="log_out">Log Out</string>
 </resources>

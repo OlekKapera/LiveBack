@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--spacings-->
+    <dimen name="spacing4">4dp</dimen>
+    <dimen name="spacing8">8dp</dimen>
+    <dimen name="spacing16">16dp</dimen>
+    <dimen name="spacing24">24dp</dimen>
+    <dimen name="spacing32">32dp</dimen>
+    <dimen name="spacing48">48dp</dimen>
+    <dimen name="spacing64">64dp</dimen>
+
+    <!--icon sizes-->
+    <dimen name="icon24">24dp</dimen>
+    <dimen name="icon36">36dp</dimen>
+    <dimen name="icon48">48dp</dimen>
+    <dimen name="icon64">64dp</dimen>
+
+    <!--font sizes-->
+    <dimen name="text12">12sp</dimen>
+    <dimen name="text16">16sp</dimen>
+    <dimen name="text18">18sp</dimen>
+    <dimen name="text24">24sp</dimen>
+    <dimen name="text28">28sp</dimen>
+    <dimen name="text32">32sp</dimen>
+
+    <!--card view-->
+    <dimen name="card_image_height">150dp</dimen>
+    <dimen name="card_profile_size">75dp</dimen>
+    <dimen name="card_guide_offset">110dp</dimen>
+
+    <!--navigation drawer-->
+    <dimen name="navItem_height">54dp</dimen>
+</resources>
