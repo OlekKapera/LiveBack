@@ -14,7 +14,7 @@
         android:layout_height="match_parent">
 
         <com.aleksanderkapera.liveback.ui.widget.RoundedTopImageView
-            android:id="@+id/cardMain_background_img"
+            android:id="@+id/cardMain_image_background"
             android:layout_width="match_parent"
             android:layout_height="@dimen/card_image_height"
             android:scaleType="centerCrop"
@@ -38,7 +38,7 @@
             app:layout_constraintGuide_begin="@dimen/spacing16" />
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/cardMain_profile_img"
+            android:id="@+id/cardMain_image_profile"
             android:layout_width="@dimen/card_profile_size"
             android:layout_height="@dimen/card_profile_size"
             android:layout_marginStart="@dimen/spacing16"
@@ -47,7 +47,7 @@
             app:layout_constraintTop_toTopOf="@+id/cardMain_guideline_horizontal" />
 
         <TextView
-            android:id="@+id/cardMain_name_txt"
+            android:id="@+id/cardMain_text_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -56,11 +56,11 @@
             android:fontFamily="sans-serif-light"
             android:text="Mari Sheibley"
             android:textSize="@dimen/text18"
-            app:layout_constraintStart_toEndOf="@+id/cardMain_profile_img"
-            app:layout_constraintTop_toBottomOf="@+id/cardMain_background_img" />
+            app:layout_constraintStart_toEndOf="@+id/cardMain_image_profile"
+            app:layout_constraintTop_toBottomOf="@+id/cardMain_image_background" />
 
         <TextView
-            android:id="@+id/cardMain_date_txt"
+            android:id="@+id/cardMain_text_date"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_marginEnd="@dimen/spacing8"
@@ -68,12 +68,12 @@
             android:text="24 Nov 2018"
             android:textColor="@color/darkGrey"
             android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@+id/cardMain_name_txt"
+            app:layout_constraintBottom_toBottomOf="@+id/cardMain_text_name"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/cardMain_name_txt" />
+            app:layout_constraintTop_toTopOf="@+id/cardMain_text_name" />
 
         <TextView
-            android:id="@+id/cardMain_title_txt"
+            android:id="@+id/cardMain_text_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing16"
@@ -81,10 +81,10 @@
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/cardMain_guideline_vertical"
-            app:layout_constraintTop_toBottomOf="@+id/cardMain_profile_img" />
+            app:layout_constraintTop_toBottomOf="@+id/cardMain_image_profile" />
 
         <TextView
-            android:id="@+id/cardMain_description_txt"
+            android:id="@+id/cardMain_text_description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/spacing16"
@@ -93,7 +93,7 @@
             android:textSize="@dimen/text12"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/cardMain_guideline_vertical"
-            app:layout_constraintTop_toBottomOf="@id/cardMain_title_txt" />
+            app:layout_constraintTop_toBottomOf="@id/cardMain_text_title" />
 
         <View
             android:id="@+id/cardMain_line_divider"
@@ -103,10 +103,10 @@
             android:background="@color/lightGrey"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardMain_description_txt" />
+            app:layout_constraintTop_toBottomOf="@+id/cardMain_text_description" />
 
         <TextView
-            android:id="@+id/cardMain_category_text"
+            android:id="@+id/cardMain_text_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing8"
@@ -122,30 +122,30 @@
             app:layout_constraintTop_toBottomOf="@+id/cardMain_line_divider" />
 
         <TextView
-            android:id="@+id/cardMain_favourite_text"
+            android:id="@+id/cardMain_text_favourite"
             style="@style/CardIconText"
             android:drawableStart="@drawable/ic_heart_grey"
             android:text="164"
-            app:layout_constraintBottom_toBottomOf="@+id/cardMain_category_text"
-            app:layout_constraintEnd_toStartOf="@+id/cardMain_feedback_text"
-            app:layout_constraintTop_toTopOf="@+id/cardMain_category_text" />
+            app:layout_constraintBottom_toBottomOf="@+id/cardMain_text_category"
+            app:layout_constraintEnd_toStartOf="@+id/cardMain_text_feedback"
+            app:layout_constraintTop_toTopOf="@+id/cardMain_text_category" />
 
         <TextView
-            android:id="@+id/cardMain_feedback_text"
+            android:id="@+id/cardMain_text_feedback"
             style="@style/CardIconText"
             android:drawableStart="@drawable/ic_feedback_grey"
             android:text="31"
-            app:layout_constraintBottom_toBottomOf="@+id/cardMain_favourite_text"
-            app:layout_constraintEnd_toStartOf="@+id/cardMain_vote_text"
-            app:layout_constraintTop_toTopOf="@+id/cardMain_favourite_text" />
+            app:layout_constraintBottom_toBottomOf="@+id/cardMain_text_favourite"
+            app:layout_constraintEnd_toStartOf="@+id/cardMain_text_vote"
+            app:layout_constraintTop_toTopOf="@+id/cardMain_text_favourite" />
 
         <TextView
-            android:id="@+id/cardMain_vote_text"
+            android:id="@+id/cardMain_text_vote"
             style="@style/CardIconText"
             android:drawableStart="@drawable/ic_questionmark_grey"
             android:text="82"
-            app:layout_constraintBottom_toBottomOf="@+id/cardMain_feedback_text"
+            app:layout_constraintBottom_toBottomOf="@+id/cardMain_text_feedback"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/cardMain_feedback_text" />
+            app:layout_constraintTop_toTopOf="@+id/cardMain_text_feedback" />
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

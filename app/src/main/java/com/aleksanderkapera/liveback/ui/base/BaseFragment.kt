@@ -1,12 +1,11 @@
 package com.aleksanderkapera.liveback.ui.base
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.support.annotation.AnimRes
 import android.support.annotation.LayoutRes
 import android.support.annotation.Nullable
 import android.support.v4.app.Fragment
-import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +17,8 @@ import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.util.AndroidUtils
 
 abstract class BaseFragment: Fragment() {
+
+    lateinit var appCompatActivity:AppCompatActivity
 
     /**
      * Returns root layout resource for this fragment.
@@ -49,10 +50,16 @@ abstract class BaseFragment: Fragment() {
         if(hideKeyboardOnTouchOutside())
             AndroidUtils.hideKeyboardOnTouchOutside(rootView, activity!!)
 
-        //Bind data to views
-        setupViews(rootView)
+        appCompatActivity = activity as AppCompatActivity
 
         return rootView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        //Bind data to views
+        setupViews(view)
     }
 
     /**

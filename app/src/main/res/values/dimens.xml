@@ -31,4 +31,5 @@
 
     <!--navigation drawer-->
     <dimen name="navItem_height">54dp</dimen>
+    <dimen name="navHeader_imageSize">110dp</dimen>
 </resources>

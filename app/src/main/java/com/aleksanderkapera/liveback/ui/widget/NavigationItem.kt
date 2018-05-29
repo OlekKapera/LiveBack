@@ -13,7 +13,6 @@ import butterknife.ButterKnife
 import com.aleksanderkapera.liveback.R
 import kotlinx.android.synthetic.main.navigation_item.view.*
 
-@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 /**
  * Created by kapera on 23-May-18.
  */

@@ -8,7 +8,7 @@ import android.view.View
 import butterknife.ButterKnife
 
 
-abstract class BaseRecyclerAdapter<VH: BaseRecyclerAdapter<VH,T>.ViewHolder,T>(context: Context) : RecyclerView.Adapter<VH>() {
+abstract class BaseRecyclerAdapter<VH: BaseRecyclerAdapter.ViewHolder,T>(context: Context) : RecyclerView.Adapter<VH>() {
 
     protected  var mData: ArrayList<T> = arrayListOf()
     protected  var mInflater: LayoutInflater = LayoutInflater.from(context)
@@ -95,10 +95,11 @@ abstract class BaseRecyclerAdapter<VH: BaseRecyclerAdapter<VH,T>.ViewHolder,T>(c
         }
     }
 
-    abstract inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView), View.OnClickListener{
+    abstract class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView), View.OnClickListener{
         init {
             ButterKnife.bind(this,itemView)
         }
+
         abstract fun bind(position: Int)
     }
 }

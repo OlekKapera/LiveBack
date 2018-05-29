@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation_container_header"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/navigation_header_image"
+        android:layout_width="@dimen/navHeader_imageSize"
+        android:layout_height="@dimen/navHeader_imageSize"
+        android:layout_marginTop="@dimen/spacing16"
+        android:src="@drawable/mari_profile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing16"
+        android:layout_marginTop="@dimen/spacing8"
+        android:text="Mari Sheibley"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text28"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/navigation_header_image" />
+</android.support.constraint.ConstraintLayout>

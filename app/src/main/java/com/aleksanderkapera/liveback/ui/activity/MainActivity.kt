@@ -1,21 +1,27 @@
 package com.aleksanderkapera.liveback.ui.activity
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.ActionBar
-import android.support.v7.app.ActionBarDrawerToggle
-import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
-import butterknife.BindString
 import com.aleksanderkapera.liveback.R
-import com.aleksanderkapera.liveback.ui.base.BaseActivity
+import com.aleksanderkapera.liveback.ui.MainFragment
+import com.aleksanderkapera.liveback.ui.base.BaseFragment
+import com.aleksanderkapera.liveback.ui.base.FragmentActivity
 import com.aleksanderkapera.liveback.ui.widget.NavigationViewHelper
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.app_bar_main.*
 
-class MainActivity : BaseActivity() {
+class MainActivity : FragmentActivity() {
+
+    companion object {
+        fun startActivity(activity: Activity){
+            val intent = Intent(activity, MainActivity::class.java)
+            activity.startActivity(intent)
+        }
+    }
 
     private lateinit var mNavigationDrawer: NavigationViewHelper
     private lateinit var mDrawerLayout: DrawerLayout
@@ -24,25 +30,14 @@ class MainActivity : BaseActivity() {
         return R.layout.activity_main
     }
 
+    override fun getDefaultFragment(): BaseFragment {
+        return MainFragment.newInstance()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         mDrawerLayout = findViewById(R.id.main_layout_drawer)
-
-        // set toolbar
-        setSupportActionBar(toolbar)
-        val actionbar: ActionBar? = supportActionBar
-        actionbar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setHomeAsUpIndicator(R.drawable.ic_menu)
-            title = getString(R.string.app_name)
-        }
-
-//        val toggle = ActionBarDrawerToggle(
-//                this, main_layout_drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-//        main_layout_drawer.setDrawerListener(toggle)
-//        toggle.syncState()
-
         mNavigationDrawer = NavigationViewHelper(this, mDrawerLayout)
     }
 
