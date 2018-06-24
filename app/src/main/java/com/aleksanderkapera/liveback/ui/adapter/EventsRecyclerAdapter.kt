@@ -3,13 +3,11 @@ package com.aleksanderkapera.liveback.ui.adapter
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import butterknife.BindView
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.SimpleEvent
-import com.aleksanderkapera.liveback.ui.widget.RoundedTopImageView
+import com.aleksanderkapera.liveback.util.ImageUtils
 import com.aleksanderkapera.liveback.util.StringUtils
-import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.android.synthetic.main.card_main.view.*
 
 /**
  * Created by kapera on 29-May-18.
@@ -22,19 +20,6 @@ class EventsRecyclerAdapter(context: Context) : BaseRecyclerAdapter<EventsRecycl
 
     inner class ViewHolder(itemView: View) : BaseRecyclerAdapter.ViewHolder(itemView) {
 
-        // @format:off
-        @BindView(R.id.cardMain_image_background) private lateinit var mBackgroundImage:RoundedTopImageView
-        @BindView(R.id.cardMain_image_profile) private lateinit var mProfileImage:CircleImageView
-        @BindView(R.id.cardMain_text_name) private lateinit var mNameText:TextView
-        @BindView(R.id.cardMain_text_date) private lateinit var mDateText:TextView
-        @BindView(R.id.cardMain_text_title) private lateinit var mTitleText:TextView
-        @BindView(R.id.cardMain_text_description) private lateinit var mDescriptionText:TextView
-        @BindView(R.id.cardMain_text_category) private lateinit var mCategoryText:TextView
-        @BindView(R.id.cardMain_text_favourite) private lateinit var mFavouriteText:TextView
-        @BindView(R.id.cardMain_text_feedback) private lateinit var mFeedbackText:TextView
-        @BindView(R.id.cardMain_text_vote) private lateinit var mVoteText:TextView
-        // @format:on
-
         private lateinit var item: SimpleEvent
 
         init {
@@ -44,14 +29,17 @@ class EventsRecyclerAdapter(context: Context) : BaseRecyclerAdapter<EventsRecycl
         override fun bind(position: Int) {
             item = mData[position]
 
-            mNameText.text = item.userName
-            mDateText.text = StringUtils.convertLongToDate(item.date)
-            mTitleText.text = item.title
-            mDescriptionText.text = item.description
-            mCategoryText.text = item.category
-            mFavouriteText.text = item.favourites.toString()
-            mFeedbackText.text = item.feedback.toString()
-            mVoteText.text = item.votes.toString()
+            itemView.cardMain_text_name.text = item.userName
+            itemView.cardMain_text_date.text = StringUtils.convertLongToDate(item.date)
+            itemView.cardMain_text_title.text = item.title
+            itemView.cardMain_text_description.text = item.description
+            itemView.cardMain_text_category.text = item.category
+            itemView.cardMain_text_favourite.text = item.favourites.toString()
+            itemView.cardMain_text_feedback.text = item.feedback.toString()
+            itemView.cardMain_text_vote.text = item.votes.toString()
+
+            itemView.cardMain_image_background.setImageBitmap(ImageUtils.decodeSampledBitmapFromResource(mRes, R.drawable.green_nature, 500, 150))
+            itemView.cardMain_image_profile.setImageBitmap(ImageUtils.decodeSampledBitmapFromResource(mRes, R.drawable.mari_profile, 75, 75))
         }
 
         override fun onClick(view: View?) {

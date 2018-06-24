@@ -2,15 +2,22 @@ package com.aleksanderkapera.liveback.util
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.Resources
 import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import com.aleksanderkapera.liveback.App
 
 class AndroidUtils{
 
     companion object {
+
+        fun getResources(): Resources {
+            return App.applicationContext().resources
+        }
+
         fun isApiBelow(api: Int): Boolean {
             return Build.VERSION.SDK_INT < api
         }
@@ -37,6 +44,11 @@ class AndroidUtils{
                     hideKeyboardOnTouchOutside(innerView, activity)
                 }
             }
+        }
+
+        fun dpToPx(dp: Int): Int {
+            val displayMetrics = getResources().displayMetrics
+            return (dp * displayMetrics.density + 0.5).toInt()
         }
     }
 }

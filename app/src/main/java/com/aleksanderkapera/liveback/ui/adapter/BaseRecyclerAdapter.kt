@@ -5,7 +5,6 @@ import android.content.res.Resources
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
-import butterknife.ButterKnife
 
 
 abstract class BaseRecyclerAdapter<VH: BaseRecyclerAdapter.ViewHolder,T>(context: Context) : RecyclerView.Adapter<VH>() {
@@ -96,10 +95,6 @@ abstract class BaseRecyclerAdapter<VH: BaseRecyclerAdapter.ViewHolder,T>(context
     }
 
     abstract class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView), View.OnClickListener{
-        init {
-            ButterKnife.bind(this,itemView)
-        }
-
         abstract fun bind(position: Int)
     }
 }

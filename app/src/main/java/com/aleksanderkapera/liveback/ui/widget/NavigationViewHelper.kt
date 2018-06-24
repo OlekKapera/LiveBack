@@ -2,45 +2,47 @@ package com.aleksanderkapera.liveback.ui.widget
 
 import android.app.Activity
 import android.support.v4.widget.DrawerLayout
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
+import android.view.View
 import com.aleksanderkapera.liveback.R
+import com.aleksanderkapera.liveback.util.AndroidUtils
+import com.aleksanderkapera.liveback.util.ImageUtils
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.navigation_header.*
+import kotlinx.android.synthetic.main.navigation_menu.*
 
 /**
  * Created by kapera on 26-May-18.
  */
-class NavigationViewHelper (activity: Activity, val drawer: DrawerLayout) {
-
-    // @format:off
-    @BindView(R.id.navigation_row_events) lateinit var eventRow:NavigationItem
-    @BindView(R.id.navigation_row_profile) lateinit var profileRow:NavigationItem
-    @BindView(R.id.navigation_row_settings) lateinit var settingsRow:NavigationItem
-    @BindView(R.id.navigation_row_logOut) lateinit var logOutRow:NavigationItem
-    // @format:on
+class NavigationViewHelper (private val activity: Activity, val drawer: DrawerLayout) {
 
     init {
-        ButterKnife.bind(this, activity)
+        setupViews()
+    }
+
+    private fun setupViews(){
+        activity.navigation_row_events.setOnClickListener(onEventsClick)
+        activity.navigation_row_profile.setOnClickListener(onProfileClick)
+        activity.navigation_row_settings.setOnClickListener(onSettingsClick)
+        activity.navigation_row_logOut.setOnClickListener(onLogOutClick)
+
+        activity.navigation_header_image.setImageBitmap(ImageUtils.decodeSampledBitmapFromResource(AndroidUtils.getResources(),R.drawable.mari_profile,110,110))
+        activity.navigation_container_background.setImageBitmap(ImageUtils.decodeSampledBitmapFromResource(AndroidUtils.getResources(),R.drawable.bg_drawer,200,600))
     }
 
     // region OnClickListeners
-    @OnClick(R.id.navigation_row_events)
-    fun onEventsClick(){
+    private val onEventsClick = View.OnClickListener{ view ->
 
     }
 
-    @OnClick(R.id.navigation_row_profile)
-    fun onProfileClick(){
+    private val onProfileClick = View.OnClickListener { view ->
 
     }
 
-    @OnClick(R.id.navigation_row_settings)
-    fun onSettingsClick(){
+    private val onSettingsClick = View.OnClickListener { view ->
 
     }
 
-    @OnClick(R.id.navigation_row_logOut)
-    fun onLogOutClick(){
+    private val onLogOutClick = View.OnClickListener { view ->
 
     }
     // endregion

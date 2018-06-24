@@ -21,8 +21,8 @@ class MainFragment : BaseFragment() {
         }
     }
 
-    private val mEvents = arrayListOf(SimpleEvent("14513543", "1532135", "Mari Sheibley", 1543056268, "The Glossary of Telescopes", "Buying the right telescope to take your love of astronomy to the next level is a big homework like this, you will find just the right telescope for this next big step in the evolution of your passion for astronomy.", "Presentation", 164, 31, 82),
-            SimpleEvent("14513543", "1532135", "Birgit Kos", 1544352268, "The Basic Of Buying a Telescope", "Buying the right telescope to take your love of astronomy to the next level is a big homework like this, you will find just the right telescope for this next big step in the evolution of your passion for astronomy.", "Presentation", 164, 31, 82))
+    private val mEvents = arrayListOf(SimpleEvent("14513543", "1532135", "Mari Sheibley", 1543014000000, "The Glossary of Telescopes", "Buying the right telescope to take your love of astronomy to the next level is a big homework like this, you will find just the right telescope for this next big step in the evolution of your passion for astronomy.", "Presentation", 164, 31, 82),
+            SimpleEvent("14513543", "1532135", "Birgit Kos", 1544310000000, "The Basic Of Buying a Telescope", "Buying the right telescope to take your love of astronomy to the next level is a big homework like this, you will find just the right telescope for this next big step in the evolution of your passion for astronomy.", "Presentation", 164, 31, 82))
 
     override fun getLayoutRes(): Int {
         return R.layout.fragment_main
