@@ -29,13 +29,13 @@ class EventsRecyclerAdapter(context: Context) : BaseRecyclerAdapter<EventsRecycl
         override fun bind(position: Int) {
             item = mData[position]
 
-            itemView.cardMain_text_name.text = item.userName
+            itemView.cardMain_text_name.text = item.user.name
             itemView.cardMain_text_date.text = StringUtils.convertLongToDate(item.date)
             itemView.cardMain_text_title.text = item.title
             itemView.cardMain_text_description.text = item.description
             itemView.cardMain_text_category.text = item.category
-            itemView.cardMain_text_favourite.text = item.favourites.toString()
-            itemView.cardMain_text_feedback.text = item.feedback.toString()
+            itemView.cardMain_text_favourite.text = item.likes.toString()
+            itemView.cardMain_text_feedback.text = item.comments.toString()
             itemView.cardMain_text_vote.text = item.votes.toString()
 
             itemView.cardMain_image_background.setImageBitmap(ImageUtils.decodeSampledBitmapFromResource(mRes, R.drawable.green_nature, 500, 150))

@@ -7,11 +7,17 @@ import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.Toast
 import com.aleksanderkapera.liveback.R
+import com.aleksanderkapera.liveback.model.SimpleEvent
+import com.aleksanderkapera.liveback.model.SimpleUser
 import com.aleksanderkapera.liveback.ui.MainFragment
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.ui.base.FragmentActivity
 import com.aleksanderkapera.liveback.ui.widget.NavigationViewHelper
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : FragmentActivity() {
@@ -25,6 +31,8 @@ class MainActivity : FragmentActivity() {
 
     private lateinit var mNavigationDrawer: NavigationViewHelper
     private lateinit var mDrawerLayout: DrawerLayout
+
+    private val mDocRef = FirebaseFirestore.getInstance().document("events/simpleEvent")
 
     override fun getLayoutRes(): Int {
         return R.layout.activity_main
@@ -61,5 +69,19 @@ class MainActivity : FragmentActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    fun onButtonClick(view: View){
+        val user = SimpleUser("Mari Sheibley", "marisheibley@gmail.com")
+        val event = SimpleEvent(user,1529964000000, "Title", "DEsc", "cat", 164,2,82)
+
+        mDocRef.set(event).addOnCompleteListener(this, OnCompleteListener {
+            if(it.isSuccessful){
+                Toast.makeText(this,"yeah",Toast.LENGTH_SHORT).show()
+            }
+            if(it.isCanceled){
+                Toast.makeText(this,"booooooooo",Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }

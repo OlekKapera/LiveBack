@@ -10,8 +10,14 @@
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </FrameLayout>
+        android:layout_height="match_parent"></FrameLayout>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="50dp"
+        android:layout_height="10dp"
+        android:onClick="onButtonClick"
+        android:text="Button" />
 
     <android.support.design.widget.NavigationView
         android:id="@+id/main_view_drawer"
@@ -35,8 +41,8 @@
 
             <include
                 layout="@layout/navigation_menu"
-                android:layout_height="0dp"
                 android:layout_width="match_parent"
+                android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/navigation_container_header" />
         </android.support.constraint.ConstraintLayout>

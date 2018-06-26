@@ -39,6 +39,8 @@ dependencies {
     implementation 'com.android.support:design:27.1.1'
 
     // networking
+    implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation 'com.google.firebase:firebase-firestore:17.0.2'
     implementation "com.squareup.okhttp3:logging-interceptor:3.10.0"
     implementation "com.squareup.retrofit2:retrofit:2.4.0"
     implementation "com.squareup.retrofit2:converter-jackson:2.4.0"
@@ -57,3 +59,5 @@ dependencies {
     implementation 'com.android.support:cardview-v7:27.1.1'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
 }
+
+apply plugin: 'com.google.gms.google-services'

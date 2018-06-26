@@ -5,6 +5,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.SimpleEvent
+import com.aleksanderkapera.liveback.model.SimpleUser
 import com.aleksanderkapera.liveback.ui.adapter.EventsRecyclerAdapter
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -21,8 +22,12 @@ class MainFragment : BaseFragment() {
         }
     }
 
-    private val mEvents = arrayListOf(SimpleEvent("14513543", "1532135", "Mari Sheibley", 1543014000000, "The Glossary of Telescopes", "Buying the right telescope to take your love of astronomy to the next level is a big homework like this, you will find just the right telescope for this next big step in the evolution of your passion for astronomy.", "Presentation", 164, 31, 82),
-            SimpleEvent("14513543", "1532135", "Birgit Kos", 1544310000000, "The Basic Of Buying a Telescope", "Buying the right telescope to take your love of astronomy to the next level is a big homework like this, you will find just the right telescope for this next big step in the evolution of your passion for astronomy.", "Presentation", 164, 31, 82))
+    val user = SimpleUser("Mari Sheibley", "marisheibley@gmail.com")
+    val event = SimpleEvent(user,1529964000000, "Title", "DEsc", "cat", 164,2,82)
+
+
+    private val mEvents = arrayListOf(SimpleEvent(user, 1543014000000, "Mari Sheibley", "The Glossary of Telescopes", "Buying the right telescope to take your love of astronomy to the next level is a big homework like this, you will find just the right telescope for this next big step in the evolution of your passion for astronomy.", 164, 31, 82),
+            SimpleEvent(user, 1543014000000, "Birgit Kos", "The Basic Of Buying a Telescope", "Buying the right telescope to take your love of astronomy to the next level is a big homework like this, you will find just the right telescope for this next big step in the evolution of your passion for astronomy.",  164, 31, 82))
 
     override fun getLayoutRes(): Int {
         return R.layout.fragment_main
