@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import com.aleksanderkapera.liveback.R
-import com.aleksanderkapera.liveback.model.SimpleEvent
+import com.aleksanderkapera.liveback.model.Event
 import com.aleksanderkapera.liveback.util.ImageUtils
 import com.aleksanderkapera.liveback.util.StringUtils
 import kotlinx.android.synthetic.main.card_main.view.*
@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.card_main.view.*
 /**
  * Created by kapera on 29-May-18.
  */
-class EventsRecyclerAdapter(context: Context) : BaseRecyclerAdapter<EventsRecyclerAdapter.ViewHolder, SimpleEvent>(context) {
+class EventsRecyclerAdapter(context: Context) : BaseRecyclerAdapter<EventsRecyclerAdapter.ViewHolder, Event>(context) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(mInflater.inflate(R.layout.card_main, parent, false))
@@ -20,7 +20,7 @@ class EventsRecyclerAdapter(context: Context) : BaseRecyclerAdapter<EventsRecycl
 
     inner class ViewHolder(itemView: View) : BaseRecyclerAdapter.ViewHolder(itemView) {
 
-        private lateinit var item: SimpleEvent
+        private lateinit var item: Event
 
         init {
             itemView.setOnClickListener(this)
@@ -29,7 +29,7 @@ class EventsRecyclerAdapter(context: Context) : BaseRecyclerAdapter<EventsRecycl
         override fun bind(position: Int) {
             item = mData[position]
 
-            itemView.cardMain_text_name.text = item.user.name
+            itemView.cardMain_text_name.text = item.userUid
             itemView.cardMain_text_date.text = StringUtils.convertLongToDate(item.date)
             itemView.cardMain_text_title.text = item.title
             itemView.cardMain_text_description.text = item.description

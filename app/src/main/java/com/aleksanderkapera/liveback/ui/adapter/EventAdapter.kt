@@ -2,7 +2,6 @@ package com.aleksanderkapera.liveback.ui.adapter
 
 import android.content.Context
 import android.view.ViewGroup
-import com.aleksanderkapera.liveback.model.SimpleEvent
 
 /**
  * Created by kapera on 23-May-18.

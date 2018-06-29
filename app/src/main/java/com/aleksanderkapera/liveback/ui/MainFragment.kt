@@ -1,11 +1,14 @@
 package com.aleksanderkapera.liveback.ui
 
+import android.os.Bundle
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.LinearLayoutManager
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import com.aleksanderkapera.liveback.R
-import com.aleksanderkapera.liveback.model.SimpleEvent
-import com.aleksanderkapera.liveback.model.SimpleUser
+import com.aleksanderkapera.liveback.model.Event
+import com.aleksanderkapera.liveback.model.ModelConstants
 import com.aleksanderkapera.liveback.ui.adapter.EventsRecyclerAdapter
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -16,18 +19,23 @@ import kotlinx.android.synthetic.main.fragment_main.*
  */
 class MainFragment : BaseFragment() {
 
+    private lateinit var mEvents : List<Event>
+
     companion object {
-        fun newInstance(): BaseFragment {
+        fun newInstance(events: ArrayList<Event>): BaseFragment {
+            val bundle = Bundle()
+            bundle.putParcelableArrayList(ModelConstants.EVENTS, events)
+            MainFragment().arguments = bundle
             return MainFragment()
         }
     }
 
-    val user = SimpleUser("Mari Sheibley", "marisheibley@gmail.com")
-    val event = SimpleEvent(user,1529964000000, "Title", "DEsc", "cat", 164,2,82)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-
-    private val mEvents = arrayListOf(SimpleEvent(user, 1543014000000, "Mari Sheibley", "The Glossary of Telescopes", "Buying the right telescope to take your love of astronomy to the next level is a big homework like this, you will find just the right telescope for this next big step in the evolution of your passion for astronomy.", 164, 31, 82),
-            SimpleEvent(user, 1543014000000, "Birgit Kos", "The Basic Of Buying a Telescope", "Buying the right telescope to take your love of astronomy to the next level is a big homework like this, you will find just the right telescope for this next big step in the evolution of your passion for astronomy.",  164, 31, 82))
+        val bundle = this.arguments
+        mEvents = ArrayList(bundle?.getParcelableArrayList(ModelConstants.EVENTS))
+    }
 
     override fun getLayoutRes(): Int {
         return R.layout.fragment_main
