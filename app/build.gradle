@@ -13,7 +13,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0"
+        versionName "0.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -58,6 +58,9 @@ dependencies {
 
     implementation 'com.android.support:cardview-v7:27.1.1'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
+
+    // communication
+    implementation 'org.greenrobot:eventbus:3.1.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
