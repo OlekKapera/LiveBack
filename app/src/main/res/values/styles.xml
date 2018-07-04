@@ -8,6 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:fontFamily">sans-serif-thin</item>
         <item name="android:textColor">@android:color/black</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:navigationBarColor">@color/navbar</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -81,5 +84,27 @@
         <item name="android:paddingTop">@dimen/spacing8</item>
         <item name="android:paddingBottom">@dimen/spacing8</item>
         <item name="android:layout_marginTop">@dimen/spacing16</item>
+    </style>
+
+    <style name="Logging">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@string/font_family_light</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">@dimen/text20</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="Logging.Input">
+        <item name="android:background">@drawable/line_edit_text</item>
+        <item name="android:backgroundTint">@android:color/white</item>
+        <item name="android:textCursorDrawable">@null</item>
+        <item name="android:paddingBottom">@dimen/spacing12</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColorHint">@android:color/white</item>
+    </style>
+
+    <style name="Logging.Button">
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
     </style>
 </resources>

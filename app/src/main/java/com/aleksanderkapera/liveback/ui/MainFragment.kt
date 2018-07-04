@@ -7,9 +7,9 @@ import android.view.View
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.bus.EventsReceivedEvent
 import com.aleksanderkapera.liveback.model.Event
-import com.aleksanderkapera.liveback.model.ModelConstants
 import com.aleksanderkapera.liveback.ui.adapter.EventsRecyclerAdapter
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
+import com.aleksanderkapera.liveback.util.AndroidUtils.Companion.setToolbarMargin
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import org.greenrobot.eventbus.EventBus
@@ -56,6 +56,8 @@ class MainFragment : BaseFragment() {
             setDisplayShowTitleEnabled(false)
             setHomeAsUpIndicator(R.drawable.ic_menu)
         }
+
+        setToolbarMargin(main_container_toolbar)
     }
 
     private fun initAdapter() {
@@ -65,6 +67,8 @@ class MainFragment : BaseFragment() {
         main_recycler_events.layoutManager = layoutManager
         main_recycler_events.adapter = adapter
     }
+
+
 
     @Subscribe
     fun onEventsReceivedEvent(event: EventsReceivedEvent) {

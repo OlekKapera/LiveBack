@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.res.Resources
 import android.os.Build
+import android.support.constraint.ConstraintLayout
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -49,6 +50,33 @@ class AndroidUtils{
         fun dpToPx(dp: Int): Int {
             val displayMetrics = getResources().displayMetrics
             return (dp * displayMetrics.density + 0.5).toInt()
+        }
+
+        fun getStatusBarHeight(): Int {
+            var result = 0
+            val resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android")
+            if (resourceId > 0)
+                result = getResources().getDimensionPixelSize(resourceId)
+
+            return result
+        }
+
+        fun getNavigationBarHeight(): Int {
+            val resources = getResources()
+            val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+            if (resourceId > 0) {
+                return resources.getDimensionPixelSize(resourceId)
+            }
+            return 0
+        }
+
+        /**
+         * Moves toolbar from top of the screen under the status bar.
+         */
+        fun setToolbarMargin(view: View) {
+            val params = view.layoutParams as ConstraintLayout.LayoutParams
+            params.setMargins(0, AndroidUtils.getStatusBarHeight(), 0, 0)
+            view.layoutParams = params
         }
     }
 }

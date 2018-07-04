@@ -16,6 +16,7 @@
     <dimen name="icon36">36dp</dimen>
     <dimen name="icon48">48dp</dimen>
     <dimen name="icon64">64dp</dimen>
+    <dimen name="icon82">82dp</dimen>
 
     <!--font sizes-->
     <dimen name="text12">12sp</dimen>
