@@ -1,5 +1,6 @@
-package com.aleksanderkapera.liveback.ui
+package com.aleksanderkapera.liveback.ui.fragment
 
+import android.app.Activity
 import android.os.Bundle
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.LinearLayoutManager
@@ -7,6 +8,7 @@ import android.view.View
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.bus.EventsReceivedEvent
 import com.aleksanderkapera.liveback.model.Event
+import com.aleksanderkapera.liveback.ui.activity.SigningActivity
 import com.aleksanderkapera.liveback.ui.adapter.EventsRecyclerAdapter
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.util.AndroidUtils.Companion.setToolbarMargin
@@ -58,6 +60,7 @@ class MainFragment : BaseFragment() {
         }
 
         setToolbarMargin(main_container_toolbar)
+        testButton.setOnClickListener(onTestClick)
     }
 
     private fun initAdapter() {
@@ -68,7 +71,9 @@ class MainFragment : BaseFragment() {
         main_recycler_events.adapter = adapter
     }
 
-
+    val onTestClick = View.OnClickListener { _ ->
+        SigningActivity.startActivity(activity as Activity)
+    }
 
     @Subscribe
     fun onEventsReceivedEvent(event: EventsReceivedEvent) {

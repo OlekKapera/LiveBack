@@ -109,13 +109,13 @@ abstract class BaseFragment: Fragment() {
      * is added to fragment manager. Animation can be changed by overriding this method.
      */
     @AnimRes
-    fun getEnterAnimation(): Int { return 0}
+    fun getEnterAnimation(): Int { return R.anim.fragment_slide_in_right}
 
     /**
      * Returns default exit animation resource for this fragment. Animation is played when fragment
      * is added to fragment manager. Animation can be changed by overriding this method.
      */
     @AnimRes
-    fun getExitAnimation(): Int { return 0}
+    fun getExitAnimation(): Int { return R.anim.fragment_slide_out_right}
 
 }

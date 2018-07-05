@@ -164,12 +164,11 @@ abstract class FragmentActivity: BaseActivity() {
     }
 
     override fun showFragment(fragment: BaseFragment) {
-        val toShow: BaseFragment? = supportFragmentManager.findFragmentByTag(fragment.javaClass.name) as BaseFragment
+        val toShow: BaseFragment? = supportFragmentManager.findFragmentByTag(fragment.javaClass.name) as BaseFragment?
 
         if (toShow != null) {
             supportFragmentManager
                     .beginTransaction()
-                    .hide(fragmentBackStack.last)
                     .show(toShow)
                     .commit()
             fragmentBackStack.removeAt(fragmentBackStack.indexOf(toShow))

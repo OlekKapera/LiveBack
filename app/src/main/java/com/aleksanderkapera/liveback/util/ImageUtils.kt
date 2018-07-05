@@ -3,6 +3,8 @@ package com.aleksanderkapera.liveback.util
 import android.content.res.Resources
 import android.graphics.BitmapFactory
 import android.graphics.Bitmap
+import android.util.DisplayMetrics
+import com.aleksanderkapera.liveback.util.AndroidUtils.Companion.getResources
 
 
 /**
@@ -35,6 +37,32 @@ class ImageUtils {
             return inSampleSize
         }
 
+        /**
+         * Decode big image of a size of whole screen
+         */
+        fun decodeSampledBitmapFromResource(res: Resources, resId: Int): Bitmap {
+
+            // First decode with inJustDecodeBounds=true to check dimensions
+            val options = BitmapFactory.Options()
+            options.inJustDecodeBounds = true
+            BitmapFactory.decodeResource(res, resId, options)
+
+            // Get device's width and height
+            val displayMetrics = getResources().displayMetrics
+            val reqHeight = (displayMetrics.heightPixels / displayMetrics.density).toInt()
+            val reqWidth = (displayMetrics.widthPixels / displayMetrics.density).toInt()
+
+            // Calculate inSampleSize
+            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight)
+
+            // Decode bitmap with inSampleSize set
+            options.inJustDecodeBounds = false
+            return BitmapFactory.decodeResource(res, resId, options)
+        }
+
+        /**
+         * Decode big image of a specific size
+         */
         fun decodeSampledBitmapFromResource(res: Resources, resId: Int,
                                             reqWidth: Int, reqHeight: Int): Bitmap {
 
