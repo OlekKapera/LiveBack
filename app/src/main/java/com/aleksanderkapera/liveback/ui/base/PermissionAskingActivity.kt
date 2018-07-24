@@ -7,8 +7,8 @@ import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v4.content.ContextCompat
 import android.widget.Toast
-import com.aleksanderkapera.liveback.util.AndroidUtils
 import com.aleksanderkapera.liveback.util.PermissionKind
+import com.aleksanderkapera.liveback.util.isApiBelow
 
 abstract class PermissionsAskingActivity: AppCompatActivity(){
 
@@ -21,11 +21,11 @@ abstract class PermissionsAskingActivity: AppCompatActivity(){
     }
 
     fun hasPermissions(permissionKind: PermissionKind): Boolean {
-        if (AndroidUtils.isApiBelow(23)) return true
+        if (isApiBelow(23)) return true
 
         var hasPermission = true
 
-        for (permission: String in permissionKind.getPermissions()) {
+        for (permission: String in permissionKind.permissions) {
             hasPermission = hasPermission && ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
         }
         return hasPermission
@@ -34,7 +34,7 @@ abstract class PermissionsAskingActivity: AppCompatActivity(){
     fun requestPermissions(permissionKind: PermissionKind){
         ActivityCompat.requestPermissions(
                 this,
-                permissionKind.getPermissions(),
+                permissionKind.permissions,
                 permissionKind.ordinal
         )
     }

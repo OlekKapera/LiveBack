@@ -14,7 +14,7 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import butterknife.Optional
 import com.aleksanderkapera.liveback.R
-import com.aleksanderkapera.liveback.util.AndroidUtils
+import com.aleksanderkapera.liveback.util.hideKeyboardOnTouchOutside
 
 abstract class BaseFragment: Fragment() {
 
@@ -48,7 +48,7 @@ abstract class BaseFragment: Fragment() {
         // set up keyboard hiding on this fragment if it's necessary. Don't forget to implement
         // hideKeyboardOnTouchOutside() method if you need different behavior.
         if(hideKeyboardOnTouchOutside())
-            AndroidUtils.hideKeyboardOnTouchOutside(rootView, activity!!)
+            hideKeyboardOnTouchOutside(rootView, activity!!)
 
         appCompatActivity = activity as AppCompatActivity
 

@@ -1,11 +1,20 @@
 package com.aleksanderkapera.liveback.ui.fragment
 
+import android.app.Activity
+import android.os.Bundle
 import android.support.constraint.ConstraintLayout
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
 import com.aleksanderkapera.liveback.R
+import com.aleksanderkapera.liveback.ui.activity.MainActivity
+import com.aleksanderkapera.liveback.ui.activity.SigningActivity
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
-import com.aleksanderkapera.liveback.util.AndroidUtils
 import com.aleksanderkapera.liveback.util.ImageUtils
+import com.aleksanderkapera.liveback.util.asString
+import com.aleksanderkapera.liveback.util.getNavigationBarHeight
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.fragment_register.*
 
 /**
@@ -19,16 +28,100 @@ class RegisterFragment : BaseFragment() {
         }
     }
 
-    override fun getLayoutRes(): Int {
-        return R.layout.fragment_register
+    private val DIALOG_TAG_OPEN = "Open Image Dialog"
+
+    private val requiredField = R.string.required_field.asString()
+    private val incorrectEmail = R.string.incorrect_email.asString()
+    private val shortPassword = R.string.short_password.asString()
+    private val differentPasswords = R.string.different_passwords.asString()
+
+    private lateinit var mAuth: FirebaseAuth
+
+    override fun getLayoutRes(): Int = R.layout.fragment_register
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        mAuth = (activity as SigningActivity).mAuth
+
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun setupViews(rootView: View) {
-        register_image_background.setImageBitmap(ImageUtils.decodeSampledBitmapFromResource(AndroidUtils.getResources(),R.drawable.bg_register))
+        register_image_background.setImageBitmap(ImageUtils.decodeSampledBitmapFromResource(resources, R.drawable.bg_register))
 
         //move the most bottom view above navigation bar
         val params = register_button_signUp.layoutParams as ConstraintLayout.LayoutParams
-        params.setMargins(0, 0, 0, AndroidUtils.getNavigationBarHeight()+32)
+        params.setMargins(0, 0, 0, getNavigationBarHeight() + 32)
         register_button_signUp.layoutParams = params
+
+        register_image_profile.setOnClickListener(onRegisterImageClick)
+        register_button_signUp.setOnClickListener(onSignUpClick)
+    }
+
+    private val onRegisterImageClick = View.OnClickListener {
+        ImagePickDialogFragment.newInstance().show(fragmentManager, DIALOG_TAG_OPEN)
+    }
+
+    private val onSignUpClick = View.OnClickListener {
+        val userName = register_input_username.text.toString()
+        val email = register_input_email.text.toString()
+        val password = register_input_password.text.toString()
+        val confirmPassword = register_input_confirm.text.toString()
+
+        if (areValid(userName, email, password, confirmPassword)) {
+            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    MainActivity.startActivity(activity as Activity)
+                } else {
+                    Toast.makeText(context, "Error with signing up", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    /**
+     * Validate input fields in empty condition
+     */
+    private fun isFilled(userName: String, email: String, password: String, confirmPassword: String): Boolean {
+        return when {
+            userName.isEmpty() -> {
+                register_input_username.error = requiredField
+                false
+            }
+            email.isEmpty() -> {
+                register_input_email.error = requiredField
+                false
+            }
+            password.isEmpty() -> {
+                register_input_password.error = requiredField
+                false
+            }
+            confirmPassword.isEmpty() -> {
+                register_input_confirm.error = requiredField
+                false
+            }
+            else -> true
+        }
+    }
+
+    /**
+     * Validate input fields by specific conditions
+     */
+    private fun areValid(userName: String, email: String, password: String, confirmPassword: String): Boolean {
+        return when {
+            !isFilled(userName, email, password, confirmPassword) -> false
+            !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
+                register_input_email.error = incorrectEmail
+                false
+            }
+            password.length < 8 -> {
+                register_input_password.error = shortPassword
+                false
+            }
+            confirmPassword != password -> {
+                register_input_confirm.error = differentPasswords
+                false
+            }
+            else -> true
+        }
     }
 }

@@ -11,7 +11,7 @@ import com.aleksanderkapera.liveback.model.Event
 import com.aleksanderkapera.liveback.ui.activity.SigningActivity
 import com.aleksanderkapera.liveback.ui.adapter.EventsRecyclerAdapter
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
-import com.aleksanderkapera.liveback.util.AndroidUtils.Companion.setToolbarMargin
+import com.aleksanderkapera.liveback.util.setToolbarMargin
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import org.greenrobot.eventbus.EventBus

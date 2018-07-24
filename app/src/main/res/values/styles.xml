@@ -107,4 +107,29 @@
     <style name="Logging.Button">
         <item name="android:foreground">?android:attr/selectableItemBackground</item>
     </style>
+
+    <style name="CustomImageDialogRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">@dimen/spacing8</item>
+        <item name="android:paddingBottom">@dimen/spacing8</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:clickable">true</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+    </style>
+
+    <style name="CustomImageDialogIcon">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="CustomImageDialogText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/spacing20</item>
+        <item name="android:textSize">@dimen/text18</item>
+        <item name="android:layout_gravity">center_vertical</item>
+    </style>
+
+
 </resources>

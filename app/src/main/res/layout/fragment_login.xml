@@ -47,17 +47,17 @@
         app:layout_constraintGuide_end="@dimen/spacing48" />
 
     <EditText
-        android:id="@+id/login_input_password"
+        android:id="@+id/login_input_email"
         style="@style/Logging.Input"
         android:layout_marginBottom="@dimen/spacing16"
         android:hint="@string/username_email"
         android:inputType="textEmailAddress"
-        app:layout_constraintBottom_toTopOf="@+id/login_input_confirm"
+        app:layout_constraintBottom_toTopOf="@+id/login_input_password"
         app:layout_constraintEnd_toStartOf="@+id/login_guide_right"
         app:layout_constraintStart_toStartOf="@+id/login_guide_left" />
 
     <EditText
-        android:id="@+id/login_input_confirm"
+        android:id="@+id/login_input_password"
         style="@style/Logging.Input"
         android:layout_marginBottom="@dimen/spacing64"
         android:hint="@string/password"

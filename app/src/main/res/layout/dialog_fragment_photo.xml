@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/bgColor"
+    android:padding="@dimen/spacing24">
+
+    <TextView
+        android:id="@+id/imageDialog_text_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_profile"
+        android:textSize="@dimen/text20"
+        android:fontFamily="@string/font_family_regular"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/imageDialog_container_takePhoto"
+        style="@style/CustomImageDialogRow"
+        android:layout_marginTop="@dimen/spacing16"
+        app:layout_constraintTop_toBottomOf="@+id/imageDialog_text_title">
+
+        <ImageView
+            android:id="@+id/imageDialog_image_camera"
+            style="@style/CustomImageDialogIcon"
+            app:srcCompat="@drawable/ic_camera" />
+
+        <TextView
+            android:id="@+id/imageDialog_text_takePhoto"
+            style="@style/CustomImageDialogText"
+            android:text="@string/take_photo" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/imageDialog_container_choosePhoto"
+        style="@style/CustomImageDialogRow"
+        app:layout_constraintTop_toBottomOf="@+id/imageDialog_container_takePhoto">
+
+        <ImageView
+            android:id="@+id/imageDialog_image_gallery"
+            style="@style/CustomImageDialogIcon"
+            app:srcCompat="@drawable/ic_gallery" />
+
+        <TextView
+            android:id="@+id/imageDialog_text_choosePhoto"
+            style="@style/CustomImageDialogText"
+            android:text="@string/choose_photo" />
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

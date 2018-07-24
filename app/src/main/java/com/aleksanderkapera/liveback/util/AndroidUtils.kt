@@ -5,78 +5,80 @@ import android.content.Context
 import android.content.res.Resources
 import android.os.Build
 import android.support.constraint.ConstraintLayout
+import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.aleksanderkapera.liveback.App
 
-class AndroidUtils{
+val context = App.context
+val resources = context.resources
 
-    companion object {
+fun isApiBelow(api: Int): Boolean {
+    return Build.VERSION.SDK_INT < api
+}
 
-        fun getResources(): Resources {
-            return App.applicationContext().resources
-        }
+fun Int.asColor() = ContextCompat.getColor(context, this)
 
-        fun isApiBelow(api: Int): Boolean {
-            return Build.VERSION.SDK_INT < api
-        }
+fun Int.asDimen() = resources.getDimension(this)
 
-        fun hideKeyboard(activity: Activity){
-            val view = activity.currentFocus
-            if(view != null){
-                view.clearFocus()
-                val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.hideSoftInputFromWindow(view.windowToken,0)
-            }
-        }
+fun Int.asDrawable() = ContextCompat.getDrawable(context, this)
 
-        fun hideKeyboardOnTouchOutside(view: View, activity: Activity){
-            if (view !is EditText){
-                view.setOnTouchListener(View.OnTouchListener { _, _ ->
-                    hideKeyboard(activity)
-                    return@OnTouchListener false
-                })
-            }
-            if (view is ViewGroup){
-                for(i in 0 until view.childCount){
-                    val innerView = view.getChildAt(i)
-                    hideKeyboardOnTouchOutside(innerView, activity)
-                }
-            }
-        }
+fun Int.asString() = context.getString(this)
 
-        fun dpToPx(dp: Int): Int {
-            val displayMetrics = getResources().displayMetrics
-            return (dp * displayMetrics.density + 0.5).toInt()
-        }
+fun hideKeyboard(activity: Activity) {
+    val view = activity.currentFocus
+    if (view != null) {
+        view.clearFocus()
+        val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+}
 
-        fun getStatusBarHeight(): Int {
-            var result = 0
-            val resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android")
-            if (resourceId > 0)
-                result = getResources().getDimensionPixelSize(resourceId)
-
-            return result
-        }
-
-        fun getNavigationBarHeight(): Int {
-            val resources = getResources()
-            val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
-            if (resourceId > 0) {
-                return resources.getDimensionPixelSize(resourceId)
-            }
-            return 0
-        }
-
-        /**
-         * Moves toolbar from top of the screen under the status bar.
-         */
-        fun setToolbarMargin(view: View) {
-            val params = view.layoutParams as ConstraintLayout.LayoutParams
-            params.setMargins(0, AndroidUtils.getStatusBarHeight(), 0, 0)
-            view.layoutParams = params
+fun hideKeyboardOnTouchOutside(view: View, activity: Activity) {
+    if (view !is EditText) {
+        view.setOnTouchListener(View.OnTouchListener { _, _ ->
+            hideKeyboard(activity)
+            return@OnTouchListener false
+        })
+    }
+    if (view is ViewGroup) {
+        for (i in 0 until view.childCount) {
+            val innerView = view.getChildAt(i)
+            hideKeyboardOnTouchOutside(innerView, activity)
         }
     }
+}
+
+fun dpToPx(dp: Int): Int {
+    val displayMetrics = resources.displayMetrics
+    return (dp * displayMetrics.density + 0.5).toInt()
+}
+
+fun getStatusBarHeight(): Int {
+    var result = 0
+    val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+    if (resourceId > 0)
+        result = resources.getDimensionPixelSize(resourceId)
+
+    return result
+}
+
+fun getNavigationBarHeight(): Int {
+    val resources = resources
+    val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+    if (resourceId > 0) {
+        return resources.getDimensionPixelSize(resourceId)
+    }
+    return 0
+}
+
+/**
+ * Moves toolbar from top of the screen under the status bar.
+ */
+fun setToolbarMargin(view: View) {
+    val params = view.layoutParams as ConstraintLayout.LayoutParams
+    params.setMargins(0, getStatusBarHeight(), 0, 0)
+    view.layoutParams = params
 }

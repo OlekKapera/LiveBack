@@ -1,10 +1,14 @@
 package com.aleksanderkapera.liveback.util
 
 import android.content.res.Resources
-import android.graphics.BitmapFactory
 import android.graphics.Bitmap
-import android.util.DisplayMetrics
-import com.aleksanderkapera.liveback.util.AndroidUtils.Companion.getResources
+import android.graphics.BitmapFactory
+import android.os.Environment
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 /**
@@ -19,8 +23,8 @@ class ImageUtils {
             val height = options.outHeight
             val width = options.outWidth
             var inSampleSize = 1
-            var reqWidth = AndroidUtils.dpToPx(reqWidth)
-            var reqHeight = AndroidUtils.dpToPx(reqHeight)
+            var reqWidth = dpToPx(reqWidth)
+            var reqHeight =dpToPx(reqHeight)
 
             if (height > reqHeight || width > reqWidth) {
 
@@ -48,7 +52,7 @@ class ImageUtils {
             BitmapFactory.decodeResource(res, resId, options)
 
             // Get device's width and height
-            val displayMetrics = getResources().displayMetrics
+            val displayMetrics = resources.displayMetrics
             val reqHeight = (displayMetrics.heightPixels / displayMetrics.density).toInt()
             val reqWidth = (displayMetrics.widthPixels / displayMetrics.density).toInt()
 
@@ -77,6 +81,34 @@ class ImageUtils {
             // Decode bitmap with inSampleSize set
             options.inJustDecodeBounds = false
             return BitmapFactory.decodeResource(res, resId, options)
+        }
+
+        /**
+         * Create file with image for further sending to the server
+         */
+        lateinit var imageFilePath: String
+
+        @Throws(IOException::class)
+        fun createImageFile(): File {
+            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss",
+                    Locale.getDefault()).format(Date())
+            val imageFileName = "IMG_" + timeStamp + "_"
+            val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+
+            val image = File.createTempFile(
+                    imageFileName, /* prefix */
+                    ".jpg", /* suffix */
+                    storageDir)   /* directory */
+
+            imageFilePath = image.absolutePath
+
+            return image
+        }
+
+        fun getBytesFromBitmap(bitmap: Bitmap?, quality: Int): ByteArray{
+            val stream = ByteArrayOutputStream()
+            bitmap?.compress(Bitmap.CompressFormat.JPEG,quality, stream)
+            return stream.toByteArray()
         }
     }
 }
