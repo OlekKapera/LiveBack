@@ -6,6 +6,7 @@ package com.aleksanderkapera.liveback.model
 
 data class User(val uid : String = "",
                 val username: String = "",
-                val email: String = "") {
-    constructor() : this("", "","")
+                val email: String = "",
+                var profilePicPath: String? = "") {
+    constructor() : this("", "","", "")
 }

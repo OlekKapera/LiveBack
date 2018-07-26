@@ -8,6 +8,7 @@ import android.support.constraint.ConstraintLayout
 import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.aleksanderkapera.liveback.App

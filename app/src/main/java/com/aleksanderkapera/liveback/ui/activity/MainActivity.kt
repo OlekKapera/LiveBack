@@ -7,24 +7,24 @@ import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.bus.EventsReceivedEvent
-import com.aleksanderkapera.liveback.model.Comment
 import com.aleksanderkapera.liveback.model.Event
 import com.aleksanderkapera.liveback.model.User
-import com.aleksanderkapera.liveback.model.Vote
-import com.aleksanderkapera.liveback.ui.fragment.MainFragment
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.ui.base.FragmentActivity
+import com.aleksanderkapera.liveback.ui.fragment.MainFragment
 import com.aleksanderkapera.liveback.ui.widget.NavigationViewHelper
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 
-class MainActivity : FragmentActivity() {
+class MainActivity : FragmentActivity(){
 
     companion object {
         fun startActivity(activity: Activity) {
@@ -36,8 +36,12 @@ class MainActivity : FragmentActivity() {
     private lateinit var mNavigationDrawer: NavigationViewHelper
     private lateinit var mDrawerLayout: DrawerLayout
 
-    private lateinit var mEventsCol : CollectionReference
-    private lateinit var mEvents : List<Event>
+    lateinit var mAuth: FirebaseAuth
+    private lateinit var mFireStoreRef: FirebaseFirestore
+    private lateinit var mEventsCol: CollectionReference
+    private lateinit var mEvents: List<Event>
+    private var mUser: User? = null
+    private var mStorageRef: StorageReference? = null
 
     override fun getLayoutRes(): Int {
         return R.layout.activity_main
@@ -50,19 +54,22 @@ class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mEventsCol = FirebaseFirestore.getInstance().collection("events")
-        mEventsCol.get().addOnCompleteListener {
-            when {
-                it.isSuccessful -> {
-                    mEvents = it.result.toObjects(Event::class.java)
-                    EventBus.getDefault().post(EventsReceivedEvent(mEvents))
-                }
-                else -> Toast.makeText(this,"Something went wrong",Toast.LENGTH_SHORT).show()
-            }
-        }
+        //show loader
+        main_view_load.show()
 
-        mDrawerLayout = findViewById(R.id.main_layout_drawer)
-        mNavigationDrawer = NavigationViewHelper(this, mDrawerLayout)
+        mAuth = FirebaseAuth.getInstance()
+        mFireStoreRef = FirebaseFirestore.getInstance()
+
+        //when no user is logged in open login fragment
+        if (mAuth.currentUser != null) {
+            mEventsCol = mFireStoreRef.collection("events")
+            getEvents()
+            getUser(mAuth.currentUser!!.uid)
+
+            mDrawerLayout = main_layout_drawer
+            mNavigationDrawer = NavigationViewHelper(this, mDrawerLayout)
+        } else
+            SigningActivity.startActivity(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -87,21 +94,10 @@ class MainActivity : FragmentActivity() {
         }
     }
 
-    fun onTestButtonClick(view: View) {
-        val user = User("Mari ", "marisheibley@gmail.com")
-        val event = Event("asd4512f3w5", 1529964000000, "Best Event", "Very long description which I wrote all by myslef while sitting in McDonald's.", "Party", 69, 31, 132)
-        val comment = Comment("Awesome Event!",1529964000000,"asd4531w23")
-        val vote = Vote ("Make it louder", "I can't hear anything you dumbasses!","1d1as321d3a5w",999,12)
-
-//        mEventsCol.add(event).addOnCompleteListener {
-//            if(it.isSuccessful){
-//                Toast.makeText(this,"yeah",Toast.LENGTH_SHORT).show()
-//            }
-//            if(it.isCanceled){
-//                Toast.makeText(this,"booooooooo",Toast.LENGTH_SHORT).show()
-//            }
-//        }
-
+    /**
+     * Retrieve events from database
+     */
+    private fun getEvents() {
         mEventsCol.get().addOnCompleteListener {
             when {
                 it.isSuccessful -> {
@@ -110,6 +106,38 @@ class MainActivity : FragmentActivity() {
                 }
                 else -> Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
             }
+
+            //hide loader
+            main_view_load.hide()
+        }
+    }
+
+    /**
+     * Retrieve current user
+     */
+    private fun getUser(uid: String){
+        mFireStoreRef.document("users/$uid").get().addOnCompleteListener {
+            when{
+                it.isSuccessful -> {
+                    mUser = it.result.toObject(User::class.java)
+                    mUser?.profilePicPath?.let {
+                        mStorageRef = FirebaseStorage.getInstance().getReference(it)
+                    }
+                }
+                else -> showToast(R.string.getUser_error)
+            }
+            mNavigationDrawer.updateViews(mUser, mStorageRef)
+        }
+    }
+
+    /**
+     * Perform log out action
+     */
+    fun logOut() {
+        if (mAuth.currentUser != null) {
+            mAuth.signOut()
+            showToast(R.string.signed_out)
+            mNavigationDrawer.updateViews(null,null)
         }
     }
 }

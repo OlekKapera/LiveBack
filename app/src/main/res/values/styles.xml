@@ -84,6 +84,8 @@
         <item name="android:paddingTop">@dimen/spacing8</item>
         <item name="android:paddingBottom">@dimen/spacing8</item>
         <item name="android:layout_marginTop">@dimen/spacing16</item>
+        <item name="android:clickable">true</item>
+        <item name="android:foreground">?android:attr/selectableItemBackgroundBorderless</item>
     </style>
 
     <style name="Logging">

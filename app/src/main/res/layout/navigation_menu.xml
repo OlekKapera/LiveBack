@@ -26,11 +26,10 @@
         app:title="@string/settings" />
 
     <com.aleksanderkapera.liveback.ui.widget.NavigationItem
-        android:id="@+id/navigation_row_logOut"
+        android:id="@+id/navigation_row_signing"
         style="@style/NavigationItem"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="@dimen/spacing16"
         app:icon="@drawable/ic_logout"
         app:title="@string/log_out" />
 </RelativeLayout>

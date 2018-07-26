@@ -14,6 +14,7 @@ import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.util.ImageUtils
 import com.aleksanderkapera.liveback.util.getNavigationBarHeight
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_signing.*
 import kotlinx.android.synthetic.main.fragment_login.*
 
 /**
@@ -52,12 +53,17 @@ class LoginFragment : BaseFragment() {
     }
 
     private val onLogInClick = View.OnClickListener {
+        //show loader
+        (activity as SigningActivity).signing_view_load.show()
+
         mAuth.signInWithEmailAndPassword(login_input_email.text.toString(), login_input_password.text.toString()).addOnCompleteListener {
             if (it.isSuccessful) {
                 MainActivity.startActivity(activity as Activity)
             } else {
                 Toast.makeText(context, "Error with logging in", Toast.LENGTH_SHORT).show()
             }
+            //hide loader
+            (activity as SigningActivity).signing_view_load.hide()
         }
     }
 

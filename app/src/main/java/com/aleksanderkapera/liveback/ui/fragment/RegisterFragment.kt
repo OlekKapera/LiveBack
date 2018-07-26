@@ -1,6 +1,6 @@
 package com.aleksanderkapera.liveback.ui.fragment
 
-import android.app.Activity
+import android.net.Uri
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.view.LayoutInflater
@@ -8,13 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.aleksanderkapera.liveback.R
-import com.aleksanderkapera.liveback.ui.activity.MainActivity
+import com.aleksanderkapera.liveback.model.User
 import com.aleksanderkapera.liveback.ui.activity.SigningActivity
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.util.ImageUtils
 import com.aleksanderkapera.liveback.util.asString
 import com.aleksanderkapera.liveback.util.getNavigationBarHeight
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_signing.*
 import kotlinx.android.synthetic.main.fragment_register.*
 
 /**
@@ -36,6 +37,8 @@ class RegisterFragment : BaseFragment() {
     private val differentPasswords = R.string.different_passwords.asString()
 
     private lateinit var mAuth: FirebaseAuth
+
+    var mImageUri: Uri? = null
 
     override fun getLayoutRes(): Int = R.layout.fragment_register
 
@@ -61,6 +64,9 @@ class RegisterFragment : BaseFragment() {
         ImagePickDialogFragment.newInstance().show(fragmentManager, DIALOG_TAG_OPEN)
     }
 
+    /**
+     * If all fields are valid perform auth call, write data to user database and upload his picture
+     */
     private val onSignUpClick = View.OnClickListener {
         val userName = register_input_username.text.toString()
         val email = register_input_email.text.toString()
@@ -68,11 +74,22 @@ class RegisterFragment : BaseFragment() {
         val confirmPassword = register_input_confirm.text.toString()
 
         if (areValid(userName, email, password, confirmPassword)) {
+            //show loader
+            activity?.signing_view_load?.show()
+
             mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
                 if (it.isSuccessful) {
-                    MainActivity.startActivity(activity as Activity)
+                    val userId = mAuth.currentUser!!.uid
+                    val userPojo = User(userId, userName, email, null)
+
+                    mImageUri?.let {
+                        (activity as SigningActivity).uploadImage(it, userPojo)
+                    } ?: run {
+                        (activity as SigningActivity).uploadUser(userPojo)
+                    }
                 } else {
-                    Toast.makeText(context, "Error with signing up", Toast.LENGTH_SHORT).show()
+                    activity?.signing_view_load?.hide()
+                    Toast.makeText(context, R.string.signUp_error, Toast.LENGTH_SHORT).show()
                 }
             }
         }

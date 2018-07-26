@@ -5,6 +5,8 @@ import android.content.res.Resources
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.support.annotation.AttrRes
+import android.support.annotation.StyleRes
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.widget.ImageView
@@ -12,7 +14,8 @@ import android.widget.ImageView
 /**
  * Created by kapera on 17-May-18.
  */
-class RoundedTopImageView : ImageView {
+class RoundedTopImageView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, @AttrRes defStyleAttr: Int = 0, @StyleRes defStyleRes: Int = 0)
+    : ImageView(context, attrs, defStyleAttr, defStyleRes) {
     private var mPaint: Paint? = null
     private var mPath: Path? = null
     private var mBitmap: Bitmap? = null
@@ -22,19 +25,7 @@ class RoundedTopImageView : ImageView {
     private var mHeight: Int = 0
     private var mDrawable: Drawable? = null
 
-    constructor(context: Context) : super(context) {
-        init()
-    }
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init()
-    }
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        init()
-    }
-
-    private fun init() {
+    init {
         mPaint = Paint()
         mPaint!!.setColor(Color.BLACK)
 

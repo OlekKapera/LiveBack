@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Bundle
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.View
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.bus.EventsReceivedEvent
@@ -14,6 +15,7 @@ import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.util.setToolbarMargin
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.android.synthetic.main.navigation_item.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
@@ -60,7 +62,6 @@ class MainFragment : BaseFragment() {
         }
 
         setToolbarMargin(main_container_toolbar)
-        testButton.setOnClickListener(onTestClick)
     }
 
     private fun initAdapter() {
@@ -69,10 +70,6 @@ class MainFragment : BaseFragment() {
         val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         main_recycler_events.layoutManager = layoutManager
         main_recycler_events.adapter = adapter
-    }
-
-    val onTestClick = View.OnClickListener { _ ->
-        SigningActivity.startActivity(activity as Activity)
     }
 
     @Subscribe

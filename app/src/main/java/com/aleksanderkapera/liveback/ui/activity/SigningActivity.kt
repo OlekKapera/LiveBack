@@ -2,7 +2,6 @@ package com.aleksanderkapera.liveback.ui.activity
 
 import android.app.Activity
 import android.content.Intent
-import android.database.Cursor
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.AsyncTask
@@ -11,16 +10,21 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import com.aleksanderkapera.liveback.R
+import com.aleksanderkapera.liveback.model.User
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.ui.base.FragmentActivity
 import com.aleksanderkapera.liveback.ui.fragment.ImagePickDialogFragment
 import com.aleksanderkapera.liveback.ui.fragment.LoginFragment
+import com.aleksanderkapera.liveback.ui.fragment.RegisterFragment
 import com.aleksanderkapera.liveback.util.ImageUtils
 import com.aleksanderkapera.liveback.util.PermissionKind
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import kotlinx.android.synthetic.main.activity_signing.*
 import kotlinx.android.synthetic.main.fragment_register.*
 import java.io.File
 import java.io.IOException
@@ -39,9 +43,10 @@ class SigningActivity : FragmentActivity() {
 
     lateinit var mAuth: FirebaseAuth
     lateinit var mStorageRef: StorageReference
+    private lateinit var mUsersRef: CollectionReference
 
-    lateinit var mUploadBytes: ByteArray
-    var mProgress = 0
+
+    private lateinit var mUploadBytes: ByteArray
 
     private lateinit var mPermissionResolvedListener: PermissionResolvedListener
 
@@ -58,6 +63,7 @@ class SigningActivity : FragmentActivity() {
 
         mAuth = FirebaseAuth.getInstance()
         mStorageRef = FirebaseStorage.getInstance().reference
+        mUsersRef = FirebaseFirestore.getInstance().collection("users")
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -69,7 +75,7 @@ class SigningActivity : FragmentActivity() {
         if (requestCode == ImagePickDialogFragment.REQUEST_CAPTURE_IMAGE) {
             // Handle image returned from camera app. Load it into image view.
             Glide.with(this).load(ImageUtils.imageFilePath).into(register_image_profile)
-//            uploadImage(Uri.parse(ImageUtils.imageFilePath))
+            (getLastFragment() as RegisterFragment).mImageUri = Uri.parse(ImageUtils.imageFilePath)
 
         } else if (requestCode == ImagePickDialogFragment.REQUEST_CHOOSE_IMAGE && data != null) {
             // Handle image which was picked by user. Load it into image view.
@@ -77,7 +83,7 @@ class SigningActivity : FragmentActivity() {
 
             try {
                 Glide.with(this).load(uri).into(register_image_profile)
-//                uploadImage(uri)
+                (getLastFragment() as RegisterFragment).mImageUri = uri
             } catch (e: IOException) {
                 e.printStackTrace()
             }
@@ -100,35 +106,39 @@ class SigningActivity : FragmentActivity() {
         mPermissionResolvedListener = listener
     }
 
-    private fun uploadImage(imagePath: Uri) {
-        val resize = ImageResize()
-        resize.execute(imagePath)
-    }
-
-    private fun executeUploadImage() {
-        val childRef = mStorageRef.child("users/${FirebaseAuth.getInstance().currentUser?.uid}")
-
-        val uploadTask = childRef.putBytes(mUploadBytes)
-        uploadTask.addOnCompleteListener {
-            if (it.isSuccessful) {
-                Toast.makeText(this, "Success!!!.", Toast.LENGTH_SHORT).show()
-
-                val imageUri = it.result.uploadSessionUri
-                Toast.makeText(this, "$imageUri", Toast.LENGTH_SHORT).show()
-
-            } else {
-                Toast.makeText(this, "Could not upload profile picture.", Toast.LENGTH_SHORT).show()
-            }
-        }.addOnProgressListener {
-            var currentProgress = (100 * it.bytesTransferred) / it.totalByteCount
-            if (currentProgress > (mProgress + 15)) {
-                mProgress = currentProgress.toInt()
-                Log.d("TAG", "upload progress: $mProgress")
-            }
+    fun uploadUser(userPojo: User) {
+        mUsersRef.document(userPojo.uid).set(userPojo).addOnSuccessListener {
+            MainActivity.startActivity(this)
+            Toast.makeText(this, R.string.welcome, Toast.LENGTH_SHORT).show()
+        }.addOnFailureListener {
+            Toast.makeText(this, R.string.signUp_error, Toast.LENGTH_SHORT).show()
+        }.addOnCompleteListener {
+            //hide loader
+            signing_view_load.hide()
         }
     }
 
-    inner class ImageResize : AsyncTask<Uri, Int, ByteArray>() {
+    fun uploadImage(imagePath: Uri, userPojo: User) {
+        val resize = ImageResize(userPojo)
+        resize.execute(imagePath)
+    }
+
+    private fun executeUploadImage(userPojo: User) {
+        val childRef = mStorageRef.child("users/${mAuth.currentUser?.uid}")
+
+        val uploadTask = childRef.putBytes(mUploadBytes)
+        uploadTask.addOnSuccessListener {
+            userPojo.profilePicPath = it.metadata?.path
+            uploadUser(userPojo)
+        }.addOnFailureListener {
+
+            //hide loader
+            signing_view_load.hide()
+            Toast.makeText(this, R.string.image_upload_error, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    inner class ImageResize(val userPojo: User) : AsyncTask<Uri, Int, ByteArray>() {
 
         private var mBitmap: Bitmap? = null
 
@@ -148,20 +158,14 @@ class SigningActivity : FragmentActivity() {
                 }
             }
 
-            Log.d("TAG", "before ${mBitmap!!.byteCount / 1000000}")
-
-            val bytes = ImageUtils.getBytesFromBitmap(mBitmap, 100)
-            Log.d("TAG", "after ${bytes.size / 1000000}")
-
-
-            return bytes
+            return ImageUtils.getBytesFromBitmap(mBitmap, 100)
         }
 
         override fun onPostExecute(result: ByteArray?) {
             super.onPostExecute(result)
 
             mUploadBytes = result!!
-            executeUploadImage()
+            executeUploadImage(userPojo)
         }
     }
 

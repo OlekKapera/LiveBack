@@ -6,6 +6,9 @@
     <string name="incorrect_email">Enter correct email address</string>
     <string name="short_password">Password needs to be at least 8 characters long</string>
     <string name="different_passwords">Passwords don\'t match</string>
+    <string name="image_upload_error">Could not upload profile picture.</string>
+    <string name="signUp_error">Error with signing up</string>
+    <string name="getUser_error">There was an error with getting your profile data. Please, try again later.</string>
 
     <!--Main Activity-->
     <string name="search">Search</string>
@@ -21,7 +24,6 @@
     <string name="log_out">Log Out</string>
 
     <!--Signing-->
-    <string name="username_email">Username / Email</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="log_in">Log In</string>
@@ -34,4 +36,6 @@
     <string name="take_photo">Take photo</string>
     <string name="choose_photo">Choose photo from gallery</string>
     <string name="no_camera">No camera detected! Photo can\'t be taken.</string>
+    <string name="welcome">Welcome!</string>
+    <string name="signed_out">You\'ve been signed out</string>
 </resources>

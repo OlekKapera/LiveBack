@@ -11,7 +11,13 @@
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></FrameLayout>
+        android:layout_height="match_parent"/>
+
+    <com.aleksanderkapera.liveback.ui.widget.LoadView
+        android:id="@+id/main_view_load"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/main_view_drawer"
@@ -41,4 +47,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/navigation_container_header" />
         </android.support.constraint.ConstraintLayout>
     </android.support.design.widget.NavigationView>
+
+
 </android.support.v4.widget.DrawerLayout>

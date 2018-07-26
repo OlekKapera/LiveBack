@@ -7,8 +7,11 @@ import android.support.annotation.AttrRes
 import android.support.annotation.RequiresApi
 import android.support.annotation.StyleRes
 import android.util.AttributeSet
+import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.Toast
 import butterknife.ButterKnife
 import com.aleksanderkapera.liveback.R
 import kotlinx.android.synthetic.main.navigation_item.view.*
@@ -17,11 +20,10 @@ import kotlinx.android.synthetic.main.navigation_item.view.*
  * Created by kapera on 23-May-18.
  */
 class NavigationItem @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, @AttrRes defStyleAttr: Int = 0, @StyleRes defStyleRes: Int = 0)
-    : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
+    : FrameLayout(context, attrs, defStyleAttr, defStyleRes){
 
     init {
         View.inflate(context, R.layout.navigation_item, this)
-        ButterKnife.bind(this)
 
         if (attrs != null) {
             val a = context.obtainStyledAttributes(attrs, R.styleable.NavigationItem)
@@ -34,5 +36,10 @@ class NavigationItem @JvmOverloads constructor(context: Context, attrs: Attribut
 
             a.recycle()
         }
+    }
+
+    override fun setOnClickListener(l: OnClickListener?) {
+        super.setOnClickListener(l)
+
     }
 }

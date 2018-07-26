@@ -50,7 +50,7 @@
         android:id="@+id/login_input_email"
         style="@style/Logging.Input"
         android:layout_marginBottom="@dimen/spacing16"
-        android:hint="@string/username_email"
+        android:hint="@string/email"
         android:inputType="textEmailAddress"
         app:layout_constraintBottom_toTopOf="@+id/login_input_password"
         app:layout_constraintEnd_toStartOf="@+id/login_guide_right"

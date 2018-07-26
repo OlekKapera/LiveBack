@@ -4,7 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.IdRes
 import android.support.annotation.Nullable
+import android.widget.Toast
 import butterknife.ButterKnife
+import com.aleksanderkapera.liveback.util.asString
 
 
 abstract class BaseActivity : PermissionsAskingActivity() {
@@ -45,5 +47,19 @@ abstract class BaseActivity : PermissionsAskingActivity() {
                 .setCustomAnimations(fragment.getEnterAnimation(), fragment.getExitAnimation())
                 .show(fragment)
                 .commit()
+    }
+
+    /**
+     * Display toast message
+     */
+    fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    /**
+     * Display toast message from resource
+     */
+    fun showToast(stringResource: Int) {
+        Toast.makeText(this, stringResource.asString(), Toast.LENGTH_SHORT).show()
     }
 }
