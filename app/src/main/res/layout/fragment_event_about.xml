@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bgColor">
+
+    <android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.aleksanderkapera.liveback.ui.widget.EventAboutItem
+            android:id="@+id/eventAbout_container_description"
+            style="@style/EventAboutItem"
+            android:layout_marginTop="0dp"
+            app:description="Buying the right telescope to take your love of astronomy to the next level is a big next step in the development of your passion for the stars. In many ways, it is a big step from"
+            app:eventItemIcon="@drawable/ic_info"
+            app:eventItemTitle="@string/description"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.aleksanderkapera.liveback.ui.widget.EventAboutItem
+            android:id="@+id/eventAbout_container_address"
+            style="@style/EventAboutItem"
+            app:description="175 Lennon Lane, Walnut Creek, CA 94598"
+            app:eventItemIcon="@drawable/ic_location"
+            app:eventItemTitle="@string/address"
+            app:layout_constraintTop_toBottomOf="@+id/eventAbout_container_description" />
+
+        <com.aleksanderkapera.liveback.ui.widget.EventAboutItem
+            android:id="@+id/eventAbout_container_date"
+            style="@style/EventAboutItem"
+            app:description="24 November 2018 16:00"
+            app:eventItemIcon="@drawable/ic_calendar_black"
+            app:eventItemTitle="@string/date"
+            app:layout_constraintTop_toBottomOf="@+id/eventAbout_container_address" />
+
+        <com.aleksanderkapera.liveback.ui.widget.EventAboutItem
+            android:id="@+id/eventAbout_container_likes"
+            style="@style/EventAboutItem"
+            app:description="164 people like this event"
+            app:eventItemIcon="@drawable/ic_heart_red"
+            app:eventItemTitle="@string/likes"
+            app:layout_constraintTop_toBottomOf="@+id/eventAbout_container_date" />
+    </android.support.constraint.ConstraintLayout>
+</android.support.v4.widget.NestedScrollView>

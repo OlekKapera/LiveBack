@@ -14,6 +14,7 @@
 
     <!--icon sizes-->
     <dimen name="icon24">24dp</dimen>
+    <dimen name="icon32">32dp</dimen>
     <dimen name="icon36">36dp</dimen>
     <dimen name="icon48">48dp</dimen>
     <dimen name="icon64">64dp</dimen>
@@ -36,4 +37,8 @@
     <!--navigation drawer-->
     <dimen name="navItem_height">54dp</dimen>
     <dimen name="navHeader_imageSize">110dp</dimen>
+
+    <!-- event -->
+    <dimen name="event_bgImage_height">250dp</dimen>
+    <dimen name="event_circleImage_size">64dp</dimen>
 </resources>

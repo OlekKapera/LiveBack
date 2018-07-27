@@ -5,6 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.Event
+import com.aleksanderkapera.liveback.ui.activity.MainActivity
+import com.aleksanderkapera.liveback.ui.fragment.EventFragment
 import com.aleksanderkapera.liveback.util.ImageUtils
 import com.aleksanderkapera.liveback.util.StringUtils
 import kotlinx.android.synthetic.main.card_main.view.*
@@ -12,7 +14,7 @@ import kotlinx.android.synthetic.main.card_main.view.*
 /**
  * Created by kapera on 29-May-18.
  */
-class EventsRecyclerAdapter(context: Context) : BaseRecyclerAdapter<EventsRecyclerAdapter.ViewHolder, Event>(context) {
+class EventsRecyclerAdapter(val context: Context) : BaseRecyclerAdapter<EventsRecyclerAdapter.ViewHolder, Event>(context) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(mInflater.inflate(R.layout.card_main, parent, false))
@@ -43,6 +45,7 @@ class EventsRecyclerAdapter(context: Context) : BaseRecyclerAdapter<EventsRecycl
         }
 
         override fun onClick(view: View?) {
+            (context as MainActivity).showFragment(EventFragment.newInstance())
         }
     }
 }

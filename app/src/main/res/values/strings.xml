@@ -38,4 +38,17 @@
     <string name="no_camera">No camera detected! Photo can\'t be taken.</string>
     <string name="welcome">Welcome!</string>
     <string name="signed_out">You\'ve been signed out</string>
+
+    <!--Event-->
+    <string name="about">About</string>
+    <string name="comments">Comments</string>
+    <string name="vote">Vote</string>
+    <string name="description">Description</string>
+    <string name="address">Address</string>
+    <string name="date">Date</string>
+    <string name="likes">Likes</string>
+    <string name="minutes_short">m</string>
+    <string name="hours_short">h</string>
+    <string name="days_short">d</string>
+    <string name="years_short">y</string>
 </resources>

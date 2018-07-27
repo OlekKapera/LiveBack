@@ -1,21 +1,17 @@
 package com.aleksanderkapera.liveback.ui.fragment
 
-import android.app.Activity
 import android.os.Bundle
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.View
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.bus.EventsReceivedEvent
 import com.aleksanderkapera.liveback.model.Event
-import com.aleksanderkapera.liveback.ui.activity.SigningActivity
 import com.aleksanderkapera.liveback.ui.adapter.EventsRecyclerAdapter
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.util.setToolbarMargin
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
-import kotlinx.android.synthetic.main.navigation_item.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
@@ -53,7 +49,7 @@ class MainFragment : BaseFragment() {
 
     override fun setupViews(rootView: View) {
         // set toolbar
-        appCompatActivity.setSupportActionBar(toolbar)
+        appCompatActivity.setSupportActionBar(event_layout_toolbar)
         val actionbar: ActionBar? = appCompatActivity.supportActionBar
         actionbar?.apply {
             setDisplayHomeAsUpEnabled(true)

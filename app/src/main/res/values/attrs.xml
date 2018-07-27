@@ -4,4 +4,10 @@
         <attr name="title" format="string" />
         <attr name="icon" />
     </declare-styleable>
+
+    <declare-styleable name="EventAboutItem">
+        <attr name="eventItemTitle" format="string"/>
+        <attr name="eventItemIcon"/>
+        <attr name="description" format="string"/>
+    </declare-styleable>
 </resources>

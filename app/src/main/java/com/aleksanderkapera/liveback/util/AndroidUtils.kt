@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.os.Build
 import android.support.constraint.ConstraintLayout
+import android.support.design.widget.CoordinatorLayout
 import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.ViewGroup
@@ -79,7 +80,7 @@ fun getNavigationBarHeight(): Int {
  * Moves toolbar from top of the screen under the status bar.
  */
 fun setToolbarMargin(view: View) {
-    val params = view.layoutParams as ConstraintLayout.LayoutParams
+    val params = view.layoutParams as CoordinatorLayout.LayoutParams
     params.setMargins(0, getStatusBarHeight(), 0, 0)
     view.layoutParams = params
 }
