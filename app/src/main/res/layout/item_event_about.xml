@@ -21,20 +21,14 @@
 
         <TextView
             android:id="@+id/eventItem_text_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/spacing16"
-            android:fontFamily="@string/font_family_medium"
-            android:textSize="@dimen/text20"
+            style="@style/EventTitle"
             app:layout_constraintBottom_toBottomOf="@+id/eventItem_image_icon"
             app:layout_constraintStart_toEndOf="@id/eventItem_image_icon"
             app:layout_constraintTop_toTopOf="@id/eventItem_image_icon" />
 
         <TextView
             android:id="@+id/eventItem_text_description"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing8"
+            style="@style/EventDescription"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/eventItem_image_icon"
             app:layout_constraintTop_toBottomOf="@id/eventItem_image_icon" />

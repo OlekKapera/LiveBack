@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/below"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bgColor">
@@ -13,4 +12,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/event_fab_like"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="@dimen/spacing16"
+        android:layout_width="wrap_content"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_heart_outline"
+        android:layout_height="wrap_content" />
 </android.support.design.widget.CoordinatorLayout>

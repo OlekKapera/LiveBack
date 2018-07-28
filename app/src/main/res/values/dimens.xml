@@ -39,6 +39,6 @@
     <dimen name="navHeader_imageSize">110dp</dimen>
 
     <!-- event -->
-    <dimen name="event_bgImage_height">250dp</dimen>
+    <dimen name="event_bgImage_height">300dp</dimen>
     <dimen name="event_circleImage_size">64dp</dimen>
 </resources>

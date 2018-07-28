@@ -2,6 +2,7 @@ package com.aleksanderkapera.liveback.ui.fragment
 
 import android.animation.Animator
 import android.support.design.widget.CollapsingToolbarLayout
+import android.support.design.widget.CoordinatorLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
@@ -9,12 +10,9 @@ import android.support.v7.app.ActionBar
 import android.view.View
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
-import com.aleksanderkapera.liveback.util.asString
-import com.aleksanderkapera.liveback.util.dpToPx
-import com.aleksanderkapera.liveback.util.getStatusBarHeight
+import com.aleksanderkapera.liveback.util.*
 import kotlinx.android.synthetic.main.app_bar_event.*
 import kotlinx.android.synthetic.main.fragment_event.*
-import java.util.logging.Handler
 
 
 /**
@@ -26,10 +24,10 @@ class EventFragment : BaseFragment() {
     private val mCommentsString = R.string.comments.asString()
     private val mVoteString = R.string.vote.asString()
 
-    var isFaded = false
-    var isAnimating = false
-    var currentOffset = 0
-
+    private var isFaded = false
+    private var isAnimating = false
+    private var currentOffset = 0
+    private val breakPoint = -dpToPx(48)
 
     companion object {
         fun newInstance(): BaseFragment = EventFragment()
@@ -52,6 +50,13 @@ class EventFragment : BaseFragment() {
         toolbarParams.setMargins(0, getStatusBarHeight(), 0, 0)
         event_layout_toolbar.layoutParams = toolbarParams
 
+        // move fab and cards above navigation bar
+        val fabParams = event_fab_like.layoutParams as CoordinatorLayout.LayoutParams
+        fabParams.setMargins(0,0, dpToPx(R.dimen.spacing16.asDimen().toInt()), getNavigationBarHeight())
+        event_fab_like.layoutParams = fabParams
+
+        event_fab_like.setOnClickListener(onLikeClick)
+
         setToolbarAnimation()
         setupTabs()
     }
@@ -61,12 +66,9 @@ class EventFragment : BaseFragment() {
      */
     private fun setToolbarAnimation() {
         val view = event_layout_header
-        val breakPoint = -dpToPx(48)
 
         event_layout_appBar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
             currentOffset = verticalOffset
-
-//            val handler = Handler().
 
             if (!isAnimating) {
                 if (Math.abs(verticalOffset) - appBarLayout.totalScrollRange > breakPoint && !isFaded) {
@@ -88,20 +90,18 @@ class EventFragment : BaseFragment() {
                 .alpha(0f)
                 .setDuration(500)
                 .setListener(object : Animator.AnimatorListener {
-                    // @format:off
-                        override fun onAnimationRepeat(p0: Animator?) {}
-                        override fun onAnimationEnd(p0: Animator?) {
-                            isFaded = true
-                            isAnimating = false
+                    override fun onAnimationRepeat(p0: Animator?) {}
+                    override fun onAnimationEnd(p0: Animator?) {
+                        isFaded = true
+                        isAnimating = false
 
-//                            if(currentOffset != offset)
-//                                fadeOut(view, currentOffset)
-                        }
-                        override fun onAnimationCancel(p0: Animator?) {}
-                        override fun onAnimationStart(p0: Animator?) {
-                            isAnimating = true
-                        }
-                        // @format:on
+                       checkIfMoved(view,offset)
+                    }
+
+                    override fun onAnimationCancel(p0: Animator?) {}
+                    override fun onAnimationStart(p0: Animator?) {
+                        isAnimating = true
+                    }
                 })
     }
 
@@ -113,21 +113,34 @@ class EventFragment : BaseFragment() {
                 .alpha(1f)
                 .setDuration(500)
                 .setListener(object : Animator.AnimatorListener {
-                    // @format:off
                     override fun onAnimationRepeat(p0: Animator?) {}
                     override fun onAnimationEnd(p0: Animator?) {
                         isFaded = false
                         isAnimating = false
 
-//                        if(currentOffset != offset)
-//                            fadeIn(view, currentOffset)
+                        checkIfMoved(view,offset)
                     }
+
                     override fun onAnimationCancel(p0: Animator?) {}
                     override fun onAnimationStart(p0: Animator?) {
                         isAnimating = true
                     }
-                    // @format:on
                 })
+    }
+
+    /**
+     * Checks if user has swiped and calls animation
+     */
+    private fun checkIfMoved(view: View, offset: Int){
+        if (currentOffset != offset) {
+            if (Math.abs(currentOffset) - event_layout_appBar.totalScrollRange > breakPoint && !isFaded) {
+                //Collapsed
+                fadeIn(view, currentOffset)
+            } else if (Math.abs(currentOffset) - event_layout_appBar.totalScrollRange < (breakPoint - 20) && isFaded) {
+                //Expanded
+                fadeOut(view, currentOffset)
+            }
+        }
     }
 
     /**
@@ -141,6 +154,10 @@ class EventFragment : BaseFragment() {
         event_layout_viewPager.adapter = adapter
 
         event_layout_tabs.setupWithViewPager(event_layout_viewPager)
+    }
+
+    private val onLikeClick = View.OnClickListener {
+
     }
 
     class ViewPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
