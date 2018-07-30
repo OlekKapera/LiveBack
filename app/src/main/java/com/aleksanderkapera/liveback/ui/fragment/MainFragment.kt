@@ -61,11 +61,13 @@ class MainFragment : BaseFragment() {
     }
 
     private fun initAdapter() {
-        val adapter = EventsRecyclerAdapter(context!!)
-        adapter.addData(mEvents)
-        val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        main_recycler_events.layoutManager = layoutManager
-        main_recycler_events.adapter = adapter
+        context?.let {
+            val adapter = EventsRecyclerAdapter(it)
+            adapter.addData(mEvents)
+            val layoutManager = LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
+            main_recycler_events.layoutManager = layoutManager
+            main_recycler_events.adapter = adapter
+        }
     }
 
     @Subscribe

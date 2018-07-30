@@ -13,6 +13,7 @@
     <dimen name="spacing64">64dp</dimen>
 
     <!--icon sizes-->
+    <dimen name="icon18">18dp</dimen>
     <dimen name="icon24">24dp</dimen>
     <dimen name="icon32">32dp</dimen>
     <dimen name="icon36">36dp</dimen>

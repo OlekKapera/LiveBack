@@ -37,9 +37,4 @@ class NavigationItem @JvmOverloads constructor(context: Context, attrs: Attribut
             a.recycle()
         }
     }
-
-    override fun setOnClickListener(l: OnClickListener?) {
-        super.setOnClickListener(l)
-
-    }
 }

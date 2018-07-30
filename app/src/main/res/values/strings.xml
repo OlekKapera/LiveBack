@@ -20,6 +20,7 @@
     <!--Navigation drawer-->
     <string name="events">Events</string>
     <string name="your_profile">Your Profile</string>
+    <string name="add_event">Add Event</string>
     <string name="settings">Settings</string>
     <string name="log_out">Log Out</string>
 
@@ -43,12 +44,16 @@
     <string name="about">About</string>
     <string name="comments">Comments</string>
     <string name="vote">Vote</string>
+    <string name="title">Title</string>
     <string name="description">Description</string>
     <string name="address">Address</string>
     <string name="date">Date</string>
     <string name="likes">Likes</string>
+    <string name="seconds_short">s</string>
     <string name="minutes_short">m</string>
     <string name="hours_short">h</string>
     <string name="days_short">d</string>
+    <string name="week_short">w</string>
+    <string name="months_short">mo</string>
     <string name="years_short">y</string>
 </resources>

@@ -19,9 +19,16 @@
         app:title="@string/your_profile" />
 
     <com.aleksanderkapera.liveback.ui.widget.NavigationItem
+        android:id="@+id/navigation_row_addEvent"
+        style="@style/NavigationItem"
+        android:layout_below="@+id/navigation_row_profile"
+        app:icon="@drawable/ic_add"
+        app:title="@string/add_event" />
+
+    <com.aleksanderkapera.liveback.ui.widget.NavigationItem
         android:id="@+id/navigation_row_settings"
         style="@style/NavigationItem"
-        android:layout_below="@id/navigation_row_profile"
+        android:layout_below="@id/navigation_row_addEvent"
         app:icon="@drawable/ic_settings"
         app:title="@string/settings" />
 

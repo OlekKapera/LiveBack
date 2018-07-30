@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    android:layout_marginTop="@dimen/spacing4"
+    app:cardUseCompatPadding="true">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/spacing8"
+        android:paddingEnd="@dimen/spacing8"
+        android:paddingStart="@dimen/spacing8"
+        android:paddingTop="@dimen/spacing8">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/eventVote_image_profile"
+            android:layout_width="@dimen/event_circleImage_size"
+            android:layout_height="@dimen/event_circleImage_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/mari_profile" />
+
+        <TextView
+            android:id="@+id/eventVote_text_title"
+            style="@style/EventTitle"
+            app:layout_constraintStart_toEndOf="@id/eventVote_image_profile"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Birgit Kos" />
+
+        <TextView
+            android:id="@+id/eventVote_text_description"
+            style="@style/EventDescription"
+            app:layout_constraintEnd_toStartOf="@id/eventVote_button_upVote"
+            app:layout_constraintStart_toStartOf="@id/eventVote_text_title"
+            app:layout_constraintTop_toBottomOf="@id/eventVote_text_title"
+            tools:text="I love it! You are awesome!" />
+
+        <ImageView
+            android:id="@+id/eventVote_button_upVote"
+            android:layout_width="@dimen/icon18"
+            android:layout_height="@dimen/icon18"
+            app:layout_constraintBottom_toTopOf="@+id/eventVote_text_votes"
+            app:layout_constraintEnd_toEndOf="@+id/eventVote_text_votes"
+            app:layout_constraintStart_toStartOf="@+id/eventVote_text_votes"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_arrow_up" />
+
+        <TextView
+            android:id="@+id/eventVote_text_votes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/spacing4"
+            android:fontFamily="@string/font_family_regular"
+            android:text="23"
+            android:textColor="@color/darkGrey"
+            android:textSize="@dimen/text16"
+            app:layout_constraintBottom_toTopOf="@+id/eventVote_button_downVote"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/eventVote_button_upVote" />
+
+        <ImageView
+            android:id="@+id/eventVote_button_downVote"
+            android:layout_width="@dimen/icon18"
+            android:layout_height="@dimen/icon18"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/eventVote_text_votes"
+            app:layout_constraintStart_toStartOf="@+id/eventVote_text_votes"
+            app:layout_constraintTop_toBottomOf="@+id/eventVote_text_votes"
+            app:srcCompat="@drawable/ic_arrow_down" />
+    </android.support.constraint.ConstraintLayout>
+</android.support.v7.widget.CardView>

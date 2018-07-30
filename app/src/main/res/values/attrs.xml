@@ -10,4 +10,9 @@
         <attr name="eventItemIcon"/>
         <attr name="description" format="string"/>
     </declare-styleable>
+
+    <declare-styleable name="InputView">
+        <attr name="inputIcon"/>
+        <attr name="inputHint" format="string"/>
+    </declare-styleable>
 </resources>

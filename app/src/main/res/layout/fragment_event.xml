@@ -14,11 +14,11 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/event_fab_like"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="@dimen/spacing16"
+        android:id="@+id/event_fab"
         android:layout_width="wrap_content"
-        android:foreground="?android:attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_heart_outline"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        app:backgroundTint="@color/red"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_heart_outline" />
 </android.support.design.widget.CoordinatorLayout>

@@ -10,6 +10,7 @@ import android.widget.RelativeLayout
 import android.widget.Toast
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.User
+import com.aleksanderkapera.liveback.ui.activity.AddEventActivity
 import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.activity.SigningActivity
 import com.aleksanderkapera.liveback.util.*
@@ -35,6 +36,10 @@ class NavigationViewHelper(private val activity: MainActivity, val drawer: Drawe
         Toast.makeText(activity, "PROFILE", Toast.LENGTH_SHORT).show()
     }
 
+    private val onAddEventClick = View.OnClickListener {
+        AddEventActivity.startActivity(activity)
+    }
+
     private val onSettingsClick = View.OnClickListener {
         Toast.makeText(activity, "SETTINGS", Toast.LENGTH_SHORT).show()
     }
@@ -50,7 +55,6 @@ class NavigationViewHelper(private val activity: MainActivity, val drawer: Drawe
         } ?: run{
             SigningActivity.startActivity(activity)
         }
-
     }
     // endregion
 
@@ -69,6 +73,7 @@ class NavigationViewHelper(private val activity: MainActivity, val drawer: Drawe
 
         activity.navigation_row_events.setOnClickListener(onEventsClick)
         activity.navigation_row_profile.setOnClickListener(onProfileClick)
+        activity.navigation_row_addEvent.setOnClickListener(onAddEventClick)
         activity.navigation_row_settings.setOnClickListener(onSettingsClick)
         activity.navigation_row_signing.setOnClickListener(onLogOutClick)
     }
