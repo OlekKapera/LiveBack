@@ -25,7 +25,7 @@ class InputView@JvmOverloads constructor(context: Context, attrs: AttributeSet? 
             val hint = a.getString(R.styleable.InputView_inputHint)
 
             input_image_icon.setImageDrawable(icon)
-            input_input_text.hint = hint
+            input_layout_text.hint = hint
         }
     }
 }

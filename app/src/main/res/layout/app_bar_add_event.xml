@@ -1,33 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/eventAdd_layout_appBar"
+    android:id="@+id/addEvent_layout_appBar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/transparent"
+    android:fitsSystemWindows="false"
     android:theme="@style/AppTheme.AppBarOverlay"
     app:elevation="0dp">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/eventAdd_layout_toolbar"
+    <android.support.design.widget.CollapsingToolbarLayout
         android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
-        app:contentInsetEnd="0dp"
-        app:contentInsetLeft="0dp"
-        app:contentInsetRight="0dp"
-        app:contentInsetStart="0dp"
-        app:popupTheme="@style/AppTheme.PopupOverlay">
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/menu_title"
-            style="@style/AppTheme.Toolbar.Title"
-            android:layout_gravity="start"
-            android:text="@string/add_event" />
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/menuSearch"
-            style="@style/AppTheme.Toolbar.Button"
-            android:layout_gravity="end"
-            app:srcCompat="@drawable/ic_tick" />
-    </android.support.v7.widget.Toolbar>
+            <ImageView
+                android:id="@+id/addEvent_image_background"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/addEvent_bgImage_height"
+                android:scaleType="centerCrop"
+                android:src="@drawable/bg_add_event" />
+
+            <ImageView
+                android:id="@+id/addEvent_button_addBackground"
+                android:layout_width="@dimen/icon64"
+                android:layout_height="@dimen/icon64"
+                android:layout_marginBottom="@dimen/spacing8"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_rounded_add_64dp"
+                app:layout_constraintBottom_toTopOf="@id/addEvent_text_addBackground"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/addEvent_text_addBackground"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing48"
+                android:text="@string/add_background"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/addEvent_button_addBackground"
+                app:layout_constraintStart_toStartOf="@id/addEvent_button_addBackground" />
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/addEvent_layout_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            app:contentInsetEnd="0dp"
+            app:contentInsetLeft="0dp"
+            app:contentInsetRight="0dp"
+            app:contentInsetStart="0dp"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <TextView
+                android:id="@+id/addEvent_text_title"
+                style="@style/AppTheme.Toolbar.Title"
+                android:layout_gravity="start"
+                android:text="@string/add_event" />
+
+            <ImageView
+                android:id="@+id/addEvent_button_accept"
+                style="@style/AppTheme.Toolbar.Button"
+                android:layout_gravity="end"
+                app:srcCompat="@drawable/ic_tick" />
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.CollapsingToolbarLayout>
 </android.support.design.widget.AppBarLayout>

@@ -42,4 +42,7 @@
     <!-- event -->
     <dimen name="event_bgImage_height">300dp</dimen>
     <dimen name="event_circleImage_size">64dp</dimen>
+
+    <!-- add event -->
+    <dimen name="addEvent_bgImage_height">256dp</dimen>
 </resources>

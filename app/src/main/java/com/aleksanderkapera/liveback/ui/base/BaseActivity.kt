@@ -23,7 +23,7 @@ abstract class BaseActivity : PermissionsAskingActivity() {
     protected fun getExtras(intent: Intent) {}
 
     override fun onSupportNavigateUp(): Boolean {
-        //TODO make implementation for opening side menu
+        onBackPressed()
         return true
     }
 

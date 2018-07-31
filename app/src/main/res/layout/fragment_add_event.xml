@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bgColor"
+    android:fitsSystemWindows="false">
+
+    <include
+        android:id="@+id/addEvent_container_toolbar"
+        layout="@layout/app_bar_add_event" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.aleksanderkapera.liveback.ui.widget.InputView
+                android:id="@+id/addEvent_view_title"
+                style="@style/AddEventItem"
+                app:inputHint="@string/title"
+                app:inputIcon="@drawable/ic_title" />
+
+            <com.aleksanderkapera.liveback.ui.widget.InputView
+                android:id="@+id/addEvent_view_description"
+                style="@style/AddEventItem"
+                app:inputHint="@string/description"
+                app:inputIcon="@drawable/ic_info" />
+
+            <com.aleksanderkapera.liveback.ui.widget.InputView
+                android:id="@+id/addEvent_view_address"
+                style="@style/AddEventItem"
+                app:inputHint="@string/address"
+                app:inputIcon="@drawable/ic_location" />
+
+            <com.aleksanderkapera.liveback.ui.widget.InputView
+                android:id="@+id/addEvent_view_date"
+                style="@style/AddEventItem"
+                app:inputHint="@string/date"
+                app:inputIcon="@drawable/ic_calendar_black" />
+
+            <com.google.android.material.chip.ChipGroup
+
+                />
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>

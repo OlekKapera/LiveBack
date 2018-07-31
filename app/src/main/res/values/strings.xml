@@ -56,4 +56,8 @@
     <string name="week_short">w</string>
     <string name="months_short">mo</string>
     <string name="years_short">y</string>
+
+    <!--Add Event-->
+    <string name="add_background">Add background</string>
+    <string name="category">Category</string>
 </resources>

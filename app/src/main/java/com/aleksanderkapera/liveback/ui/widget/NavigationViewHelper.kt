@@ -1,10 +1,8 @@
 package com.aleksanderkapera.liveback.ui.widget
 
-import android.app.Activity
-import android.graphics.Bitmap
-import android.net.Uri
 import android.support.constraint.ConstraintLayout
 import android.support.v4.widget.DrawerLayout
+import android.view.Gravity
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.Toast
@@ -13,6 +11,7 @@ import com.aleksanderkapera.liveback.model.User
 import com.aleksanderkapera.liveback.ui.activity.AddEventActivity
 import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.activity.SigningActivity
+import com.aleksanderkapera.liveback.ui.fragment.MainFragment
 import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.Glide
 import com.firebase.ui.storage.images.FirebaseImageLoader
@@ -25,11 +24,12 @@ import kotlinx.android.synthetic.main.navigation_menu.*
 /**
  * Created by kapera on 26-May-18.
  */
-class NavigationViewHelper(private val activity: MainActivity, val drawer: DrawerLayout) {
+class NavigationViewHelper(private val activity: MainActivity, private val drawer: DrawerLayout) {
 
     // region OnClickListeners
     private val onEventsClick = View.OnClickListener {
-        Toast.makeText(activity, "EVENT", Toast.LENGTH_SHORT).show()
+        MainActivity.startActivity(activity)
+        drawer.closeDrawer(Gravity.START)
     }
 
     private val onProfileClick = View.OnClickListener {
@@ -38,6 +38,7 @@ class NavigationViewHelper(private val activity: MainActivity, val drawer: Drawe
 
     private val onAddEventClick = View.OnClickListener {
         AddEventActivity.startActivity(activity)
+        drawer.closeDrawer(Gravity.START)
     }
 
     private val onSettingsClick = View.OnClickListener {
@@ -52,7 +53,7 @@ class NavigationViewHelper(private val activity: MainActivity, val drawer: Drawe
             activity.logOut()
             activity.navigation_row_signing.navigation_item_image.setImageDrawable(R.drawable.ic_login.asDrawable())
             activity.navigation_row_signing.navigation_item_text.text = R.string.log_in.asString()
-        } ?: run{
+        } ?: run {
             SigningActivity.startActivity(activity)
         }
     }
