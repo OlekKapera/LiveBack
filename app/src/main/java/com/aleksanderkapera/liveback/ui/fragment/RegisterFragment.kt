@@ -61,7 +61,7 @@ class RegisterFragment : BaseFragment() {
     }
 
     private val onRegisterImageClick = View.OnClickListener {
-        ImagePickDialogFragment.newInstance().show(fragmentManager, DIALOG_TAG_OPEN)
+        ImagePickerDialogFragment.newInstance().show(fragmentManager, DIALOG_TAG_OPEN)
     }
 
     /**

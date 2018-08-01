@@ -29,6 +29,8 @@ fun Int.asDrawable() = ContextCompat.getDrawable(context, this)
 
 fun Int.asString() = context.getString(this)
 
+fun Int.asStringArray() = resources.getStringArray(this)
+
 fun hideKeyboard(activity: Activity) {
     val view = activity.currentFocus
     if (view != null) {

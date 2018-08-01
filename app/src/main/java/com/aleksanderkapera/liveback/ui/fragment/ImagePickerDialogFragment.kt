@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.aleksanderkapera.liveback.R
+import com.aleksanderkapera.liveback.ui.activity.AddEventActivity
 import com.aleksanderkapera.liveback.ui.activity.SigningActivity
 import com.aleksanderkapera.liveback.ui.base.PermissionsAskingActivity
 import com.aleksanderkapera.liveback.util.ImageUtils
@@ -23,11 +24,12 @@ import java.io.IOException
 /**
  * Created by kapera on 06-Jul-18.
  */
-class ImagePickDialogFragment : DialogFragment(), SigningActivity.PermissionResolvedListener {
+class ImagePickerDialogFragment : DialogFragment(), SigningActivity.PermissionResolvedListener,
+    AddEventActivity.PermissionResolvedListener{
 
     companion object {
         fun newInstance(): DialogFragment {
-            return ImagePickDialogFragment()
+            return ImagePickerDialogFragment()
         }
 
         const val REQUEST_CAPTURE_IMAGE = 100
@@ -47,7 +49,10 @@ class ImagePickDialogFragment : DialogFragment(), SigningActivity.PermissionReso
         val rootView = inflater.inflate(R.layout.dialog_fragment_photo, container, false)
 
         //register the listener
-        (activity as SigningActivity).setPermissionResolvedListener(this)
+        if (activity is SigningActivity)
+            (activity as SigningActivity).setPermissionResolvedListener(this)
+        else if (activity is AddEventActivity)
+            (activity as AddEventActivity).setPermissionResolvedListener(this)
 
         rootView.imageDialog_container_takePhoto.setOnClickListener(onTakePhotoClick)
         rootView.imageDialog_container_choosePhoto.setOnClickListener(onChoosePhotoClick)

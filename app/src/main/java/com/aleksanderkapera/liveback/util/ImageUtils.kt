@@ -86,7 +86,7 @@ class ImageUtils {
         /**
          * Create file with image for further sending to the server
          */
-        lateinit var imageFilePath: String
+        var imageFilePath = ""
 
         @Throws(IOException::class)
         fun createImageFile(): File {

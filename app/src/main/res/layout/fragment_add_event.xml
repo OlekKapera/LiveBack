@@ -16,6 +16,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
+            android:id="@+id/addEvent_layout_parent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -41,12 +42,37 @@
             <com.aleksanderkapera.liveback.ui.widget.InputView
                 android:id="@+id/addEvent_view_date"
                 style="@style/AddEventItem"
+                app:editable="false"
                 app:inputHint="@string/date"
                 app:inputIcon="@drawable/ic_calendar_black" />
 
-            <com.google.android.material.chip.ChipGroup
+            <android.support.v7.widget.CardView
+                android:id="@+id/addEvent_layout_chipCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing16"
+                app:cardUseCompatPadding="true">
 
-                />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/spacing8">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon24"
+                        android:layout_height="@dimen/icon24"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="@dimen/spacing16"
+                        app:srcCompat="@drawable/ic_label" />
+
+                    <android.support.design.chip.ChipGroup
+                        android:id="@+id/addEvent_layout_chips"
+                        app:singleSelection="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>

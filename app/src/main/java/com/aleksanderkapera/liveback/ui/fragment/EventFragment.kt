@@ -1,6 +1,7 @@
 package com.aleksanderkapera.liveback.ui.fragment
 
 import android.animation.Animator
+import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.design.widget.CoordinatorLayout
 import android.support.design.widget.TabLayout
@@ -56,7 +57,7 @@ class EventFragment : BaseFragment() {
 
         // move fab and cards above navigation bar
         val fabParams = event_fab.layoutParams as CoordinatorLayout.LayoutParams
-        fabParams.setMargins(0,0, dpToPx(R.dimen.spacing8.asDimen().toInt()), getNavigationBarHeight())
+        fabParams.setMargins(0, 0, dpToPx(R.dimen.spacing8.asDimen().toInt()), getNavigationBarHeight())
         event_fab.layoutParams = fabParams
 
         event_fab.setOnClickListener(onLikeClick)
@@ -71,7 +72,7 @@ class EventFragment : BaseFragment() {
     private fun setToolbarAnimation() {
         val view = event_layout_header
 
-        event_layout_appBar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
+        val listener = AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
             currentOffset = verticalOffset
 
             if (!isAnimating) {
@@ -84,6 +85,8 @@ class EventFragment : BaseFragment() {
                 }
             }
         }
+
+        event_layout_appBar.addOnOffsetChangedListener(listener)
     }
 
     /**
@@ -99,7 +102,7 @@ class EventFragment : BaseFragment() {
                         isFaded = true
                         isAnimating = false
 
-                       checkIfMoved(view,offset)
+                        checkIfMoved(view, offset)
                     }
 
                     override fun onAnimationCancel(p0: Animator?) {}
@@ -122,7 +125,7 @@ class EventFragment : BaseFragment() {
                         isFaded = false
                         isAnimating = false
 
-                        checkIfMoved(view,offset)
+                        checkIfMoved(view, offset)
                     }
 
                     override fun onAnimationCancel(p0: Animator?) {}
@@ -135,7 +138,7 @@ class EventFragment : BaseFragment() {
     /**
      * Checks if user has swiped and calls animation
      */
-    private fun checkIfMoved(view: View, offset: Int){
+    private fun checkIfMoved(view: View, offset: Int) {
         if (currentOffset != offset) {
             if (Math.abs(currentOffset) - event_layout_appBar.totalScrollRange > breakPoint && !isFaded) {
                 //Collapsed
@@ -159,14 +162,15 @@ class EventFragment : BaseFragment() {
 
         event_layout_tabs.setupWithViewPager(event_layout_viewPager)
 
-        event_layout_tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
+        event_layout_tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {
             }
+
             override fun onTabUnselected(tab: TabLayout.Tab?) {
             }
 
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                when(tab?.position){
+                when (tab?.position) {
                     0 -> event_fab.setImageDrawable(R.drawable.ic_heart_outline.asDrawable())
                     else -> event_fab.setImageDrawable(R.drawable.ic_add.asDrawable())
                 }

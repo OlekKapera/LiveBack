@@ -14,5 +14,6 @@
     <declare-styleable name="InputView">
         <attr name="inputIcon"/>
         <attr name="inputHint" format="string"/>
+        <attr name="editable" format="boolean"/>
     </declare-styleable>
 </resources>

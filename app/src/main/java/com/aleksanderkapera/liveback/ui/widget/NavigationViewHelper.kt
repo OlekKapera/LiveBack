@@ -46,6 +46,13 @@ class NavigationViewHelper(private val activity: MainActivity, private val drawe
     }
 
     /**
+     * TODO proper retrieve
+     */
+    private fun mockData(): ArrayList<String>{
+        return arrayListOf("School", "Party", "Free Time", "Concert", "Restaurant", "Bar", "Other")
+    }
+
+    /**
      * Handle log in and log out input
      */
     private val onLogOutClick = View.OnClickListener {

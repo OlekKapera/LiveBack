@@ -60,4 +60,11 @@
     <!--Add Event-->
     <string name="add_background">Add background</string>
     <string name="category">Category</string>
+    <string name="concert">Concert</string>
+    <string name="free_time">Free Time</string>
+    <string name="school">School</string>
+    <string name="party">Party</string>
+    <string name="restaurant">Restaurant</string>
+    <string name="bar">Bar</string>
+    <string name="other">Other</string>
 </resources>

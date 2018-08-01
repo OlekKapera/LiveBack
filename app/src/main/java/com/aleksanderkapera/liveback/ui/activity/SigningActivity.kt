@@ -13,7 +13,7 @@ import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.User
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.ui.base.FragmentActivity
-import com.aleksanderkapera.liveback.ui.fragment.ImagePickDialogFragment
+import com.aleksanderkapera.liveback.ui.fragment.ImagePickerDialogFragment
 import com.aleksanderkapera.liveback.ui.fragment.LoginFragment
 import com.aleksanderkapera.liveback.ui.fragment.RegisterFragment
 import com.aleksanderkapera.liveback.util.ImageUtils
@@ -72,12 +72,12 @@ class SigningActivity : FragmentActivity() {
         if (resultCode == Activity.RESULT_CANCELED)
             return
 
-        if (requestCode == ImagePickDialogFragment.REQUEST_CAPTURE_IMAGE) {
+        if (requestCode == ImagePickerDialogFragment.REQUEST_CAPTURE_IMAGE) {
             // Handle image returned from camera app. Load it into image view.
             Glide.with(this).load(ImageUtils.imageFilePath).into(register_image_profile)
             (getLastFragment() as RegisterFragment).mImageUri = Uri.parse(ImageUtils.imageFilePath)
 
-        } else if (requestCode == ImagePickDialogFragment.REQUEST_CHOOSE_IMAGE && data != null) {
+        } else if (requestCode == ImagePickerDialogFragment.REQUEST_CHOOSE_IMAGE && data != null) {
             // Handle image which was picked by user. Load it into image view.
             val uri = data.data
 

@@ -24,7 +24,7 @@ import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 
-class MainActivity : FragmentActivity(){
+class MainActivity : FragmentActivity() {
 
     companion object {
         fun startActivity(activity: Activity) {
@@ -115,9 +115,9 @@ class MainActivity : FragmentActivity(){
     /**
      * Retrieve current user
      */
-    private fun getUser(uid: String){
+    private fun getUser(uid: String) {
         mFireStoreRef.document("users/$uid").get().addOnCompleteListener {
-            when{
+            when {
                 it.isSuccessful -> {
                     mUser = it.result.toObject(User::class.java)
                     mUser?.profilePicPath?.let {
@@ -137,7 +137,7 @@ class MainActivity : FragmentActivity(){
         if (mAuth.currentUser != null) {
             mAuth.signOut()
             showToast(R.string.signed_out)
-            mNavigationDrawer.updateViews(null,null)
+            mNavigationDrawer.updateViews(null, null)
         }
     }
 }

@@ -4,4 +4,14 @@
         <item>@string/take_photo</item>
         <item>@string/choose_photo</item>
     </string-array>
+
+    <string-array name="categories">
+        <item>@string/concert</item>
+        <item>@string/free_time</item>
+        <item>@string/school</item>
+        <item>@string/party</item>
+        <item>@string/restaurant</item>
+        <item>@string/bar</item>
+        <item>@string/other</item>
+    </string-array>
 </resources>
