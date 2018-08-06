@@ -7,29 +7,35 @@ import android.os.Parcelable
  * Created by kapera on 23-May-18.
  */
 
-data class Event(val userUid: String = "",
-                 val date: Long = -1,
-                 val title: String = "",
-                 val description: String = "",
-                 val category: String = "",
-                 val likes: Int = -1,
-                 val comments: Int = -1,
-                 val votes: Int = -1) : Parcelable {
+data class Event(var userUid: String = "",
+                 var userName: String = "",
+                 var title: String = "",
+                 var description: String = "",
+                 var address: String = "",
+                 var date: Long = -1,
+                 var category: String = "",
+                 var picturePath: String = "",
+                 var likes: Int = 0,
+                 var comments: Int = 0,
+                 var votes: Int = 0) : Parcelable {
 
     constructor(parcel: Parcel) : this(
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
             parcel.readString(),
             parcel.readLong(),
             parcel.readString(),
             parcel.readString(),
-            parcel.readString(),
-            parcel.readInt(),
             parcel.readInt(),
             parcel.readInt())
 
-    constructor() : this("", -1, "", "", "", -1, -1, -1)
+    constructor() : this("","", "", "", "", 0,"","", 0, 0,0)
 
     override fun writeToParcel(write: Parcel?, flags: Int) {
         write?.writeString(userUid)
+        write?.writeString(userName)
         write?.writeLong(date)
         write?.writeString(title)
         write?.writeString(description)
@@ -37,6 +43,8 @@ data class Event(val userUid: String = "",
         write?.writeInt(likes)
         write?.writeInt(comments)
         write?.writeInt(votes)
+        write?.writeString(picturePath)
+        write?.writeString(address)
     }
 
     override fun describeContents(): Int {

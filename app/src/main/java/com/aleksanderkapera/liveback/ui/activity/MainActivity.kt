@@ -16,6 +16,7 @@ import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.ui.base.FragmentActivity
 import com.aleksanderkapera.liveback.ui.fragment.MainFragment
 import com.aleksanderkapera.liveback.ui.widget.NavigationViewHelper
+import com.aleksanderkapera.liveback.util.LoggedUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -120,8 +121,15 @@ class MainActivity : FragmentActivity() {
             when {
                 it.isSuccessful -> {
                     mUser = it.result.toObject(User::class.java)
-                    mUser?.profilePicPath?.let {
-                        mStorageRef = FirebaseStorage.getInstance().getReference(it)
+                    mUser?.let {user ->
+                        LoggedUser.username = user.username
+                        LoggedUser.email = user.email
+                        LoggedUser.uid = user.uid
+
+                        user.profilePicPath?.let {
+                            mStorageRef = FirebaseStorage.getInstance().getReference(it)
+                            LoggedUser.profilePicPath = it
+                        }
                     }
                 }
                 else -> showToast(R.string.getUser_error)

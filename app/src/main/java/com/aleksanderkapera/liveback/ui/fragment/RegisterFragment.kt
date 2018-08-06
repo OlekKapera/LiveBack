@@ -11,8 +11,8 @@ import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.User
 import com.aleksanderkapera.liveback.ui.activity.SigningActivity
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
-import com.aleksanderkapera.liveback.util.ImageUtils
 import com.aleksanderkapera.liveback.util.asString
+import com.aleksanderkapera.liveback.util.decodeSampledBitmapFromResource
 import com.aleksanderkapera.liveback.util.getNavigationBarHeight
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_signing.*
@@ -49,7 +49,7 @@ class RegisterFragment : BaseFragment() {
     }
 
     override fun setupViews(rootView: View) {
-        register_image_background.setImageBitmap(ImageUtils.decodeSampledBitmapFromResource(resources, R.drawable.bg_register))
+        register_image_background.setImageBitmap(decodeSampledBitmapFromResource(resources, R.drawable.bg_register))
 
         //move the most bottom view above navigation bar
         val params = register_button_signUp.layoutParams as ConstraintLayout.LayoutParams

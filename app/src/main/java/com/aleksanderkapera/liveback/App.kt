@@ -1,9 +1,8 @@
 package com.aleksanderkapera.liveback
 
 import android.app.Application
-import android.content.Context
 
-class App: Application() {
+class App : Application() {
 
     //providing context for whole app
     companion object {

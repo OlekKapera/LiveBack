@@ -7,8 +7,8 @@ import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.Event
 import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.fragment.EventFragment
-import com.aleksanderkapera.liveback.util.ImageUtils
-import com.aleksanderkapera.liveback.util.StringUtils
+import com.aleksanderkapera.liveback.util.convertLongToDate
+import com.aleksanderkapera.liveback.util.decodeSampledBitmapFromResource
 import kotlinx.android.synthetic.main.card_main.view.*
 
 /**
@@ -31,8 +31,8 @@ class EventsRecyclerAdapter(val context: Context) : BaseRecyclerAdapter<EventsRe
         override fun bind(position: Int) {
             item = mData[position]
 
-            itemView.cardMain_text_name.text = item.userUid
-            itemView.cardMain_text_date.text = StringUtils.convertLongToDate(item.date)
+            itemView.cardMain_text_name.text = item.userName
+            itemView.cardMain_text_date.text = convertLongToDate(item.date)
             itemView.cardMain_text_title.text = item.title
             itemView.cardMain_text_description.text = item.description
             itemView.cardMain_text_category.text = item.category
@@ -40,8 +40,8 @@ class EventsRecyclerAdapter(val context: Context) : BaseRecyclerAdapter<EventsRe
             itemView.cardMain_text_feedback.text = item.comments.toString()
             itemView.cardMain_text_vote.text = item.votes.toString()
 
-            itemView.cardMain_image_background.setImageBitmap(ImageUtils.decodeSampledBitmapFromResource(mRes, R.drawable.green_nature, 500, 150))
-            itemView.cardMain_image_profile.setImageBitmap(ImageUtils.decodeSampledBitmapFromResource(mRes, R.drawable.mari_profile, 75, 75))
+            itemView.cardMain_image_background.setImageBitmap(decodeSampledBitmapFromResource(mRes, R.drawable.green_nature, 500, 150))
+            itemView.cardMain_image_profile.setImageBitmap(decodeSampledBitmapFromResource(mRes, R.drawable.mari_profile, 75, 75))
         }
 
         override fun onClick(view: View?) {

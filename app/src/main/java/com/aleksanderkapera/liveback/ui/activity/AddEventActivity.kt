@@ -1,12 +1,15 @@
 package com.aleksanderkapera.liveback.ui.activity
 
 import android.app.Activity
-import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
+import android.os.AsyncTask
 import android.os.Bundle
+import android.provider.MediaStore
 import android.support.design.chip.Chip
 import android.support.design.widget.CollapsingToolbarLayout
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import com.aleksanderkapera.liveback.R
@@ -16,9 +19,14 @@ import com.aleksanderkapera.liveback.ui.fragment.DatePickerDialogFragment
 import com.aleksanderkapera.liveback.ui.fragment.ImagePickerDialogFragment
 import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import kotlinx.android.synthetic.main.activity_add_event.*
 import kotlinx.android.synthetic.main.app_bar_add_event.*
-import kotlinx.android.synthetic.main.fragment_add_event.*
 import kotlinx.android.synthetic.main.widget_input.view.*
+import java.io.File
 import java.io.IOException
 
 /**
@@ -26,15 +34,21 @@ import java.io.IOException
  */
 class AddEventActivity : BaseActivity() {
 
+    private lateinit var mFireStore: FirebaseFirestore
+    private lateinit var mStorageRef: StorageReference
+
+    private lateinit var mUploadBytes: ByteArray
+
     private val mChips = R.array.categories.asStringArray()
     private var mSelectedChip: String = ""
-    private lateinit var mBackgroundUri: Uri
+    private var mBackgroundUri: Uri? = null
+    private lateinit var mEvent: Event
 
     var year = 0
     var month = 0
     var day = 0
-    var hour = 0
-    var minute = 0
+    var hour = "0"
+    var minute = "0"
 
     private val DATE_PICKER = "DATE PICKER"
     private val DIALOG_TAG_OPEN = "ADD EVENT DIALOG OPEN"
@@ -47,10 +61,13 @@ class AddEventActivity : BaseActivity() {
         }
     }
 
-    override fun getLayoutRes(): Int = R.layout.fragment_add_event
+    override fun getLayoutRes(): Int = R.layout.activity_add_event
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        mFireStore = FirebaseFirestore.getInstance()
+        mStorageRef = FirebaseStorage.getInstance().reference
 
         // set toolbar
         setSupportActionBar(addEvent_layout_toolbar)
@@ -87,8 +104,8 @@ class AddEventActivity : BaseActivity() {
 
         if (requestCode == ImagePickerDialogFragment.REQUEST_CAPTURE_IMAGE) {
             // Handle image returned from camera app. Load it into image view.
-            Glide.with(this).load(ImageUtils.imageFilePath).into(addEvent_image_background)
-            mBackgroundUri = Uri.parse(ImageUtils.imageFilePath)
+            Glide.with(this).load(imageFilePath).into(addEvent_image_background)
+            mBackgroundUri = Uri.parse(imageFilePath)
 
         } else if (requestCode == ImagePickerDialogFragment.REQUEST_CHOOSE_IMAGE && data != null) {
             // Handle image which was picked by user. Load it into image view.
@@ -148,6 +165,52 @@ class AddEventActivity : BaseActivity() {
     }
 
     /**
+     * Upload new event into BE with its background image
+     */
+    private fun addEventUpload() {
+        addEvent_view_load.show()
+        if (mBackgroundUri != null)
+            ImageResize().execute(mBackgroundUri)
+        else
+            executeEventUpload()
+    }
+
+    /**
+     * Upload background image and when successful then call event upload
+     */
+    private fun executeUpload() {
+        mBackgroundUri?.let {
+            mStorageRef.child("events").putFile(it).addOnCompleteListener {
+                when {
+                    it.isSuccessful -> {
+                        it.result.metadata?.path?.let {
+                            mEvent.picturePath = it
+                        }
+                        executeEventUpload()
+                    }
+                    else -> {
+                        showToast(R.string.image_upload_error)
+                        addEvent_view_load.hide()
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Upload only event pojo without background photo
+     */
+    private fun executeEventUpload() {
+        mFireStore.collection("events").add(mEvent).addOnCompleteListener {
+            when {
+                it.isSuccessful -> showToast(R.string.successful_add)
+                else -> showToast(R.string.addEvent_error)
+            }
+            addEvent_view_load.hide()
+        }
+    }
+
+    /**
      * Open dialog where user can choose a source of event's background image
      */
     private val onAddBackgroundClick = View.OnClickListener {
@@ -158,10 +221,22 @@ class AddEventActivity : BaseActivity() {
      * Execute upload with user entered data
      */
     private val onAcceptClick = View.OnClickListener {
-        val title = addEvent_view_title.input_input_text.text
-        val description = addEvent_view_description.input_input_text.text
-        val address = addEvent_view_address.input_input_text.text
+        val title = addEvent_view_title.input_input_text.text.toString()
+        val description = addEvent_view_description.input_input_text.text.toString()
+        val address = addEvent_view_address.input_input_text.text.toString()
+        val date = convertStringToLongTime(addEvent_view_date.input_input_text.text.toString())
+
         val event = Event()
+        event.userUid = LoggedUser.uid
+        event.userName = LoggedUser.username
+        event.title = title
+        event.description = description
+        event.address = address
+        event.date = date
+        event.category = mSelectedChip
+        mEvent = event
+
+        addEventUpload()
     }
 
     /**
@@ -169,6 +244,37 @@ class AddEventActivity : BaseActivity() {
      */
     private val onDateClick = View.OnClickListener {
         DatePickerDialogFragment().show(supportFragmentManager, DATE_PICKER)
+    }
+
+    inner class ImageResize : AsyncTask<Uri, Int, ByteArray>() {
+
+        private var mBitmap: Bitmap? = null
+
+        override fun onPreExecute() {
+            super.onPreExecute()
+        }
+
+        override fun doInBackground(vararg params: Uri?): ByteArray {
+            if (mBitmap == null) {
+                try {
+                    mBitmap = if (params[0].toString().startsWith("content://"))
+                        MediaStore.Images.Media.getBitmap(contentResolver, params[0])
+                    else
+                        MediaStore.Images.Media.getBitmap(contentResolver, Uri.fromFile(File(params[0]?.path)))
+                } catch (ex: IOException) {
+                    Log.e("TAG", ex.message)
+                }
+            }
+
+            return getBytesFromBitmap(mBitmap, 100)
+        }
+
+        override fun onPostExecute(result: ByteArray?) {
+            super.onPostExecute(result)
+
+            mUploadBytes = result!!
+            executeUpload()
+        }
     }
 
     interface PermissionResolvedListener {

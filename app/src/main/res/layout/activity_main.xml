@@ -15,7 +15,7 @@
 
     <com.aleksanderkapera.liveback.ui.widget.LoadView
         android:id="@+id/main_view_load"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

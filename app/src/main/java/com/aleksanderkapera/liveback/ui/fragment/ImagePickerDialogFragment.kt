@@ -14,8 +14,8 @@ import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.ui.activity.AddEventActivity
 import com.aleksanderkapera.liveback.ui.activity.SigningActivity
 import com.aleksanderkapera.liveback.ui.base.PermissionsAskingActivity
-import com.aleksanderkapera.liveback.util.ImageUtils
 import com.aleksanderkapera.liveback.util.PermissionKind
+import com.aleksanderkapera.liveback.util.createImageFile
 import kotlinx.android.synthetic.main.dialog_fragment_photo.*
 import kotlinx.android.synthetic.main.dialog_fragment_photo.view.*
 import java.io.File
@@ -25,22 +25,20 @@ import java.io.IOException
  * Created by kapera on 06-Jul-18.
  */
 class ImagePickerDialogFragment : DialogFragment(), SigningActivity.PermissionResolvedListener,
-    AddEventActivity.PermissionResolvedListener{
+        AddEventActivity.PermissionResolvedListener {
 
     companion object {
-        fun newInstance(): DialogFragment {
-            return ImagePickerDialogFragment()
-        }
+        fun newInstance(): DialogFragment = ImagePickerDialogFragment()
 
         const val REQUEST_CAPTURE_IMAGE = 100
         const val REQUEST_CHOOSE_IMAGE = 200
     }
 
     override fun onResume() {
-        val params = dialog.window!!.attributes
-        params.width = ViewGroup.LayoutParams.MATCH_PARENT
-        params.height = ViewGroup.LayoutParams.WRAP_CONTENT
-        dialog.window!!.attributes = params as android.view.WindowManager.LayoutParams
+        val params = dialog.window?.attributes
+        params?.width = ViewGroup.LayoutParams.MATCH_PARENT
+        params?.height = ViewGroup.LayoutParams.WRAP_CONTENT
+        dialog.window?.attributes = params as android.view.WindowManager.LayoutParams
 
         super.onResume()
     }
@@ -88,7 +86,7 @@ class ImagePickerDialogFragment : DialogFragment(), SigningActivity.PermissionRe
                     // create file to store image
                     var photoFile: File? = null
                     try {
-                        photoFile = ImageUtils.createImageFile()
+                        photoFile = createImageFile()
                     } catch (ex: IOException) {
                         // Error occurred while creating the File
                     }

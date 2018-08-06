@@ -16,8 +16,9 @@ import com.aleksanderkapera.liveback.ui.base.FragmentActivity
 import com.aleksanderkapera.liveback.ui.fragment.ImagePickerDialogFragment
 import com.aleksanderkapera.liveback.ui.fragment.LoginFragment
 import com.aleksanderkapera.liveback.ui.fragment.RegisterFragment
-import com.aleksanderkapera.liveback.util.ImageUtils
 import com.aleksanderkapera.liveback.util.PermissionKind
+import com.aleksanderkapera.liveback.util.getBytesFromBitmap
+import com.aleksanderkapera.liveback.util.imageFilePath
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
@@ -74,8 +75,8 @@ class SigningActivity : FragmentActivity() {
 
         if (requestCode == ImagePickerDialogFragment.REQUEST_CAPTURE_IMAGE) {
             // Handle image returned from camera app. Load it into image view.
-            Glide.with(this).load(ImageUtils.imageFilePath).into(register_image_profile)
-            (getLastFragment() as RegisterFragment).mImageUri = Uri.parse(ImageUtils.imageFilePath)
+            Glide.with(this).load(imageFilePath).into(register_image_profile)
+            (getLastFragment() as RegisterFragment).mImageUri = Uri.parse(imageFilePath)
 
         } else if (requestCode == ImagePickerDialogFragment.REQUEST_CHOOSE_IMAGE && data != null) {
             // Handle image which was picked by user. Load it into image view.
@@ -158,7 +159,7 @@ class SigningActivity : FragmentActivity() {
                 }
             }
 
-            return ImageUtils.getBytesFromBitmap(mBitmap, 100)
+            return getBytesFromBitmap(mBitmap, 100)
         }
 
         override fun onPostExecute(result: ByteArray?) {

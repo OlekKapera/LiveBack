@@ -11,7 +11,6 @@ import com.aleksanderkapera.liveback.model.User
 import com.aleksanderkapera.liveback.ui.activity.AddEventActivity
 import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.activity.SigningActivity
-import com.aleksanderkapera.liveback.ui.fragment.MainFragment
 import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.Glide
 import com.firebase.ui.storage.images.FirebaseImageLoader
@@ -43,13 +42,6 @@ class NavigationViewHelper(private val activity: MainActivity, private val drawe
 
     private val onSettingsClick = View.OnClickListener {
         Toast.makeText(activity, "SETTINGS", Toast.LENGTH_SHORT).show()
-    }
-
-    /**
-     * TODO proper retrieve
-     */
-    private fun mockData(): ArrayList<String>{
-        return arrayListOf("School", "Party", "Free Time", "Concert", "Restaurant", "Bar", "Other")
     }
 
     /**
@@ -90,7 +82,7 @@ class NavigationViewHelper(private val activity: MainActivity, private val drawe
      * Fill navigation drawer with user data if accessible
      */
     fun updateViews(user: User?, profilePic: StorageReference?) {
-        activity.navigation_container_background.setImageBitmap(ImageUtils.decodeSampledBitmapFromResource(resources, R.drawable.bg_drawer, 200, 600))
+        activity.navigation_container_background.setImageBitmap(decodeSampledBitmapFromResource(resources, R.drawable.bg_drawer, 200, 600))
 
         user?.let {
             activity.navigation_header_userName.text = it.username

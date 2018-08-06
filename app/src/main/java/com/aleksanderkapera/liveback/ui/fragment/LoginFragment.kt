@@ -11,7 +11,7 @@ import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.activity.SigningActivity
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
-import com.aleksanderkapera.liveback.util.ImageUtils
+import com.aleksanderkapera.liveback.util.decodeSampledBitmapFromResource
 import com.aleksanderkapera.liveback.util.getNavigationBarHeight
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_signing.*
@@ -41,7 +41,7 @@ class LoginFragment : BaseFragment() {
     }
 
     override fun setupViews(rootView: View) {
-        login_image_background.setImageBitmap(ImageUtils.decodeSampledBitmapFromResource(resources, R.drawable.bg_login))
+        login_image_background.setImageBitmap(decodeSampledBitmapFromResource(resources, R.drawable.bg_login))
 
         //move the most bottom view above navigation bar
         val params = login_text_continue.layoutParams as ConstraintLayout.LayoutParams

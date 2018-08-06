@@ -5,8 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.Comment
-import com.aleksanderkapera.liveback.util.StringUtils
 import com.aleksanderkapera.liveback.util.asString
+import com.aleksanderkapera.liveback.util.convertLongToDate
 import kotlinx.android.synthetic.main.item_comment.view.*
 
 /**
@@ -47,13 +47,13 @@ class EventCommentsAdapter(context: Context) : BaseRecyclerAdapter<EventComments
             val difference = (System.currentTimeMillis() - time) / 1000
 
             return when{
-                difference >= secToYear -> "${StringUtils.convertLongToDate(difference,"y")} ${R.string.years_short.asString()}"
-                difference >= secToMonth -> "${StringUtils.convertLongToDate(difference,"M")} ${R.string.months_short.asString()}"
-                difference >= secToWeek -> "${StringUtils.convertLongToDate(difference,"w")} ${R.string.week_short.asString()}"
-                difference >= secToDay -> "${StringUtils.convertLongToDate(difference,"d")} ${R.string.days_short.asString()}"
-                difference >= secToHour -> "${StringUtils.convertLongToDate(difference,"h")} ${R.string.hours_short.asString()}"
-                difference >= secToMin -> "${StringUtils.convertLongToDate(difference,"m")} ${R.string.minutes_short.asString()}"
-                else -> "${StringUtils.convertLongToDate(difference,"s")} ${R.string.seconds_short.asString()}"
+                difference >= secToYear -> "${convertLongToDate(difference,"y")} ${R.string.years_short.asString()}"
+                difference >= secToMonth -> "${convertLongToDate(difference,"M")} ${R.string.months_short.asString()}"
+                difference >= secToWeek -> "${convertLongToDate(difference,"w")} ${R.string.week_short.asString()}"
+                difference >= secToDay -> "${convertLongToDate(difference,"d")} ${R.string.days_short.asString()}"
+                difference >= secToHour -> "${convertLongToDate(difference,"h")} ${R.string.hours_short.asString()}"
+                difference >= secToMin -> "${convertLongToDate(difference,"m")} ${R.string.minutes_short.asString()}"
+                else -> "${convertLongToDate(difference,"s")} ${R.string.seconds_short.asString()}"
             }
         }
     }

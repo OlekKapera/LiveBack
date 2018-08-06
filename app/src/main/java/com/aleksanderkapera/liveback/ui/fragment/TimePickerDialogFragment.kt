@@ -13,7 +13,7 @@ import java.util.*
 /**
  * Created by kapera on 01-Aug-18.
  */
-class TimePickerDialogFragment: DialogFragment(), TimePickerDialog.OnTimeSetListener {
+class TimePickerDialogFragment : DialogFragment(), TimePickerDialog.OnTimeSetListener {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         // Use the current time as the default values for the picker
         val c = Calendar.getInstance()
@@ -26,8 +26,14 @@ class TimePickerDialogFragment: DialogFragment(), TimePickerDialog.OnTimeSetList
     }
 
     override fun onTimeSet(view: TimePicker?, hour: Int, minute: Int) {
-        (activity as AddEventActivity).hour = hour
-        (activity as AddEventActivity).minute = minute
+        if (hour < 10)
+            (activity as AddEventActivity).hour = "0$hour"
+        else
+            (activity as AddEventActivity).hour = "$hour"
+        if (minute < 10)
+            (activity as AddEventActivity).minute = "0$minute"
+        else
+            (activity as AddEventActivity).minute = "$minute"
 
         (activity as AddEventActivity).updateDate()
     }
