@@ -10,6 +10,8 @@
     <string name="signUp_error">Error with signing up</string>
     <string name="getUser_error">There was an error with getting your profile data. Please, try again later.</string>
     <string name="addEvent_error">Adding event failed! Please, try again later.</string>
+    <string name="date_error">You need to select a date of your event!</string>
+    <string name="category_error">You need select a category of you event!</string>
 
     <!--Main Activity-->
     <string name="search">Search</string>

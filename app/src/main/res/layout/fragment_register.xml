@@ -65,7 +65,7 @@
         style="@style/Logging.Input"
         android:layout_marginBottom="@dimen/spacing16"
         android:hint="@string/username"
-        android:inputType="text"
+        android:inputType="textCapSentences"
         app:layout_constraintBottom_toTopOf="@+id/register_input_email"
         app:layout_constraintEnd_toStartOf="@+id/register_guide_right"
         app:layout_constraintStart_toStartOf="@+id/register_guide_left" />

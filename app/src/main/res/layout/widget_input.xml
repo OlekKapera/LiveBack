@@ -25,6 +25,10 @@
 
             <EditText
                 android:id="@+id/input_input_text"
+                android:focusable="true"
+                android:clickable="true"
+                android:singleLine="true"
+                android:inputType="textCapSentences"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </android.support.design.widget.TextInputLayout>

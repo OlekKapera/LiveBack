@@ -19,7 +19,6 @@ import com.aleksanderkapera.liveback.ui.fragment.DatePickerDialogFragment
 import com.aleksanderkapera.liveback.ui.fragment.ImagePickerDialogFragment
 import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.Glide
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -28,6 +27,7 @@ import kotlinx.android.synthetic.main.app_bar_add_event.*
 import kotlinx.android.synthetic.main.widget_input.view.*
 import java.io.File
 import java.io.IOException
+import java.util.*
 
 /**
  * Created by kapera on 30-Jul-18.
@@ -53,6 +53,10 @@ class AddEventActivity : BaseActivity() {
     private val DATE_PICKER = "DATE PICKER"
     private val DIALOG_TAG_OPEN = "ADD EVENT DIALOG OPEN"
     private lateinit var mPermissionResolvedListener: PermissionResolvedListener
+
+    private val requiredField = R.string.required_field.asString()
+    private val dateError = R.string.date_error.asString()
+    private val categoryError = R.string.category_error.asString()
 
     companion object {
         fun startActivity(activity: Activity) {
@@ -179,19 +183,17 @@ class AddEventActivity : BaseActivity() {
      * Upload background image and when successful then call event upload
      */
     private fun executeUpload() {
-        mBackgroundUri?.let {
-            mStorageRef.child("events").putFile(it).addOnCompleteListener {
-                when {
-                    it.isSuccessful -> {
-                        it.result.metadata?.path?.let {
-                            mEvent.picturePath = it
-                        }
-                        executeEventUpload()
+        mStorageRef.child("events/${UUID.randomUUID()}").putBytes(mUploadBytes).addOnCompleteListener {
+            when {
+                it.isSuccessful -> {
+                    it.result.metadata?.path?.let {
+                        mEvent.backgroundPicturePath = it
                     }
-                    else -> {
-                        showToast(R.string.image_upload_error)
-                        addEvent_view_load.hide()
-                    }
+                    executeEventUpload()
+                }
+                else -> {
+                    showToast(R.string.image_upload_error)
+                    addEvent_view_load.hide()
                 }
             }
         }
@@ -203,10 +205,47 @@ class AddEventActivity : BaseActivity() {
     private fun executeEventUpload() {
         mFireStore.collection("events").add(mEvent).addOnCompleteListener {
             when {
-                it.isSuccessful -> showToast(R.string.successful_add)
+                it.isSuccessful -> {
+                    showToast(R.string.successful_add)
+                    MainActivity.startActivity(this)
+                }
                 else -> showToast(R.string.addEvent_error)
             }
             addEvent_view_load.hide()
+        }
+    }
+
+    /**
+     * Validate input fields for empty state
+     */
+    private fun areValid(title: String, description: String, address: String, date: Long?): Boolean {
+        return when {
+            title.isEmpty() -> {
+                addEvent_view_title.displayError(requiredField)
+                false
+            }
+
+            description.isEmpty() -> {
+                addEvent_view_description.displayError(requiredField)
+                false
+            }
+
+            address.isEmpty() -> {
+                addEvent_view_address.displayError(requiredField)
+                false
+            }
+
+            date == null -> {
+                showToast(dateError)
+                false
+            }
+
+            mSelectedChip.isEmpty() -> {
+                showToast(categoryError)
+                false
+            }
+
+            else -> true
         }
     }
 
@@ -224,19 +263,25 @@ class AddEventActivity : BaseActivity() {
         val title = addEvent_view_title.input_input_text.text.toString()
         val description = addEvent_view_description.input_input_text.text.toString()
         val address = addEvent_view_address.input_input_text.text.toString()
-        val date = convertStringToLongTime(addEvent_view_date.input_input_text.text.toString())
+        var date: Long? = null
 
-        val event = Event()
-        event.userUid = LoggedUser.uid
-        event.userName = LoggedUser.username
-        event.title = title
-        event.description = description
-        event.address = address
-        event.date = date
-        event.category = mSelectedChip
-        mEvent = event
+        if (addEvent_view_date.input_input_text.text.toString().isNotEmpty())
+            date = convertStringToLongTime(addEvent_view_date.input_input_text.text.toString())
 
-        addEventUpload()
+        if (areValid(title, description, address, date)) {
+            val event = Event()
+            event.userUid = LoggedUser.uid
+            event.userName = LoggedUser.username
+            event.userProfilePath = LoggedUser.profilePicPath
+            event.title = title
+            event.description = description
+            event.address = address
+            event.date = date!!
+            event.category = mSelectedChip
+            mEvent = event
+
+            addEventUpload()
+        }
     }
 
     /**
@@ -266,7 +311,7 @@ class AddEventActivity : BaseActivity() {
                 }
             }
 
-            return getBytesFromBitmap(mBitmap, 100)
+            return getBytesFromBitmap(mBitmap, 25)
         }
 
         override fun onPostExecute(result: ByteArray?) {

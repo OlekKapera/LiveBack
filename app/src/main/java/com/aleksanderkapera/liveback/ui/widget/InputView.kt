@@ -33,4 +33,8 @@ class InputView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
                 input_input_text.isFocusable = editable
         }
     }
+
+    fun displayError(text: String){
+        input_input_text.error = text
+    }
 }

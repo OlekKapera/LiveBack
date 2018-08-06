@@ -9,17 +9,19 @@ import android.os.Parcelable
 
 data class Event(var userUid: String = "",
                  var userName: String = "",
+                 var userProfilePath: String? = "",
                  var title: String = "",
                  var description: String = "",
                  var address: String = "",
                  var date: Long = -1,
                  var category: String = "",
-                 var picturePath: String = "",
+                 var backgroundPicturePath: String? = "",
                  var likes: Int = 0,
                  var comments: Int = 0,
                  var votes: Int = 0) : Parcelable {
 
     constructor(parcel: Parcel) : this(
+            parcel.readString(),
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
@@ -31,11 +33,12 @@ data class Event(var userUid: String = "",
             parcel.readInt(),
             parcel.readInt())
 
-    constructor() : this("","", "", "", "", 0,"","", 0, 0,0)
+    constructor() : this("","","", "", "", "", 0,"","", 0, 0,0)
 
     override fun writeToParcel(write: Parcel?, flags: Int) {
         write?.writeString(userUid)
         write?.writeString(userName)
+        write?.writeString(userProfilePath)
         write?.writeLong(date)
         write?.writeString(title)
         write?.writeString(description)
@@ -43,7 +46,7 @@ data class Event(var userUid: String = "",
         write?.writeInt(likes)
         write?.writeInt(comments)
         write?.writeInt(votes)
-        write?.writeString(picturePath)
+        write?.writeString(backgroundPicturePath)
         write?.writeString(address)
     }
 

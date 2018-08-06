@@ -21,6 +21,6 @@ fun convertStringToLongTime(text: String): Long{
 }
 
 fun convertStringToLongTime(text: String, dateFormat: String): Long{
-    val dateFormat = SimpleDateFormat(dateFormat, Locale.ENGLISH)
-    return dateFormat.parse(text).time
+    val format = SimpleDateFormat(dateFormat, Locale.ENGLISH)
+    return format.parse(text).time
 }

@@ -7,8 +7,13 @@ import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.Event
 import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.fragment.EventFragment
+import com.aleksanderkapera.liveback.util.asDrawable
 import com.aleksanderkapera.liveback.util.convertLongToDate
 import com.aleksanderkapera.liveback.util.decodeSampledBitmapFromResource
+import com.bumptech.glide.Glide
+import com.firebase.ui.storage.images.FirebaseImageLoader
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.card_main.view.*
 
 /**
@@ -23,6 +28,7 @@ class EventsRecyclerAdapter(val context: Context) : BaseRecyclerAdapter<EventsRe
     inner class ViewHolder(itemView: View) : BaseRecyclerAdapter.ViewHolder(itemView) {
 
         private lateinit var item: Event
+        private lateinit var mStorageRef: StorageReference
 
         init {
             itemView.setOnClickListener(this)
@@ -40,8 +46,29 @@ class EventsRecyclerAdapter(val context: Context) : BaseRecyclerAdapter<EventsRe
             itemView.cardMain_text_feedback.text = item.comments.toString()
             itemView.cardMain_text_vote.text = item.votes.toString()
 
-            itemView.cardMain_image_background.setImageBitmap(decodeSampledBitmapFromResource(mRes, R.drawable.green_nature, 500, 150))
-            itemView.cardMain_image_profile.setImageBitmap(decodeSampledBitmapFromResource(mRes, R.drawable.mari_profile, 75, 75))
+            item.userProfilePath?.let {
+                if (it.isNotEmpty()) {
+                    mStorageRef = FirebaseStorage.getInstance().getReference(it)
+                    Glide.with(context)
+                            .using(FirebaseImageLoader())
+                            .load(mStorageRef)
+                            .into(itemView.cardMain_image_profile)
+                } else
+                    itemView.cardMain_image_profile.setImageDrawable(R.drawable.ic_user.asDrawable())
+            }
+
+            item.backgroundPicturePath?.let {
+                if (it.isNotEmpty()) {
+                    mStorageRef = FirebaseStorage.getInstance().getReference(it)
+                    Glide.with(context)
+                            .using(FirebaseImageLoader())
+                            .load(mStorageRef)
+                            .into(itemView.cardMain_image_background)
+                } else {
+                    itemView.cardMain_guideline_horizontal.setGuidelineBegin(0)
+                    itemView.cardMain_image_background.visibility = View.GONE
+                }
+            }
         }
 
         override fun onClick(view: View?) {
