@@ -9,13 +9,13 @@ import android.os.Parcelable
 
 data class Event(var userUid: String = "",
                  var userName: String = "",
-                 var userProfilePath: String? = "",
+                 var userProfilePath: String = "",
                  var title: String = "",
                  var description: String = "",
                  var address: String = "",
                  var date: Long = -1,
                  var category: String = "",
-                 var backgroundPicturePath: String? = "",
+                 var backgroundPicturePath: String = "",
                  var likes: Int = 0,
                  var comments: Int = 0,
                  var votes: Int = 0) : Parcelable {

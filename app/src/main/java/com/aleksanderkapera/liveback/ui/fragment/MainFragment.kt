@@ -1,14 +1,18 @@
 package com.aleksanderkapera.liveback.ui.fragment
 
+import android.graphics.Rect
 import android.os.Bundle
+import android.support.design.widget.CoordinatorLayout
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.bus.EventsReceivedEvent
 import com.aleksanderkapera.liveback.model.Event
 import com.aleksanderkapera.liveback.ui.adapter.EventsRecyclerAdapter
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
+import com.aleksanderkapera.liveback.util.getNavigationBarHeight
 import com.aleksanderkapera.liveback.util.setToolbarMargin
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -67,6 +71,9 @@ class MainFragment : BaseFragment() {
             val layoutManager = LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
             main_recycler_events.layoutManager = layoutManager
             main_recycler_events.adapter = adapter
+
+            val bottomOffset = BottomOffsetDecoration(getNavigationBarHeight())
+            main_recycler_events.addItemDecoration(bottomOffset)
         }
     }
 
@@ -74,5 +81,19 @@ class MainFragment : BaseFragment() {
     fun onEventsReceivedEvent(event: EventsReceivedEvent) {
         mEvents = event.events
         initAdapter()
+    }
+
+    inner class BottomOffsetDecoration(val offset: Int): RecyclerView.ItemDecoration(){
+        override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+            super.getItemOffsets(outRect, view, parent, state)
+
+            val dataSize = state.itemCount
+            val position = parent.getChildAdapterPosition(view)
+            if (dataSize > 0 && position == dataSize - 1) {
+                outRect.set(0, 0, 0, offset)
+            } else {
+                outRect.set(0, 0, 0, 0)
+            }
+        }
     }
 }

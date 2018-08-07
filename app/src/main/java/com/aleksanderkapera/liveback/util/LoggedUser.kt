@@ -9,5 +9,12 @@ class LoggedUser {
         var username = ""
         var email = ""
         var profilePicPath = ""
+
+        fun clear(){
+            uid = ""
+            username = ""
+            email = ""
+            profilePicPath = ""
+        }
     }
 }

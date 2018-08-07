@@ -32,6 +32,7 @@ class NavigationViewHelper(private val activity: MainActivity, private val drawe
     }
 
     private val onProfileClick = View.OnClickListener {
+        drawer.closeDrawer(Gravity.START)
         Toast.makeText(activity, "PROFILE", Toast.LENGTH_SHORT).show()
     }
 
@@ -41,6 +42,7 @@ class NavigationViewHelper(private val activity: MainActivity, private val drawe
     }
 
     private val onSettingsClick = View.OnClickListener {
+        drawer.closeDrawer(Gravity.START)
         Toast.makeText(activity, "SETTINGS", Toast.LENGTH_SHORT).show()
     }
 
@@ -48,8 +50,10 @@ class NavigationViewHelper(private val activity: MainActivity, private val drawe
      * Handle log in and log out input
      */
     private val onLogOutClick = View.OnClickListener {
+        drawer.closeDrawer(Gravity.START)
         activity.mAuth.currentUser?.let {
             activity.logOut()
+            LoggedUser.clear()
             activity.navigation_row_signing.navigation_item_image.setImageDrawable(R.drawable.ic_login.asDrawable())
             activity.navigation_row_signing.navigation_item_text.text = R.string.log_in.asString()
         } ?: run {
@@ -102,7 +106,7 @@ class NavigationViewHelper(private val activity: MainActivity, private val drawe
                     .load(profilePic)
                     .into(activity.navigation_header_image)
         } ?: run {
-            activity.navigation_header_image.setImageDrawable(R.drawable.ic_user.asDrawable())
+            activity.navigation_header_image.setImageDrawable(R.drawable.ic_round_user.asDrawable())
         }
     }
 

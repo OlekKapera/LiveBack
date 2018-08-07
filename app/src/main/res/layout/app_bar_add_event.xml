@@ -11,11 +11,13 @@
 
     <android.support.design.widget.CollapsingToolbarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            app:layout_collapseMode="parallax">
 
             <ImageView
                 android:id="@+id/addEvent_image_background"
@@ -29,9 +31,9 @@
                 android:layout_width="@dimen/icon64"
                 android:layout_height="@dimen/icon64"
                 android:layout_marginBottom="@dimen/spacing8"
-                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_rounded_add_64dp"
                 app:layout_constraintBottom_toTopOf="@id/addEvent_text_addBackground"
                 app:layout_constraintEnd_toEndOf="parent"

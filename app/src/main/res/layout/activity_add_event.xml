@@ -68,9 +68,9 @@
 
                     <android.support.design.chip.ChipGroup
                         android:id="@+id/addEvent_layout_chips"
-                        app:singleSelection="true"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        app:singleSelection="true" />
                 </LinearLayout>
             </android.support.v7.widget.CardView>
         </LinearLayout>
@@ -78,7 +78,7 @@
 
     <com.aleksanderkapera.liveback.ui.widget.LoadView
         android:id="@+id/addEvent_view_load"
-        android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 </android.support.design.widget.CoordinatorLayout>

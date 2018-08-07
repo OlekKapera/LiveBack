@@ -24,9 +24,7 @@ import kotlinx.android.synthetic.main.fragment_register.*
 class RegisterFragment : BaseFragment() {
 
     companion object {
-        fun newInstance(): BaseFragment {
-            return RegisterFragment()
-        }
+        fun newInstance(): BaseFragment = RegisterFragment()
     }
 
     private val DIALOG_TAG_OPEN = "Open Image Dialog"

@@ -1,6 +1,7 @@
 package com.aleksanderkapera.liveback.ui.fragment
 
 import android.animation.Animator
+import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.design.widget.CoordinatorLayout
@@ -11,9 +12,13 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.app.ActionBar
 import android.view.View
 import com.aleksanderkapera.liveback.R
+import com.aleksanderkapera.liveback.model.Event
 import com.aleksanderkapera.liveback.ui.adapter.EventCommentsAdapter
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.util.*
+import com.bumptech.glide.Glide
+import com.firebase.ui.storage.images.FirebaseImageLoader
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.app_bar_event.*
 import kotlinx.android.synthetic.main.fragment_event.*
 
@@ -32,15 +37,27 @@ class EventFragment : BaseFragment() {
     private var currentOffset = 0
     private val breakPoint = -dpToPx(48)
 
-    private lateinit var commentsAdapter: EventCommentsAdapter
+    private var mEvent: Event? = null
 
     companion object {
-        fun newInstance(): BaseFragment = EventFragment()
+        fun newInstance(event: Event): BaseFragment {
+            val fragment = EventFragment()
+            val bundle = Bundle()
+            bundle.putParcelable(EVENT_BUNDLE_KEY, event)
+            fragment.arguments = bundle
+
+            return fragment
+        }
     }
 
     override fun getLayoutRes(): Int = R.layout.fragment_event
 
     override fun setupViews(rootView: View) {
+        //retrieve event from main fragment
+        arguments?.let {
+            mEvent = it.getParcelable(EVENT_BUNDLE_KEY)
+        }
+
         // set toolbar
         appCompatActivity.setSupportActionBar(event_layout_toolbar)
         val actionbar: ActionBar? = appCompatActivity.supportActionBar
@@ -62,8 +79,34 @@ class EventFragment : BaseFragment() {
 
         event_fab.setOnClickListener(onLikeClick)
 
+        setToolbarViews()
         setToolbarAnimation()
         setupTabs()
+    }
+
+    /**
+     * Fill toolbar with event data
+     */
+    private fun setToolbarViews() {
+        mEvent?.let { event ->
+            if (event.backgroundPicturePath.isNotEmpty()) {
+                Glide.with(context)
+                        .using(FirebaseImageLoader())
+                        .load(FirebaseStorage.getInstance().getReference(event.backgroundPicturePath))
+                        .into(event_image_background)
+            } else
+                setBackgroundCategory(event.category, event_image_background)
+
+            if (event.userProfilePath.isNotEmpty()) {
+                Glide.with(context)
+                        .using(FirebaseImageLoader())
+                        .load(FirebaseStorage.getInstance().getReference(event.userProfilePath))
+                        .into(event_image_profile)
+            } else
+                event_image_profile.setImageDrawable(R.drawable.ic_round_user.asDrawable())
+
+            event_text_eventName.text = event.title
+        }
     }
 
     /**
@@ -154,12 +197,15 @@ class EventFragment : BaseFragment() {
      * Setup tab layout and view pager
      */
     private fun setupTabs() {
-        val adapter = ViewPagerAdapter(appCompatActivity.supportFragmentManager)
-        adapter.addFragment(EventAboutFragment.newInstance(), mAboutString)
-        adapter.addFragment(EventCommentsFragment.newInstance(), mCommentsString)
-        adapter.addFragment(EventVoteFragment.newInstance(), mVoteString)
-        event_layout_viewPager.adapter = adapter
+        val adapter = ViewPagerAdapter(childFragmentManager)
 
+        mEvent?.let {
+            adapter.addFragment(EventAboutFragment.newInstance(it), mAboutString)
+            adapter.addFragment(EventCommentsFragment.newInstance(), mCommentsString)
+            adapter.addFragment(EventVoteFragment.newInstance(), mVoteString)
+        }
+
+        event_layout_viewPager.adapter = adapter
         event_layout_tabs.setupWithViewPager(event_layout_viewPager)
 
         event_layout_tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -169,6 +215,7 @@ class EventFragment : BaseFragment() {
             override fun onTabUnselected(tab: TabLayout.Tab?) {
             }
 
+            // set fab drawable according to current tab
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 when (tab?.position) {
                     0 -> event_fab.setImageDrawable(R.drawable.ic_heart_outline.asDrawable())
@@ -184,7 +231,7 @@ class EventFragment : BaseFragment() {
 
     class ViewPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
 
-        private val mFragmentList = mutableListOf<BaseFragment>()
+        private val mFragmentList = mutableListOf<Fragment>()
         private val mFragmentListTitle = mutableListOf<String>()
 
         override fun getItem(position: Int): Fragment = mFragmentList[position]
@@ -193,7 +240,7 @@ class EventFragment : BaseFragment() {
 
         override fun getPageTitle(position: Int): CharSequence? = mFragmentListTitle[position]
 
-        public fun addFragment(fragment: BaseFragment, title: String) {
+        fun addFragment(fragment: Fragment, title: String) {
             mFragmentList.add(fragment)
             mFragmentListTitle.add(title)
         }

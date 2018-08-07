@@ -1,13 +1,17 @@
 package com.aleksanderkapera.liveback.ui.widget
 
+import android.app.Activity
 import android.content.Context
+import android.graphics.Color
 import android.support.annotation.AttrRes
 import android.support.annotation.StyleRes
 import android.text.InputType
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.Toast
 import com.aleksanderkapera.liveback.R
+import com.aleksanderkapera.liveback.util.asColor
 import kotlinx.android.synthetic.main.widget_input.view.*
 
 /**

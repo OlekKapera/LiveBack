@@ -7,9 +7,7 @@ import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.Event
 import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.fragment.EventFragment
-import com.aleksanderkapera.liveback.util.asDrawable
-import com.aleksanderkapera.liveback.util.convertLongToDate
-import com.aleksanderkapera.liveback.util.decodeSampledBitmapFromResource
+import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.Glide
 import com.firebase.ui.storage.images.FirebaseImageLoader
 import com.google.firebase.storage.FirebaseStorage
@@ -54,7 +52,7 @@ class EventsRecyclerAdapter(val context: Context) : BaseRecyclerAdapter<EventsRe
                             .load(mStorageRef)
                             .into(itemView.cardMain_image_profile)
                 } else
-                    itemView.cardMain_image_profile.setImageDrawable(R.drawable.ic_user.asDrawable())
+                    itemView.cardMain_image_profile.setImageDrawable(R.drawable.ic_round_user_solid.asDrawable())
             }
 
             item.backgroundPicturePath?.let {
@@ -65,14 +63,13 @@ class EventsRecyclerAdapter(val context: Context) : BaseRecyclerAdapter<EventsRe
                             .load(mStorageRef)
                             .into(itemView.cardMain_image_background)
                 } else {
-                    itemView.cardMain_guideline_horizontal.setGuidelineBegin(0)
-                    itemView.cardMain_image_background.visibility = View.GONE
+                    setBackgroundCategory(item.category, itemView.cardMain_image_background)
                 }
             }
         }
 
         override fun onClick(view: View?) {
-            (context as MainActivity).showFragment(EventFragment.newInstance())
+            (context as MainActivity).showFragment(EventFragment.newInstance(item))
         }
     }
 }
