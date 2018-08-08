@@ -12,12 +12,15 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.app.ActionBar
 import android.view.View
 import com.aleksanderkapera.liveback.R
+import com.aleksanderkapera.liveback.model.Comment
 import com.aleksanderkapera.liveback.model.Event
-import com.aleksanderkapera.liveback.ui.adapter.EventCommentsAdapter
+import com.aleksanderkapera.liveback.model.Vote
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.Glide
 import com.firebase.ui.storage.images.FirebaseImageLoader
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.app_bar_event.*
 import kotlinx.android.synthetic.main.fragment_event.*
@@ -31,19 +34,26 @@ class EventFragment : BaseFragment() {
     private val mAboutString = R.string.about.asString()
     private val mCommentsString = R.string.comments.asString()
     private val mVoteString = R.string.vote.asString()
+    private val mErrorString = R.string.event_error.asString()
 
     private var isFaded = false
     private var isAnimating = false
     private var currentOffset = 0
     private val breakPoint = -dpToPx(48)
 
+    private lateinit var mEventDoc: DocumentReference
+
     private var mEvent: Event? = null
+    private var mComments: List<Comment>? = null
+    private var mVotes: List<Vote>? = null
+
+    private var currentTab = 0
 
     companion object {
         fun newInstance(event: Event): BaseFragment {
             val fragment = EventFragment()
             val bundle = Bundle()
-            bundle.putParcelable(EVENT_BUNDLE_KEY, event)
+            bundle.putParcelable(BUNDLE_EVENT, event)
             fragment.arguments = bundle
 
             return fragment
@@ -52,12 +62,18 @@ class EventFragment : BaseFragment() {
 
     override fun getLayoutRes(): Int = R.layout.fragment_event
 
-    override fun setupViews(rootView: View) {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
         //retrieve event from main fragment
         arguments?.let {
-            mEvent = it.getParcelable(EVENT_BUNDLE_KEY)
+            mEvent = it.getParcelable(BUNDLE_EVENT)
         }
 
+        mEventDoc = FirebaseFirestore.getInstance().document("events/${mEvent?.eventUid}")
+    }
+
+    override fun setupViews(rootView: View) {
         // set toolbar
         appCompatActivity.setSupportActionBar(event_layout_toolbar)
         val actionbar: ActionBar? = appCompatActivity.supportActionBar
@@ -77,11 +93,11 @@ class EventFragment : BaseFragment() {
         fabParams.setMargins(0, 0, dpToPx(R.dimen.spacing8.asDimen().toInt()), getNavigationBarHeight())
         event_fab.layoutParams = fabParams
 
-        event_fab.setOnClickListener(onLikeClick)
+        event_fab.setOnClickListener(onFabClick)
 
         setToolbarViews()
         setToolbarAnimation()
-        setupTabs()
+        getComments()
     }
 
     /**
@@ -194,6 +210,40 @@ class EventFragment : BaseFragment() {
     }
 
     /**
+     * Retrieve all comments for this event
+     */
+    private fun getComments() {
+        event_view_load.show()
+        mEventDoc.collection("comments").get().addOnCompleteListener {
+            when {
+                it.isSuccessful -> {
+                    mComments = it.result.toObjects(Comment::class.java)
+                    getVotes()
+                }
+                else -> {
+                    event_view_load.hide()
+                    showToast(mErrorString)
+                }
+            }
+        }
+    }
+
+    /**
+     * Retrieve all votes for this event
+     */
+    private fun getVotes(){
+        mEventDoc.collection("votes").get().addOnCompleteListener {
+            when{
+                it.isSuccessful -> {
+                    mVotes = it.result.toObjects(Vote::class.java)
+                    setupTabs()
+                }
+            }
+            event_view_load.hide()
+        }
+    }
+
+    /**
      * Setup tab layout and view pager
      */
     private fun setupTabs() {
@@ -201,7 +251,7 @@ class EventFragment : BaseFragment() {
 
         mEvent?.let {
             adapter.addFragment(EventAboutFragment.newInstance(it), mAboutString)
-            adapter.addFragment(EventCommentsFragment.newInstance(), mCommentsString)
+            adapter.addFragment(EventCommentsFragment.newInstance(mComments), mCommentsString)
             adapter.addFragment(EventVoteFragment.newInstance(), mVoteString)
         }
 
@@ -217,16 +267,32 @@ class EventFragment : BaseFragment() {
 
             // set fab drawable according to current tab
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                when (tab?.position) {
-                    0 -> event_fab.setImageDrawable(R.drawable.ic_heart_outline.asDrawable())
-                    else -> event_fab.setImageDrawable(R.drawable.ic_add.asDrawable())
+                tab?.position?.let {
+                    currentTab = it
+                    when (it) {
+                        0 -> event_fab.setImageDrawable(R.drawable.ic_heart_outline.asDrawable())
+                        else -> event_fab.setImageDrawable(R.drawable.ic_add.asDrawable())
+                    }
                 }
             }
         })
     }
 
-    private val onLikeClick = View.OnClickListener {
+    /**
+     * Handle on fab clicks on individual tabs
+     */
+    private val onFabClick = View.OnClickListener {
+        when (currentTab){
+            0 -> {
 
+            }
+            1 -> {
+                AddFeedbackDialogFragment.newInstance().show(fragmentManager, TAG_ADD_FEEDBACK)
+            }
+            2 -> {
+
+            }
+        }
     }
 
     class ViewPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {

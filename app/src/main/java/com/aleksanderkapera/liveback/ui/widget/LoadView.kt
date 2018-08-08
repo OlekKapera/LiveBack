@@ -44,13 +44,10 @@ class LoadView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     }
 
     fun show() {
-        (context as Activity).window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
         startAnimation(mFadeIn)
     }
 
     fun hide() {
-        (context as Activity).window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
         startAnimation(mFadeOut)
     }
 }

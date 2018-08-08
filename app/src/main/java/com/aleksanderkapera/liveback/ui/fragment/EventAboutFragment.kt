@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.Event
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
-import com.aleksanderkapera.liveback.util.EVENT_ABOUT_BUNDLE_KEY
+import com.aleksanderkapera.liveback.util.BUNDLE_EVENT_ABOUT
 import com.aleksanderkapera.liveback.util.convertLongToDate
 import kotlinx.android.synthetic.main.fragment_event_about.view.*
 import kotlinx.android.synthetic.main.item_event_about.view.*
@@ -25,7 +25,7 @@ class EventAboutFragment : BaseFragment() {
             val fragment = EventAboutFragment()
             val bundle = Bundle()
 
-            bundle.putParcelable(EVENT_ABOUT_BUNDLE_KEY, event)
+            bundle.putParcelable(BUNDLE_EVENT_ABOUT, event)
             fragment.arguments = bundle
 
             return fragment
@@ -35,7 +35,7 @@ class EventAboutFragment : BaseFragment() {
     override fun getLayoutRes(): Int = R.layout.fragment_event_about
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        arguments?.getParcelable<Event>(EVENT_ABOUT_BUNDLE_KEY)?.let {
+        arguments?.getParcelable<Event>(BUNDLE_EVENT_ABOUT)?.let {
             mEvent = it
         }
 

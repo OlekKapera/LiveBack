@@ -7,7 +7,8 @@ import android.os.Parcelable
  * Created by kapera on 23-May-18.
  */
 
-data class Event(var userUid: String = "",
+data class Event(var eventUid: String = "",
+                 var userUid: String = "",
                  var userName: String = "",
                  var userProfilePath: String = "",
                  var title: String = "",
@@ -27,15 +28,17 @@ data class Event(var userUid: String = "",
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
+            parcel.readString(),
             parcel.readLong(),
             parcel.readString(),
             parcel.readString(),
             parcel.readInt(),
             parcel.readInt())
 
-    constructor() : this("","","", "", "", "", 0,"","", 0, 0,0)
+    constructor() : this("", "", "", "", "", "", "", 0, "", "", 0, 0, 0)
 
     override fun writeToParcel(write: Parcel?, flags: Int) {
+        write?.writeString(eventUid)
         write?.writeString(userUid)
         write?.writeString(userName)
         write?.writeString(userProfilePath)
@@ -50,9 +53,8 @@ data class Event(var userUid: String = "",
         write?.writeString(address)
     }
 
-    override fun describeContents(): Int {
-        return 0
-    }
+    override fun describeContents(): Int = 0
+
 
     companion object CREATOR : Parcelable.Creator<Event> {
         override fun createFromParcel(parcel: Parcel): Event {

@@ -12,6 +12,7 @@
     <string name="addEvent_error">Adding event failed! Please, try again later.</string>
     <string name="date_error">You need to select a date of your event!</string>
     <string name="category_error">You need select a category of you event!</string>
+    <string name="event_error">Couldn\'t retrieve event. Try again later.</string>
 
     <!--Main Activity-->
     <string name="search">Search</string>
@@ -59,6 +60,9 @@
     <string name="week_short">w</string>
     <string name="months_short">mo</string>
     <string name="years_short">y</string>
+    <string name="add_comment">Add comment</string>
+    <string name="add_suggestion">Add suggestion</string>
+    <string name="subject">Subject</string>
 
     <!--Add Event-->
     <string name="add_background">Add background</string>

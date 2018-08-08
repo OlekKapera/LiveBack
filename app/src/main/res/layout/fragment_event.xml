@@ -21,4 +21,11 @@
         app:backgroundTint="@color/red"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_heart_outline" />
+
+    <com.aleksanderkapera.liveback.ui.widget.LoadView
+        android:id="@+id/event_view_load"
+        android:visibility="gone"
+        android:elevation="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </android.support.design.widget.CoordinatorLayout>

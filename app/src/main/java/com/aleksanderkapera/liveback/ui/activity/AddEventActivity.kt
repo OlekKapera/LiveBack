@@ -203,6 +203,9 @@ class AddEventActivity : BaseActivity() {
      * Upload only event pojo without background photo
      */
     private fun executeEventUpload() {
+        val docRef = mFireStore.collection("events").document()
+        mEvent.eventUid = docRef.id
+
         mFireStore.collection("events").add(mEvent).addOnCompleteListener {
             when {
                 it.isSuccessful -> {

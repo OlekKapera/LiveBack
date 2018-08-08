@@ -11,6 +11,7 @@ import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.User
 import com.aleksanderkapera.liveback.ui.activity.SigningActivity
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
+import com.aleksanderkapera.liveback.util.TAG_REGISTER_DIALOG
 import com.aleksanderkapera.liveback.util.asString
 import com.aleksanderkapera.liveback.util.decodeSampledBitmapFromResource
 import com.aleksanderkapera.liveback.util.getNavigationBarHeight
@@ -26,8 +27,6 @@ class RegisterFragment : BaseFragment() {
     companion object {
         fun newInstance(): BaseFragment = RegisterFragment()
     }
-
-    private val DIALOG_TAG_OPEN = "Open Image Dialog"
 
     private val requiredField = R.string.required_field.asString()
     private val incorrectEmail = R.string.incorrect_email.asString()
@@ -59,7 +58,7 @@ class RegisterFragment : BaseFragment() {
     }
 
     private val onRegisterImageClick = View.OnClickListener {
-        ImagePickerDialogFragment.newInstance().show(fragmentManager, DIALOG_TAG_OPEN)
+        ImagePickerDialogFragment.newInstance().show(fragmentManager, TAG_REGISTER_DIALOG)
     }
 
     /**
