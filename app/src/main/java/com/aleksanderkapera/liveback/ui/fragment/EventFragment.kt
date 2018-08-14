@@ -29,23 +29,31 @@ import kotlinx.android.synthetic.main.fragment_event.*
 /**
  * Created by kapera on 27-Jul-18.
  */
-class EventFragment : BaseFragment() {
+class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentListener {
 
     private val mAboutString = R.string.about.asString()
     private val mCommentsString = R.string.comments.asString()
     private val mVoteString = R.string.vote.asString()
     private val mErrorString = R.string.event_error.asString()
+    private val mCommentSuccString = R.string.comment_successful.asString()
+    private val mVoteSuccString = R.string.vote_successful.asString()
+    private val mCommentFailString = R.string.comment_error.asString()
+    private val mVoteFailString = R.string.vote_error.asString()
 
     private var isFaded = false
     private var isAnimating = false
     private var currentOffset = 0
     private val breakPoint = -dpToPx(48)
 
+    private lateinit var mFireStore: FirebaseFirestore
     private lateinit var mEventDoc: DocumentReference
 
     private var mEvent: Event? = null
-    private var mComments: List<Comment>? = null
-    private var mVotes: List<Vote>? = null
+    private var mComments: MutableList<Comment>? = null
+    private var mVotes: MutableList<Vote>? = null
+
+    private lateinit var mCommentFragment: EventCommentsFragment
+    private lateinit var mVotesFragment: EventVoteFragment
 
     private var currentTab = 0
 
@@ -70,7 +78,8 @@ class EventFragment : BaseFragment() {
             mEvent = it.getParcelable(BUNDLE_EVENT)
         }
 
-        mEventDoc = FirebaseFirestore.getInstance().document("events/${mEvent?.eventUid}")
+        mFireStore = FirebaseFirestore.getInstance()
+        mEventDoc = mFireStore.document("events/${mEvent?.eventUid}")
     }
 
     override fun setupViews(rootView: View) {
@@ -98,6 +107,16 @@ class EventFragment : BaseFragment() {
         setToolbarViews()
         setToolbarAnimation()
         getComments()
+    }
+
+    /**
+     * Handle events when user approves dialog messages
+     */
+    override fun positiveButtonClicked(title: String, description: String) {
+        if (title.isEmpty())
+            addComment(description)
+        else
+            addVote()
     }
 
     /**
@@ -231,9 +250,9 @@ class EventFragment : BaseFragment() {
     /**
      * Retrieve all votes for this event
      */
-    private fun getVotes(){
+    private fun getVotes() {
         mEventDoc.collection("votes").get().addOnCompleteListener {
-            when{
+            when {
                 it.isSuccessful -> {
                     mVotes = it.result.toObjects(Vote::class.java)
                     setupTabs()
@@ -244,15 +263,47 @@ class EventFragment : BaseFragment() {
     }
 
     /**
+     * Adding comment for event
+     */
+    private fun addComment(review: String) {
+        val commentPojo = Comment(LoggedUser.username, review, System.currentTimeMillis(),
+                LoggedUser.profilePicPath, LoggedUser.uid)
+
+        event_view_load.show()
+        mFireStore.collection("events/${mEvent?.eventUid}/comments").add(commentPojo).addOnCompleteListener {
+            when {
+                it.isSuccessful -> {
+                    showToast(mCommentSuccString)
+                    mComments?.let {
+                        it.add(commentPojo)
+                        mCommentFragment.commentsAdapter.replaceData(it)
+                    }
+                }
+                else -> showToast(mCommentFailString)
+            }
+            event_view_load.hide()
+        }
+    }
+
+    /**
+     * Adding vote
+     */
+    private fun addVote() {
+
+    }
+
+    /**
      * Setup tab layout and view pager
      */
     private fun setupTabs() {
         val adapter = ViewPagerAdapter(childFragmentManager)
+        mCommentFragment = EventCommentsFragment.newInstance(mComments)
+        mVotesFragment = EventVoteFragment.newInstance()
 
         mEvent?.let {
             adapter.addFragment(EventAboutFragment.newInstance(it), mAboutString)
-            adapter.addFragment(EventCommentsFragment.newInstance(mComments), mCommentsString)
-            adapter.addFragment(EventVoteFragment.newInstance(), mVoteString)
+            adapter.addFragment(mCommentFragment, mCommentsString)
+            adapter.addFragment(mVotesFragment, mVoteString)
         }
 
         event_layout_viewPager.adapter = adapter
@@ -282,15 +333,19 @@ class EventFragment : BaseFragment() {
      * Handle on fab clicks on individual tabs
      */
     private val onFabClick = View.OnClickListener {
-        when (currentTab){
+        when (currentTab) {
             0 -> {
 
             }
             1 -> {
-                AddFeedbackDialogFragment.newInstance().show(fragmentManager, TAG_ADD_FEEDBACK)
+                val dialog = AddFeedbackDialogFragment.newInstance(AddFeedbackDialogType.COMMENT)
+                dialog.setTargetFragment(this, REQUEST_TARGET_EVENT_FRAGMENT)
+                dialog.show(fragmentManager, TAG_ADD_FEEDBACK)
             }
             2 -> {
-
+                val dialog = AddFeedbackDialogFragment.newInstance(AddFeedbackDialogType.VOTE)
+                dialog.setTargetFragment(this, REQUEST_TARGET_EVENT_FRAGMENT)
+                dialog.show(fragmentManager, TAG_ADD_FEEDBACK)
             }
         }
     }

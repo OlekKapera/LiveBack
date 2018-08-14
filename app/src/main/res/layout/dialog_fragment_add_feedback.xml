@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@color/bgColor"
     android:padding="@dimen/spacing24">
 
     <TextView
@@ -16,25 +15,76 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.aleksanderkapera.liveback.ui.widget.InputView
-        android:id="@+id/feedbackDialog_view_subject"
+    <LinearLayout
+        android:id="@+id/feedbackDialog_layout_subject"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing16"
-        app:inputHint="@string/subject"
-        app:inputIcon="@drawable/ic_title"
+        android:orientation="horizontal"
+        android:padding="@dimen/spacing8"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/feedbackDialog_text_title" />
+        app:layout_constraintTop_toBottomOf="@id/feedbackDialog_text_title">
 
-    <com.aleksanderkapera.liveback.ui.widget.InputView
-        android:id="@+id/feedbackDialog_view_description"
+        <ImageView
+            android:layout_width="@dimen/icon24"
+            android:layout_height="@dimen/icon24"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="@dimen/spacing16"
+            app:srcCompat="@drawable/ic_title" />
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/feedbackDialog_input_subject"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:hint="@string/subject"
+                android:inputType="textMultiLine|textCapSentences"
+                android:maxLines="3"
+                android:scrollbars="vertical"
+                android:singleLine="false" />
+        </android.support.design.widget.TextInputLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/feedbackDialog_layout_description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing16"
-        app:inputHint="@string/description"
-        app:inputIcon="@drawable/ic_info"
+        android:layout_marginTop="@dimen/spacing8"
+        android:orientation="horizontal"
+        android:padding="@dimen/spacing8"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/feedbackDialog_view_subject" />
+        app:layout_constraintTop_toBottomOf="@id/feedbackDialog_layout_subject"
+        app:layout_goneMarginTop="@dimen/spacing16">
+
+        <ImageView
+            android:layout_width="@dimen/icon24"
+            android:layout_height="@dimen/icon24"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="@dimen/spacing16"
+            app:srcCompat="@drawable/ic_info" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/feedbackDialog_inputLayout_description"
+            android:hint="@string/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/feedbackDialog_input_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:inputType="textMultiLine|textCapSentences"
+                android:maxLines="10"
+                android:scrollbars="vertical" />
+        </android.support.design.widget.TextInputLayout>
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>

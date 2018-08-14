@@ -5,8 +5,14 @@ import android.view.View
 import android.view.ViewGroup
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.Comment
+import com.aleksanderkapera.liveback.util.asDrawable
 import com.aleksanderkapera.liveback.util.asString
+import com.aleksanderkapera.liveback.util.context
 import com.aleksanderkapera.liveback.util.convertLongToDate
+import com.bumptech.glide.Glide
+import com.firebase.ui.storage.images.FirebaseImageLoader
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.item_comment.view.*
 
 /**
@@ -21,6 +27,7 @@ class EventCommentsAdapter(context: Context) : BaseRecyclerAdapter<EventComments
     inner class ViewHolder(itemView: View) : BaseRecyclerAdapter.ViewHolder(itemView) {
 
         private lateinit var item:Comment
+        private lateinit var mStorageRef: StorageReference
 
         private val secToMin = 60
         private val secToHour = 3600
@@ -35,6 +42,17 @@ class EventCommentsAdapter(context: Context) : BaseRecyclerAdapter<EventComments
             itemView.eventComment_text_title.text = item.authorName
             itemView.eventComment_text_description.text = item.description
             itemView.eventComment_text_time.text = convertLong(item.postedTime)
+
+            item.profilePictureUrl.let{
+                if(it.isNotEmpty()){
+                    mStorageRef = FirebaseStorage.getInstance().getReference(it)
+                    Glide.with(context)
+                            .using(FirebaseImageLoader())
+                            .load(mStorageRef)
+                            .into(itemView.eventComment_image_profile)
+                } else
+                    itemView.eventComment_image_profile.setImageDrawable(R.drawable.ic_round_user_solid.asDrawable())
+            }
         }
 
         override fun onClick(p0: View?) {

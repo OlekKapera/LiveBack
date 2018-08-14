@@ -1,7 +1,6 @@
 package com.aleksanderkapera.liveback.ui.fragment
 
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.aleksanderkapera.liveback.R
@@ -19,10 +18,10 @@ import java.io.Serializable
 class EventCommentsFragment : BaseFragment() {
 
     private var mComments = listOf<Comment>()
-    private lateinit var commentsAdapter: EventCommentsAdapter
+    lateinit var commentsAdapter: EventCommentsAdapter
 
     companion object {
-        fun newInstance(comments: List<Comment>?): BaseFragment {
+        fun newInstance(comments: List<Comment>?): EventCommentsFragment {
             val fragment = EventCommentsFragment()
             val bundle = Bundle()
 

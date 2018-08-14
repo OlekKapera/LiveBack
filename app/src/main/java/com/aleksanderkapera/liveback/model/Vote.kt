@@ -9,7 +9,7 @@ data class Vote(val title: String = "",
                 val text: String = "",
                 val voteAuthorUid: String = "",
                 val profilePictureUrl: String = "",
-                val upVotes: Int = 0,
-                val downVotes: Int = 0) : Serializable {
-    constructor() : this("", "", "", "", 0, 0)
+                val upVotes: List<String> = listOf(),
+                val downVotes: List<String> = listOf()) : Serializable {
+    constructor() : this("", "", "", "", listOf(), listOf())
 }

@@ -10,7 +10,7 @@ import com.aleksanderkapera.liveback.ui.base.BaseFragment
 class EventVoteFragment: BaseFragment() {
 
     companion object {
-        fun newInstance(): BaseFragment = EventVoteFragment()
+        fun newInstance(): EventVoteFragment = EventVoteFragment()
     }
 
     override fun getLayoutRes(): Int = R.layout.fragment_event_vote

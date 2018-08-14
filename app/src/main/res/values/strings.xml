@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name" translatable="false">LiveBack</string>
 
+    <!-- Common words-->
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+    <string name="send">Send</string>
+
     <!-- Error messages-->
     <string name="required_field">This field is required!</string>
     <string name="incorrect_email">Enter correct email address</string>
@@ -13,6 +18,8 @@
     <string name="date_error">You need to select a date of your event!</string>
     <string name="category_error">You need select a category of you event!</string>
     <string name="event_error">Couldn\'t retrieve event. Try again later.</string>
+    <string name="comment_error">Adding comment failed! Please, try again later.</string>
+    <string name="vote_error">Adding vote failed! Please, try again later.</string>
 
     <!--Main Activity-->
     <string name="search">Search</string>
@@ -50,6 +57,7 @@
     <string name="vote">Vote</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
+    <string name="review">Review</string>
     <string name="address">Address</string>
     <string name="date">Date</string>
     <string name="likes">Likes</string>
@@ -63,6 +71,8 @@
     <string name="add_comment">Add comment</string>
     <string name="add_suggestion">Add suggestion</string>
     <string name="subject">Subject</string>
+    <string name="comment_successful">Comment added successfully!</string>
+    <string name="vote_successful">Vote added successfully!</string>
 
     <!--Add Event-->
     <string name="add_background">Add background</string>
