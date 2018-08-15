@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-
     android:layout_marginTop="@dimen/spacing4"
     app:cardUseCompatPadding="true">
 
@@ -28,6 +27,7 @@
         <TextView
             android:id="@+id/eventVote_text_title"
             style="@style/EventTitle"
+            app:layout_constraintEnd_toStartOf="@id/eventVote_button_upVote"
             app:layout_constraintStart_toEndOf="@id/eventVote_image_profile"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Birgit Kos" />
@@ -44,19 +44,25 @@
             android:id="@+id/eventVote_button_upVote"
             android:layout_width="@dimen/icon18"
             android:layout_height="@dimen/icon18"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             app:layout_constraintBottom_toTopOf="@+id/eventVote_text_votes"
             app:layout_constraintEnd_toEndOf="@+id/eventVote_text_votes"
             app:layout_constraintStart_toStartOf="@+id/eventVote_text_votes"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
             app:srcCompat="@drawable/ic_arrow_up" />
 
         <TextView
             android:id="@+id/eventVote_text_votes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/spacing4"
+            android:layout_marginBottom="@dimen/spacing8"
+            android:layout_marginEnd="@dimen/spacing8"
+            android:layout_marginTop="@dimen/spacing8"
             android:fontFamily="@string/font_family_regular"
-            android:text="23"
+            android:text="0"
             android:textColor="@color/darkGrey"
             android:textSize="@dimen/text16"
             app:layout_constraintBottom_toTopOf="@+id/eventVote_button_downVote"
@@ -67,6 +73,9 @@
             android:id="@+id/eventVote_button_downVote"
             android:layout_width="@dimen/icon18"
             android:layout_height="@dimen/icon18"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/eventVote_text_votes"
             app:layout_constraintStart_toStartOf="@+id/eventVote_text_votes"

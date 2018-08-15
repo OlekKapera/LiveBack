@@ -5,10 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.Comment
-import com.aleksanderkapera.liveback.util.asDrawable
-import com.aleksanderkapera.liveback.util.asString
-import com.aleksanderkapera.liveback.util.context
-import com.aleksanderkapera.liveback.util.convertLongToDate
+import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.Glide
 import com.firebase.ui.storage.images.FirebaseImageLoader
 import com.google.firebase.storage.FirebaseStorage
@@ -29,19 +26,12 @@ class EventCommentsAdapter(context: Context) : BaseRecyclerAdapter<EventComments
         private lateinit var item:Comment
         private lateinit var mStorageRef: StorageReference
 
-        private val secToMin = 60
-        private val secToHour = 3600
-        private val secToDay = 86400
-        private val secToWeek = 604800
-        private val secToMonth = 2678400
-        private val secToYear =  31536000
-
         override fun bind(position: Int) {
             item = mData[position]
 
             itemView.eventComment_text_title.text = item.authorName
             itemView.eventComment_text_description.text = item.description
-            itemView.eventComment_text_time.text = convertLong(item.postedTime)
+            itemView.eventComment_text_time.text = longToStringAgo(item.postedTime)
 
             item.profilePictureUrl.let{
                 if(it.isNotEmpty()){
@@ -56,23 +46,6 @@ class EventCommentsAdapter(context: Context) : BaseRecyclerAdapter<EventComments
         }
 
         override fun onClick(p0: View?) {
-        }
-
-        /**
-         * Convert long to desired displayable format
-         */
-        private fun convertLong(time: Long): String{
-            val difference = (System.currentTimeMillis() - time) / 1000
-
-            return when{
-                difference >= secToYear -> "${convertLongToDate(difference,"y")} ${R.string.years_short.asString()}"
-                difference >= secToMonth -> "${convertLongToDate(difference,"M")} ${R.string.months_short.asString()}"
-                difference >= secToWeek -> "${convertLongToDate(difference,"w")} ${R.string.week_short.asString()}"
-                difference >= secToDay -> "${convertLongToDate(difference,"d")} ${R.string.days_short.asString()}"
-                difference >= secToHour -> "${convertLongToDate(difference,"h")} ${R.string.hours_short.asString()}"
-                difference >= secToMin -> "${convertLongToDate(difference,"m")} ${R.string.minutes_short.asString()}"
-                else -> "${convertLongToDate(difference,"s")} ${R.string.seconds_short.asString()}"
-            }
         }
     }
 }

@@ -20,6 +20,8 @@
     <string name="event_error">Couldn\'t retrieve event. Try again later.</string>
     <string name="comment_error">Adding comment failed! Please, try again later.</string>
     <string name="vote_error">Adding vote failed! Please, try again later.</string>
+    <string name="empty_votes">There are no votes to be displayed.</string>
+    <string name="empty_comments">There are no comments to be displayed.</string>
 
     <!--Main Activity-->
     <string name="search">Search</string>

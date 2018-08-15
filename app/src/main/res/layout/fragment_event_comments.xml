@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/eventComment_layout_comments"
+        android:id="@+id/eventComment_recycler_comments"
         android:paddingStart="@dimen/spacing8"
+        android:overScrollMode="never"
         android:paddingEnd="@dimen/spacing8"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+    <com.aleksanderkapera.liveback.ui.widget.EmptyScreenView
+        android:id="@+id/eventComment_view_emptyScreen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing32"
+        app:layout_constraintTop_toTopOf="parent"
+        app:message="@string/empty_comments" />
 </android.support.constraint.ConstraintLayout>

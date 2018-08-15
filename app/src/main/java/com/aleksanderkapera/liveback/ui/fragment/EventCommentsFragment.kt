@@ -7,8 +7,11 @@ import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.Comment
 import com.aleksanderkapera.liveback.ui.adapter.EventCommentsAdapter
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
-import com.aleksanderkapera.liveback.util.BUNDLE_EVENT_ABOUT
+import com.aleksanderkapera.liveback.ui.widget.BottomOffsetDecoration
 import com.aleksanderkapera.liveback.util.BUNDLE_EVENT_COMMENT
+import com.aleksanderkapera.liveback.util.asDimen
+import com.aleksanderkapera.liveback.util.dpToPx
+import com.aleksanderkapera.liveback.util.getNavigationBarHeight
 import kotlinx.android.synthetic.main.fragment_event_comments.*
 import java.io.Serializable
 
@@ -25,7 +28,7 @@ class EventCommentsFragment : BaseFragment() {
             val fragment = EventCommentsFragment()
             val bundle = Bundle()
 
-            bundle.putSerializable(BUNDLE_EVENT_ABOUT, comments as Serializable)
+            bundle.putSerializable(BUNDLE_EVENT_COMMENT, comments as Serializable)
             fragment.arguments = bundle
 
             return fragment
@@ -47,8 +50,11 @@ class EventCommentsFragment : BaseFragment() {
             commentsAdapter = EventCommentsAdapter(it)
             commentsAdapter.replaceData(mComments)
             val layout = LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
-            eventComment_layout_comments.layoutManager = layout
-            eventComment_layout_comments.adapter = commentsAdapter
+            eventComment_recycler_comments.layoutManager = layout
+            eventComment_recycler_comments.adapter = commentsAdapter
+            eventComment_recycler_comments.addItemDecoration(BottomOffsetDecoration(getNavigationBarHeight()+ dpToPx(R.dimen.spacing16.asDimen().toInt())))
         }
+
+        (parentFragment as EventFragment).switchEmptyView(mComments as MutableList<Any>, eventComment_recycler_comments, eventComment_view_emptyScreen)
     }
 }

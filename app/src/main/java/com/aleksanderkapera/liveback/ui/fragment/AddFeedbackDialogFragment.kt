@@ -62,11 +62,17 @@ class AddFeedbackDialogFragment : DialogFragment() {
         // set keyboard button to next and capitalize sentence
         rootView.feedbackDialog_input_subject.imeOptions = EditorInfo.IME_ACTION_NEXT
         rootView.feedbackDialog_input_subject.setRawInputType(InputType.TYPE_CLASS_TEXT)
+        rootView.feedbackDialog_input_subject.inputType = InputType.TYPE_TEXT_FLAG_MULTI_LINE
+        rootView.feedbackDialog_input_subject.setHorizontallyScrolling(false)
+        rootView.feedbackDialog_input_subject.maxLines = 3
         rootView.feedbackDialog_input_subject.keyListener = TextKeyListener(TextKeyListener.Capitalize.SENTENCES,true)
 
         // set keyboard button to done and capitalize sentence
         rootView.feedbackDialog_input_description.imeOptions = EditorInfo.IME_ACTION_DONE
         rootView.feedbackDialog_input_description.setRawInputType(InputType.TYPE_CLASS_TEXT)
+        rootView.feedbackDialog_input_description.inputType = InputType.TYPE_TEXT_FLAG_MULTI_LINE
+        rootView.feedbackDialog_input_description.setHorizontallyScrolling(false)
+        rootView.feedbackDialog_input_description.maxLines = 10
         rootView.feedbackDialog_input_description.keyListener = TextKeyListener(TextKeyListener.Capitalize.SENTENCES,true)
 
         // adjust layout according to comment or vote selection

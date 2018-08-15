@@ -10,12 +10,14 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.app.ActionBar
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.Comment
 import com.aleksanderkapera.liveback.model.Event
 import com.aleksanderkapera.liveback.model.Vote
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
+import com.aleksanderkapera.liveback.ui.widget.EmptyScreenView
 import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.Glide
 import com.firebase.ui.storage.images.FirebaseImageLoader
@@ -24,6 +26,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.app_bar_event.*
 import kotlinx.android.synthetic.main.fragment_event.*
+import kotlinx.android.synthetic.main.fragment_event_comments.*
+import kotlinx.android.synthetic.main.fragment_event_vote.*
 
 
 /**
@@ -116,7 +120,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
         if (title.isEmpty())
             addComment(description)
         else
-            addVote()
+            addVote(title, description)
     }
 
     /**
@@ -281,6 +285,8 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                 }
                 else -> showToast(mCommentFailString)
             }
+
+            switchEmptyView(mComments as MutableList<Any>, eventComment_recycler_comments, eventComment_view_emptyScreen)
             event_view_load.hide()
         }
     }
@@ -288,8 +294,24 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     /**
      * Adding vote
      */
-    private fun addVote() {
+    private fun addVote(title: String, description: String) {
+        val votePojo = Vote(title, description, LoggedUser.uid, LoggedUser.profilePicPath, listOf(), listOf())
+        event_view_load.show()
+        mFireStore.collection("events/${mEvent?.eventUid}/votes").add(votePojo).addOnCompleteListener {
+            when {
+                it.isSuccessful -> {
+                    showToast(mVoteSuccString)
+                    mVotes?.let {
+                        it.add(votePojo)
+                        mVotesFragment.votesAdapter.replaceData(it)
+                    }
+                }
+                else -> showToast(mVoteFailString)
+            }
 
+            switchEmptyView(mVotes as MutableList<Any>, eventVote_recycler_votes, eventVote_view_emptyScreen)
+            event_view_load.hide()
+        }
     }
 
     /**
@@ -298,7 +320,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     private fun setupTabs() {
         val adapter = ViewPagerAdapter(childFragmentManager)
         mCommentFragment = EventCommentsFragment.newInstance(mComments)
-        mVotesFragment = EventVoteFragment.newInstance()
+        mVotesFragment = EventVoteFragment.newInstance(mVotes)
 
         mEvent?.let {
             adapter.addFragment(EventAboutFragment.newInstance(it), mAboutString)
@@ -327,6 +349,21 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                 }
             }
         })
+    }
+
+    /**
+     * Switches between visibilities of recycler and empty view based on list's size
+     */
+    fun switchEmptyView(list: MutableList<Any>?, recycler: RecyclerView, emptyView: EmptyScreenView){
+        list?.let {
+            if (it.isNotEmpty()) {
+                recycler.visibility = View.VISIBLE
+                emptyView.visibility = View.GONE
+            } else {
+                recycler.visibility = View.GONE
+                emptyView.visibility = View.VISIBLE
+            }
+        }
     }
 
     /**
