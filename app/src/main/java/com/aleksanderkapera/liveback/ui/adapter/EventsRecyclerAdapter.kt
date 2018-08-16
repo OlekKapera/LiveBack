@@ -40,7 +40,7 @@ class EventsRecyclerAdapter(val context: Context) : BaseRecyclerAdapter<EventsRe
             itemView.cardMain_text_title.text = item.title
             itemView.cardMain_text_description.text = item.description
             itemView.cardMain_text_category.text = item.category
-            itemView.cardMain_text_favourite.text = item.likes.toString()
+            itemView.cardMain_text_favourite.text = item.likes.size.toString()
             itemView.cardMain_text_feedback.text = item.comments.toString()
             itemView.cardMain_text_vote.text = item.votes.toString()
 

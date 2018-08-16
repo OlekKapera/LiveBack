@@ -17,7 +17,7 @@ data class Event(var eventUid: String = "",
                  var date: Long = -1,
                  var category: String = "",
                  var backgroundPicturePath: String = "",
-                 var likes: Int = 0,
+                 var likes: MutableList<String> = mutableListOf(),
                  var comments: Int = 0,
                  var votes: Int = 0) : Parcelable {
 
@@ -32,10 +32,11 @@ data class Event(var eventUid: String = "",
             parcel.readLong(),
             parcel.readString(),
             parcel.readString(),
+            parcel.readSerializable() as MutableList<String>,
             parcel.readInt(),
             parcel.readInt())
 
-    constructor() : this("", "", "", "", "", "", "", 0, "", "", 0, 0, 0)
+    constructor() : this("", "", "", "", "", "", "", 0, "", "", mutableListOf(), 0, 0)
 
     override fun writeToParcel(write: Parcel?, flags: Int) {
         write?.writeString(eventUid)
@@ -46,7 +47,7 @@ data class Event(var eventUid: String = "",
         write?.writeString(title)
         write?.writeString(description)
         write?.writeString(category)
-        write?.writeInt(likes)
+        write?.writeStringList(likes)
         write?.writeInt(comments)
         write?.writeInt(votes)
         write?.writeString(backgroundPicturePath)

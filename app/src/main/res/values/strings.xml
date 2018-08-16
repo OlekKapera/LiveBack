@@ -22,6 +22,8 @@
     <string name="vote_error">Adding vote failed! Please, try again later.</string>
     <string name="empty_votes">There are no votes to be displayed.</string>
     <string name="empty_comments">There are no comments to be displayed.</string>
+    <string name="up_vote_error">Couldn\'t upvote! Please, try again later.</string>
+    <string name="down_vote_error">Couldn\'t downvote! Please, try again later.</string>
 
     <!--Main Activity-->
     <string name="search">Search</string>

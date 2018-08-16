@@ -13,7 +13,6 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
-        versionName "0.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -33,15 +32,15 @@ dependencies {
 
     // support
     implementation 'com.android.support:appcompat-v7:28.0.0-beta01'
-    implementation 'com.android.support:recyclerview-v7:28.0.0-beta01'
-    implementation 'com.android.support:support-v4:28.0.0-beta01'
-    implementation 'com.android.support:design:28.0.0-beta01'
+    implementation 'com.android.support:recyclerview-v7:28.0.0-rc01'
+    implementation 'com.android.support:support-v4:28.0.0-rc01'
+    implementation 'com.android.support:design:28.0.0-rc01'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
 
     // networking
     implementation 'com.google.firebase:firebase-core:16.0.1'
-    implementation 'com.google.firebase:firebase-firestore:17.0.4'
-    implementation 'com.google.firebase:firebase-auth:16.0.2'
+    implementation 'com.google.firebase:firebase-firestore:17.1.0'
+    implementation 'com.google.firebase:firebase-auth:16.0.3'
     implementation 'com.google.firebase:firebase-storage:16.0.1'
     implementation 'com.firebaseui:firebase-ui-storage:0.6.0'
 
@@ -55,7 +54,7 @@ dependencies {
         exclude module: 'support-v4'
     }
 
-    implementation 'com.android.support:cardview-v7:28.0.0-beta01'
+    implementation 'com.android.support:cardview-v7:28.0.0-rc01'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
 
     implementation 'com.github.bumptech.glide:glide:3.7.0'

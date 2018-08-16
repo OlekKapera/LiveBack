@@ -31,6 +31,8 @@ fun Int.asString() = context.getString(this)
 
 fun Int.asStringArray() = resources.getStringArray(this)
 
+fun Int.asPluralsString(number: Int) = resources.getQuantityString(this, number,number)
+
 fun hideKeyboard(activity: Activity) {
     val view = activity.currentFocus
     if (view != null) {

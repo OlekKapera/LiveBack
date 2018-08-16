@@ -22,12 +22,16 @@ import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.Glide
 import com.firebase.ui.storage.images.FirebaseImageLoader
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.app_bar_event.*
 import kotlinx.android.synthetic.main.fragment_event.*
+import kotlinx.android.synthetic.main.fragment_event_about.*
 import kotlinx.android.synthetic.main.fragment_event_comments.*
 import kotlinx.android.synthetic.main.fragment_event_vote.*
+import kotlinx.android.synthetic.main.item_event_about.view.*
 
 
 /**
@@ -55,6 +59,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     private var mEvent: Event? = null
     private var mComments: MutableList<Comment>? = null
     private var mVotes: MutableList<Vote>? = null
+    private var mIsLiked = false
 
     private lateinit var mCommentFragment: EventCommentsFragment
     private lateinit var mVotesFragment: EventVoteFragment
@@ -105,6 +110,14 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
         val fabParams = event_fab.layoutParams as CoordinatorLayout.LayoutParams
         fabParams.setMargins(0, 0, dpToPx(R.dimen.spacing8.asDimen().toInt()), getNavigationBarHeight())
         event_fab.layoutParams = fabParams
+
+        mEvent?.let {
+            mIsLiked = it.likes.contains(LoggedUser.uid)
+            if (mIsLiked)
+                event_fab.setImageDrawable(R.drawable.ic_heart_white.asDrawable())
+            else
+                event_fab.setImageDrawable(R.drawable.ic_heart_outline.asDrawable())
+        }
 
         event_fab.setOnClickListener(onFabClick)
 
@@ -237,7 +250,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
      */
     private fun getComments() {
         event_view_load.show()
-        mEventDoc.collection("comments").get().addOnCompleteListener {
+        mEventDoc.collection("comments").orderBy("postedTime", Query.Direction.DESCENDING).get().addOnCompleteListener {
             when {
                 it.isSuccessful -> {
                     mComments = it.result.toObjects(Comment::class.java)
@@ -267,10 +280,49 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     }
 
     /**
+     * Adding or deleting switchLike
+     */
+    private fun switchLike() {
+        event_view_load.show()
+
+        if (!mIsLiked) {
+            mFireStore.document("events/${mEvent?.eventUid}").update("likes", FieldValue.arrayUnion(LoggedUser.uid)).addOnCompleteListener {
+                event_view_load.hide()
+                when {
+                    it.isSuccessful -> {
+                        mIsLiked = true
+                        mEvent?.let {
+                            it.likes.add(LoggedUser.uid)
+                            event_fab.setImageDrawable(R.drawable.ic_heart_white.asDrawable())
+                            eventAbout_container_likes.eventItem_text_description.text = R.plurals.event_likes.asPluralsString(it.likes.size)
+                        }
+                    }
+                }
+            }
+        } else {
+            mFireStore.document("events/${mEvent?.eventUid}").update("likes", FieldValue.arrayRemove(LoggedUser.uid)).addOnCompleteListener {
+                event_view_load.hide()
+                when {
+                    it.isSuccessful -> {
+                        mIsLiked = false
+                        mEvent?.let {
+                            it.likes.remove(LoggedUser.uid)
+                            event_fab.setImageDrawable(R.drawable.ic_heart_outline.asDrawable())
+                            eventAbout_container_likes.eventItem_text_description.text = R.plurals.event_likes.asPluralsString(it.likes.size)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Adding comment for event
      */
     private fun addComment(review: String) {
-        val commentPojo = Comment(LoggedUser.username, review, System.currentTimeMillis(),
+        val commentRef = mFireStore.collection("events/${mEvent?.eventUid}/comments").document()
+
+        val commentPojo = Comment(commentRef.id, LoggedUser.username, review, System.currentTimeMillis(),
                 LoggedUser.profilePicPath, LoggedUser.uid)
 
         event_view_load.show()
@@ -295,9 +347,11 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
      * Adding vote
      */
     private fun addVote(title: String, description: String) {
-        val votePojo = Vote(title, description, LoggedUser.uid, LoggedUser.profilePicPath, listOf(), listOf())
+        val voteRef = mFireStore.collection("events/${mEvent?.eventUid}/votes").document()
+
+        val votePojo = Vote(voteRef.id, title, description, LoggedUser.uid, LoggedUser.profilePicPath, mutableListOf(), mutableListOf())
         event_view_load.show()
-        mFireStore.collection("events/${mEvent?.eventUid}/votes").add(votePojo).addOnCompleteListener {
+        voteRef.set(votePojo).addOnCompleteListener {
             when {
                 it.isSuccessful -> {
                     showToast(mVoteSuccString)
@@ -318,43 +372,48 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
      * Setup tab layout and view pager
      */
     private fun setupTabs() {
-        val adapter = ViewPagerAdapter(childFragmentManager)
-        mCommentFragment = EventCommentsFragment.newInstance(mComments)
-        mVotesFragment = EventVoteFragment.newInstance(mVotes)
-
         mEvent?.let {
+            val adapter = ViewPagerAdapter(childFragmentManager)
+            mCommentFragment = EventCommentsFragment.newInstance(mComments)
+            mVotesFragment = EventVoteFragment.newInstance(mVotes, it.eventUid)
+
             adapter.addFragment(EventAboutFragment.newInstance(it), mAboutString)
             adapter.addFragment(mCommentFragment, mCommentsString)
             adapter.addFragment(mVotesFragment, mVoteString)
-        }
 
-        event_layout_viewPager.adapter = adapter
-        event_layout_tabs.setupWithViewPager(event_layout_viewPager)
+            event_layout_viewPager.adapter = adapter
+            event_layout_tabs.setupWithViewPager(event_layout_viewPager)
 
-        event_layout_tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-            }
+            event_layout_tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                override fun onTabReselected(tab: TabLayout.Tab?) {
+                }
 
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-            }
+                override fun onTabUnselected(tab: TabLayout.Tab?) {
+                }
 
-            // set fab drawable according to current tab
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                tab?.position?.let {
-                    currentTab = it
-                    when (it) {
-                        0 -> event_fab.setImageDrawable(R.drawable.ic_heart_outline.asDrawable())
-                        else -> event_fab.setImageDrawable(R.drawable.ic_add.asDrawable())
+                // set fab drawable according to current tab
+                override fun onTabSelected(tab: TabLayout.Tab?) {
+                    tab?.position?.let {
+                        currentTab = it
+                        when (it) {
+                            0 -> {
+                                if (mIsLiked)
+                                    event_fab.setImageDrawable(R.drawable.ic_heart_white.asDrawable())
+                                else
+                                    event_fab.setImageDrawable(R.drawable.ic_heart_outline.asDrawable())
+                            }
+                            else -> event_fab.setImageDrawable(R.drawable.ic_add.asDrawable())
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     }
 
     /**
      * Switches between visibilities of recycler and empty view based on list's size
      */
-    fun switchEmptyView(list: MutableList<Any>?, recycler: RecyclerView, emptyView: EmptyScreenView){
+    fun switchEmptyView(list: MutableList<Any>?, recycler: RecyclerView, emptyView: EmptyScreenView) {
         list?.let {
             if (it.isNotEmpty()) {
                 recycler.visibility = View.VISIBLE
@@ -372,7 +431,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     private val onFabClick = View.OnClickListener {
         when (currentTab) {
             0 -> {
-
+                switchLike()
             }
             1 -> {
                 val dialog = AddFeedbackDialogFragment.newInstance(AddFeedbackDialogType.COMMENT)

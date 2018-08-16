@@ -9,6 +9,7 @@ import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.Event
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.util.BUNDLE_EVENT_ABOUT
+import com.aleksanderkapera.liveback.util.asPluralsString
 import com.aleksanderkapera.liveback.util.convertLongToDate
 import kotlinx.android.synthetic.main.fragment_event_about.view.*
 import kotlinx.android.synthetic.main.item_event_about.view.*
@@ -46,6 +47,7 @@ class EventAboutFragment : BaseFragment() {
         rootView.eventAbout_container_description.eventItem_text_description.text = mEvent.description
         rootView.eventAbout_container_address.eventItem_text_description.text = mEvent.address
         rootView.eventAbout_container_date.eventItem_text_description.text = convertLongToDate(mEvent.date, "dd MMMM yyyy HH:mm")
-        rootView.eventAbout_container_likes.eventItem_text_description.text = mEvent.likes.toString()
+        rootView.eventAbout_container_likes.eventItem_text_description.text = mEvent.likes.size.toString()
+        rootView.eventAbout_container_likes.eventItem_text_description.text = R.plurals.event_likes.asPluralsString(mEvent.likes.size)
     }
 }

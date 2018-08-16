@@ -20,6 +20,7 @@ import com.aleksanderkapera.liveback.util.LoggedUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.activity_main.*
@@ -99,7 +100,7 @@ class MainActivity : FragmentActivity() {
      * Retrieve events from database
      */
     private fun getEvents() {
-        mEventsCol.get().addOnCompleteListener {
+        mEventsCol.orderBy("date",Query.Direction.ASCENDING).get().addOnCompleteListener {
             when {
                 it.isSuccessful -> {
                     mEvents = it.result.toObjects(Event::class.java)

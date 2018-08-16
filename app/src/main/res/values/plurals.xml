@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="event_likes">
+        <item quantity="zero">%d people like this event</item>
+        <item quantity="one">%d person likes this event</item>
+        <item quantity="other">%d people like this event</item>
+    </plurals>
+</resources>
