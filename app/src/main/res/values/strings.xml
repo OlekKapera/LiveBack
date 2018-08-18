@@ -24,6 +24,7 @@
     <string name="empty_comments">There are no comments to be displayed.</string>
     <string name="up_vote_error">Couldn\'t upvote! Please, try again later.</string>
     <string name="down_vote_error">Couldn\'t downvote! Please, try again later.</string>
+    <string name="need_to_login">You need to login to access this feature!</string>
 
     <!--Main Activity-->
     <string name="search">Search</string>

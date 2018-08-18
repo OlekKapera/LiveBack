@@ -111,19 +111,25 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
         fabParams.setMargins(0, 0, dpToPx(R.dimen.spacing8.asDimen().toInt()), getNavigationBarHeight())
         event_fab.layoutParams = fabParams
 
+        if (LoggedUser.uid.isEmpty())
+            event_fab.visibility = View.GONE
+        else
+            event_fab.visibility = View.VISIBLE
+
         mEvent?.let {
             mIsLiked = it.likes.contains(LoggedUser.uid)
             if (mIsLiked)
                 event_fab.setImageDrawable(R.drawable.ic_heart_white.asDrawable())
             else
                 event_fab.setImageDrawable(R.drawable.ic_heart_outline.asDrawable())
+
+            getComments()
         }
 
         event_fab.setOnClickListener(onFabClick)
 
         setToolbarViews()
         setToolbarAnimation()
-        getComments()
     }
 
     /**

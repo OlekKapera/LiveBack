@@ -210,7 +210,7 @@ class AddEventActivity : BaseActivity() {
             when {
                 it.isSuccessful -> {
                     showToast(R.string.successful_add)
-                    MainActivity.startActivity(this)
+                    MainActivity.startActivity(this,LoggedUser.uid.isEmpty())
                 }
                 else -> showToast(R.string.addEvent_error)
             }

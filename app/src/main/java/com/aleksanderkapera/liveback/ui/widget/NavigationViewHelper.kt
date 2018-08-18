@@ -25,25 +25,36 @@ import kotlinx.android.synthetic.main.navigation_menu.*
  */
 class NavigationViewHelper(private val activity: MainActivity, private val drawer: DrawerLayout) {
 
+    private val needToLogin = R.string.need_to_login.asString()
+
     // region OnClickListeners
     private val onEventsClick = View.OnClickListener {
-        MainActivity.startActivity(activity)
+        MainActivity.startActivity(activity, LoggedUser.uid.isEmpty())
         drawer.closeDrawer(Gravity.START)
     }
 
     private val onProfileClick = View.OnClickListener {
         drawer.closeDrawer(Gravity.START)
-        Toast.makeText(activity, "PROFILE", Toast.LENGTH_SHORT).show()
+        if (LoggedUser.uid.isEmpty())
+            Toast.makeText(activity, needToLogin, Toast.LENGTH_SHORT).show()
+        else
+            Toast.makeText(activity, "PROFILE", Toast.LENGTH_SHORT).show()
     }
 
     private val onAddEventClick = View.OnClickListener {
-        AddEventActivity.startActivity(activity)
         drawer.closeDrawer(Gravity.START)
+        if (LoggedUser.uid.isEmpty())
+            Toast.makeText(activity, needToLogin, Toast.LENGTH_SHORT).show()
+        else
+            AddEventActivity.startActivity(activity)
     }
 
     private val onSettingsClick = View.OnClickListener {
         drawer.closeDrawer(Gravity.START)
-        Toast.makeText(activity, "SETTINGS", Toast.LENGTH_SHORT).show()
+        if (LoggedUser.uid.isEmpty())
+            Toast.makeText(activity, needToLogin, Toast.LENGTH_SHORT).show()
+        else
+            Toast.makeText(activity, "SETTINGS", Toast.LENGTH_SHORT).show()
     }
 
     /**

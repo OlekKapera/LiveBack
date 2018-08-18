@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.item_event_about.view.*
  */
 class EventAboutFragment : BaseFragment() {
 
-    private lateinit var mEvent: Event
+    private var mEvent: Event? = null
 
     companion object {
         fun newInstance(event: Event): Fragment {
@@ -44,10 +44,12 @@ class EventAboutFragment : BaseFragment() {
     }
 
     override fun setupViews(rootView: View) {
-        rootView.eventAbout_container_description.eventItem_text_description.text = mEvent.description
-        rootView.eventAbout_container_address.eventItem_text_description.text = mEvent.address
-        rootView.eventAbout_container_date.eventItem_text_description.text = convertLongToDate(mEvent.date, "dd MMMM yyyy HH:mm")
-        rootView.eventAbout_container_likes.eventItem_text_description.text = mEvent.likes.size.toString()
-        rootView.eventAbout_container_likes.eventItem_text_description.text = R.plurals.event_likes.asPluralsString(mEvent.likes.size)
+        mEvent?.let {
+            rootView.eventAbout_container_description.eventItem_text_description.text = it.description
+            rootView.eventAbout_container_address.eventItem_text_description.text = it.address
+            rootView.eventAbout_container_date.eventItem_text_description.text = convertLongToDate(it.date, "dd MMMM yyyy HH:mm")
+            rootView.eventAbout_container_likes.eventItem_text_description.text = it.likes.size.toString()
+            rootView.eventAbout_container_likes.eventItem_text_description.text = R.plurals.event_likes.asPluralsString(it.likes.size)
+        }
     }
 }

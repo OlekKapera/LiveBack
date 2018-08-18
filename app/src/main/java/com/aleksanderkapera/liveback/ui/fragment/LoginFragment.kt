@@ -23,16 +23,12 @@ import kotlinx.android.synthetic.main.fragment_login.*
 class LoginFragment : BaseFragment() {
 
     companion object {
-        fun newInstance(): BaseFragment {
-            return LoginFragment()
-        }
+        fun newInstance(): BaseFragment = LoginFragment()
     }
 
     private lateinit var mAuth: FirebaseAuth
 
-    override fun getLayoutRes(): Int {
-        return R.layout.fragment_login
-    }
+    override fun getLayoutRes(): Int = R.layout.fragment_login
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mAuth = (activity as SigningActivity).mAuth
@@ -48,17 +44,18 @@ class LoginFragment : BaseFragment() {
         params.setMargins(0, 0, 0, getNavigationBarHeight() + 32)
         login_text_continue.layoutParams = params
 
-        login_button_logIn.setOnClickListener(onLogInClick)
-        login_button_signUp.setOnClickListener(onSignUpClick)
+        login_button_logIn.setOnClickListener { onLogInClick() }
+        login_button_signUp.setOnClickListener { onSignUpClick() }
+        login_text_continue.setOnClickListener { onContinueClick() }
     }
 
-    private val onLogInClick = View.OnClickListener {
+    private fun onLogInClick() {
         //show loader
         (activity as SigningActivity).signing_view_load.show()
 
         mAuth.signInWithEmailAndPassword(login_input_email.text.toString(), login_input_password.text.toString()).addOnCompleteListener {
             if (it.isSuccessful) {
-                MainActivity.startActivity(activity as Activity)
+                MainActivity.startActivity(activity as Activity, false)
             } else {
                 Toast.makeText(context, "Error with logging in", Toast.LENGTH_SHORT).show()
             }
@@ -67,7 +64,11 @@ class LoginFragment : BaseFragment() {
         }
     }
 
-    private val onSignUpClick = View.OnClickListener {
+    private fun onSignUpClick() {
         (activity as SigningActivity).showFragment(RegisterFragment.newInstance())
+    }
+
+    private fun onContinueClick(){
+        MainActivity.startActivity(activity as Activity, true)
     }
 }

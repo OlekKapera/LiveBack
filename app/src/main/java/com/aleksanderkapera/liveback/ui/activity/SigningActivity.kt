@@ -109,7 +109,7 @@ class SigningActivity : FragmentActivity() {
 
     fun uploadUser(userPojo: User) {
         mUsersRef.document(userPojo.uid).set(userPojo).addOnSuccessListener {
-            MainActivity.startActivity(this)
+            MainActivity.startActivity(this,false)
             Toast.makeText(this, R.string.welcome, Toast.LENGTH_SHORT).show()
         }.addOnFailureListener {
             Toast.makeText(this, R.string.signUp_error, Toast.LENGTH_SHORT).show()

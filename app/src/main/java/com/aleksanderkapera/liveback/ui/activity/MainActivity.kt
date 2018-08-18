@@ -16,6 +16,7 @@ import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.ui.base.FragmentActivity
 import com.aleksanderkapera.liveback.ui.fragment.MainFragment
 import com.aleksanderkapera.liveback.ui.widget.NavigationViewHelper
+import com.aleksanderkapera.liveback.util.INTENT_MAIN_LOGGING
 import com.aleksanderkapera.liveback.util.LoggedUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
@@ -29,8 +30,9 @@ import org.greenrobot.eventbus.EventBus
 class MainActivity : FragmentActivity() {
 
     companion object {
-        fun startActivity(activity: Activity) {
+        fun startActivity(activity: Activity, anonymousUser: Boolean) {
             val intent = Intent(activity, MainActivity::class.java)
+            intent.putExtra(INTENT_MAIN_LOGGING, anonymousUser)
             activity.startActivity(intent)
         }
     }
@@ -44,14 +46,11 @@ class MainActivity : FragmentActivity() {
     private lateinit var mEvents: List<Event>
     private var mUser: User? = null
     private var mStorageRef: StorageReference? = null
+    private var isAnonymousUser = false
 
-    override fun getLayoutRes(): Int {
-        return R.layout.activity_main
-    }
+    override fun getLayoutRes(): Int = R.layout.activity_main
 
-    override fun getDefaultFragment(): BaseFragment {
-        return MainFragment.newInstance()
-    }
+    override fun getDefaultFragment(): BaseFragment = MainFragment.newInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,14 +61,19 @@ class MainActivity : FragmentActivity() {
         mAuth = FirebaseAuth.getInstance()
         mFireStoreRef = FirebaseFirestore.getInstance()
 
+        isAnonymousUser = intent.getBooleanExtra(INTENT_MAIN_LOGGING, false)
+
         //when no user is logged in open login fragment
-        if (mAuth.currentUser != null) {
+        if (mAuth.currentUser != null || isAnonymousUser) {
             mEventsCol = mFireStoreRef.collection("events")
             getEvents()
-            getUser(mAuth.currentUser!!.uid)
+            mAuth.currentUser?.let {
+                getUser(it.uid)
+            }
 
             mDrawerLayout = main_layout_drawer
             mNavigationDrawer = NavigationViewHelper(this, mDrawerLayout)
+
         } else
             SigningActivity.startActivity(this)
     }
@@ -100,7 +104,7 @@ class MainActivity : FragmentActivity() {
      * Retrieve events from database
      */
     private fun getEvents() {
-        mEventsCol.orderBy("date",Query.Direction.ASCENDING).get().addOnCompleteListener {
+        mEventsCol.orderBy("date", Query.Direction.ASCENDING).get().addOnCompleteListener {
             when {
                 it.isSuccessful -> {
                     mEvents = it.result.toObjects(Event::class.java)
@@ -122,7 +126,7 @@ class MainActivity : FragmentActivity() {
             when {
                 it.isSuccessful -> {
                     mUser = it.result.toObject(User::class.java)
-                    mUser?.let {user ->
+                    mUser?.let { user ->
                         LoggedUser.username = user.username
                         LoggedUser.email = user.email
                         LoggedUser.uid = user.uid

@@ -14,3 +14,5 @@ const val TAG_REGISTER_DIALOG = "Register Dialog Tag"
 const val TAG_ADD_FEEDBACK = "Add Feedback Tag"
 
 const val REQUEST_TARGET_EVENT_FRAGMENT = 25
+
+const val INTENT_MAIN_LOGGING = "Intent Main Logging"
