@@ -13,6 +13,7 @@ import com.aleksanderkapera.liveback.util.asDimen
 import com.aleksanderkapera.liveback.util.dpToPx
 import com.aleksanderkapera.liveback.util.getNavigationBarHeight
 import kotlinx.android.synthetic.main.fragment_event_comments.*
+import kotlinx.android.synthetic.main.fragment_profile_events.*
 import java.io.Serializable
 
 /**
@@ -52,9 +53,10 @@ class EventCommentsFragment : BaseFragment() {
             val layout = LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
             eventComment_recycler_comments.layoutManager = layout
             eventComment_recycler_comments.adapter = commentsAdapter
-            eventComment_recycler_comments.addItemDecoration(BottomOffsetDecoration(getNavigationBarHeight()+ dpToPx(R.dimen.spacing16.asDimen().toInt())))
+            eventComment_recycler_comments.addItemDecoration(BottomOffsetDecoration(getNavigationBarHeight() + dpToPx(R.dimen.spacing16.asDimen().toInt())))
         }
 
-        (parentFragment as EventFragment).switchEmptyView(mComments as MutableList<Any>, eventComment_recycler_comments, eventComment_view_emptyScreen)
+        (parentFragment as? EventFragment)?.switchEmptyView(mComments as MutableList<Any>, eventComment_recycler_comments, eventComment_view_emptyScreen)
+        (parentFragment as? ProfileFragment)?.switchEmptyView(mComments as MutableList<Any>, eventComment_recycler_comments, eventComment_view_emptyScreen)
     }
 }

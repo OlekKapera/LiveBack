@@ -17,14 +17,18 @@
     <string name="addEvent_error">Adding event failed! Please, try again later.</string>
     <string name="date_error">You need to select a date of your event!</string>
     <string name="category_error">You need select a category of you event!</string>
-    <string name="event_error">Couldn\'t retrieve event. Try again later.</string>
-    <string name="comment_error">Adding comment failed! Please, try again later.</string>
+    <string name="event_error">Couldn\'t retrieve event! Try again later.</string>
+    <string name="events_error">Couldn\'t retrieve events! Try again later.</string>
+    <string name="comments_error">Couldn\'t retrieve comments! Try again later.</string>
+    <string name="comment_add_error">Adding comment failed! Please, try again later.</string>
     <string name="vote_error">Adding vote failed! Please, try again later.</string>
     <string name="empty_votes">There are no votes to be displayed.</string>
     <string name="empty_comments">There are no comments to be displayed.</string>
+    <string name="empty_events">There are no events to be displayed.</string>
     <string name="up_vote_error">Couldn\'t upvote! Please, try again later.</string>
     <string name="down_vote_error">Couldn\'t downvote! Please, try again later.</string>
     <string name="need_to_login">You need to login to access this feature!</string>
+    <string name="profile_error">Couldn\'t retrieve profile! Try again later.</string>
 
     <!--Main Activity-->
     <string name="search">Search</string>

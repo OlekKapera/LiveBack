@@ -9,6 +9,8 @@ const val BUNDLE_EVENT_COMMENT = "Event About Bundle Key"
 const val BUNDLE_EVENT_VOTE = "Event Vote Bundle Key"
 const val BUNDLE_EVENT_VOTE_UID = "Event Vote UID Bundle Key"
 const val BUNDLE_EVENT_DIALOG_TYPE = "Event Dialog Type Bundle Key"
+const val BUNDLE_PROFILE_USER = "Bundle Profile User"
+const val BUNDLE_PROFILE_EVENTS = "Bundle Profile Events"
 
 const val TAG_REGISTER_DIALOG = "Register Dialog Tag"
 const val TAG_ADD_FEEDBACK = "Add Feedback Tag"

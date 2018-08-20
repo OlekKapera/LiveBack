@@ -11,6 +11,7 @@ import com.aleksanderkapera.liveback.model.User
 import com.aleksanderkapera.liveback.ui.activity.AddEventActivity
 import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.activity.SigningActivity
+import com.aleksanderkapera.liveback.ui.fragment.ProfileFragment
 import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.Glide
 import com.firebase.ui.storage.images.FirebaseImageLoader
@@ -38,7 +39,7 @@ class NavigationViewHelper(private val activity: MainActivity, private val drawe
         if (LoggedUser.uid.isEmpty())
             Toast.makeText(activity, needToLogin, Toast.LENGTH_SHORT).show()
         else
-            Toast.makeText(activity, "PROFILE", Toast.LENGTH_SHORT).show()
+            activity.showFragment(ProfileFragment.newInstance(LoggedUser.uid))
     }
 
     private val onAddEventClick = View.OnClickListener {

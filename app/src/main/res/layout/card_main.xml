@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/spacing16"
+    android:layout_marginBottom="@dimen/spacing12"
+    android:layout_marginTop="@dimen/spacing4"
     app:cardCornerRadius="10dp"
     app:cardPreventCornerOverlap="false"
     app:cardUseCompatPadding="true">
@@ -53,10 +54,10 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:fontFamily="sans-serif-light"
-            tools:text="Mari Sheibley"
             android:textSize="@dimen/text18"
             app:layout_constraintStart_toEndOf="@+id/cardMain_image_profile"
-            app:layout_constraintTop_toBottomOf="@+id/cardMain_image_background" />
+            app:layout_constraintTop_toBottomOf="@+id/cardMain_image_background"
+            tools:text="Mari Sheibley" />
 
         <TextView
             android:id="@+id/cardMain_text_date"
@@ -64,23 +65,23 @@
             android:layout_height="0dp"
             android:layout_marginEnd="@dimen/spacing8"
             android:gravity="center"
-            tools:text="24 Nov 2018"
             android:textColor="@color/darkGrey"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="@+id/cardMain_text_name"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/cardMain_text_name" />
+            app:layout_constraintTop_toTopOf="@+id/cardMain_text_name"
+            tools:text="24 Nov 2018" />
 
         <TextView
             android:id="@+id/cardMain_text_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing16"
-            tools:text="The Glossary of Telescopes"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/cardMain_guideline_vertical"
-            app:layout_constraintTop_toBottomOf="@+id/cardMain_image_profile" />
+            app:layout_constraintTop_toBottomOf="@+id/cardMain_image_profile"
+            tools:text="The Glossary of Telescopes" />
 
         <TextView
             android:id="@+id/cardMain_text_description"
@@ -88,11 +89,11 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/spacing16"
             android:layout_marginTop="@dimen/spacing8"
-            tools:text="Buying the right telescope to take your love of astronomy to the next level is a big homework like this, you will find just the right telescope for this next big step in the evolution of your passion for astronomy."
             android:textSize="@dimen/text12"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/cardMain_guideline_vertical"
-            app:layout_constraintTop_toBottomOf="@id/cardMain_text_title" />
+            app:layout_constraintTop_toBottomOf="@id/cardMain_text_title"
+            tools:text="Buying the right telescope to take your love of astronomy to the next level is a big homework like this, you will find just the right telescope for this next big step in the evolution of your passion for astronomy." />
 
         <View
             android:id="@+id/cardMain_line_divider"
@@ -111,40 +112,40 @@
             android:layout_marginBottom="@dimen/spacing8"
             android:layout_marginTop="@dimen/spacing8"
             android:fontFamily="sans-serif-black"
-            tools:text="Presentation"
             android:textAllCaps="true"
             android:textColor="@color/categoryBlue"
             android:textSize="@dimen/text12"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/cardMain_guideline_vertical"
-            app:layout_constraintTop_toBottomOf="@+id/cardMain_line_divider" />
+            app:layout_constraintTop_toBottomOf="@+id/cardMain_line_divider"
+            tools:text="Presentation" />
 
         <TextView
             android:id="@+id/cardMain_text_favourite"
             style="@style/CardIconText"
             android:drawableStart="@drawable/ic_heart_grey"
-            tools:text="164"
             app:layout_constraintBottom_toBottomOf="@+id/cardMain_text_category"
             app:layout_constraintEnd_toStartOf="@+id/cardMain_text_feedback"
-            app:layout_constraintTop_toTopOf="@+id/cardMain_text_category" />
+            app:layout_constraintTop_toTopOf="@+id/cardMain_text_category"
+            tools:text="164" />
 
         <TextView
             android:id="@+id/cardMain_text_feedback"
             style="@style/CardIconText"
             android:drawableStart="@drawable/ic_feedback_grey"
-            tools:text="31"
             app:layout_constraintBottom_toBottomOf="@+id/cardMain_text_favourite"
             app:layout_constraintEnd_toStartOf="@+id/cardMain_text_vote"
-            app:layout_constraintTop_toTopOf="@+id/cardMain_text_favourite" />
+            app:layout_constraintTop_toTopOf="@+id/cardMain_text_favourite"
+            tools:text="31" />
 
         <TextView
             android:id="@+id/cardMain_text_vote"
             style="@style/CardIconText"
             android:drawableStart="@drawable/ic_questionmark_grey"
-            tools:text="82"
             app:layout_constraintBottom_toBottomOf="@+id/cardMain_text_feedback"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/cardMain_text_feedback" />
+            app:layout_constraintTop_toTopOf="@+id/cardMain_text_feedback"
+            tools:text="82" />
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

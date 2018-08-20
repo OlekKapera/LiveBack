@@ -16,6 +16,7 @@ import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.Comment
 import com.aleksanderkapera.liveback.model.Event
 import com.aleksanderkapera.liveback.model.Vote
+import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.ui.widget.EmptyScreenView
 import com.aleksanderkapera.liveback.util.*
@@ -45,7 +46,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     private val mErrorString = R.string.event_error.asString()
     private val mCommentSuccString = R.string.comment_successful.asString()
     private val mVoteSuccString = R.string.vote_successful.asString()
-    private val mCommentFailString = R.string.comment_error.asString()
+    private val mCommentFailString = R.string.comment_add_error.asString()
     private val mVoteFailString = R.string.vote_error.asString()
 
     private var isFaded = false
@@ -164,6 +165,8 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                 event_image_profile.setImageDrawable(R.drawable.ic_round_user.asDrawable())
 
             event_text_eventName.text = event.title
+
+            event_image_profile.setOnClickListener { (activity as MainActivity).showFragment(ProfileFragment.newInstance(event.userUid)) }
         }
     }
 

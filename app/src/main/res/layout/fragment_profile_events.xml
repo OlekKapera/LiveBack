@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/eventComment_recycler_comments"
+        android:id="@+id/profileEvents_recycler_events"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:overScrollMode="never"
@@ -13,10 +13,10 @@
         android:paddingStart="@dimen/spacing8" />
 
     <com.aleksanderkapera.liveback.ui.widget.EmptyScreenView
-        android:id="@+id/eventComment_view_emptyScreen"
+        android:id="@+id/profileEvents_view_emptyScreen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing32"
         app:layout_constraintTop_toTopOf="parent"
-        app:message="@string/empty_comments" />
+        app:message="@string/empty_events" />
 </android.support.constraint.ConstraintLayout>

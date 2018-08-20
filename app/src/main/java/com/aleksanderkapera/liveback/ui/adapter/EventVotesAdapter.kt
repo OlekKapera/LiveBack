@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.Vote
+import com.aleksanderkapera.liveback.ui.activity.MainActivity
+import com.aleksanderkapera.liveback.ui.fragment.ProfileFragment
 import com.aleksanderkapera.liveback.ui.widget.LoadView
 import com.aleksanderkapera.liveback.util.LoggedUser
 import com.aleksanderkapera.liveback.util.asColor
@@ -53,6 +55,8 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val loader: 
             itemView.eventVote_text_description.text = item.text
             itemView.eventVote_text_votes.text = convertVotesDifference()
 
+            itemView.eventVote_image_profile.setOnClickListener { (context as MainActivity).showFragment(ProfileFragment.newInstance(item.voteAuthorUid)) }
+
             item.profilePictureUrl.let {
                 if (it.isNotEmpty()) {
                     mStorageRef = FirebaseStorage.getInstance().getReference(it)
@@ -77,6 +81,7 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val loader: 
         }
 
         override fun onClick(p0: View?) {
+            itemView.eventVote_image_profile.setOnClickListener(this)
         }
 
         /**

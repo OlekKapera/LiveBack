@@ -17,8 +17,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/eventComment_image_profile"
-            android:layout_width="@dimen/event_circleImage_size"
-            android:layout_height="@dimen/event_circleImage_size"
+            android:layout_width="@dimen/collapsing_circleImage_size"
+            android:layout_height="@dimen/collapsing_circleImage_size"
             tools:src="@drawable/mari_profile"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
