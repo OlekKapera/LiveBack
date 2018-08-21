@@ -23,7 +23,10 @@ class AddFeedbackDialogFragment : DialogFragment() {
     private val mSendString = R.string.send.asString()
     private val mCancelString = R.string.cancel.asString()
     private val mReviewString = R.string.review.asString()
+    private val mDescriptionString = R.string.description.asString()
     private val mRequiredField = R.string.required_field.asString()
+    private val mAddComment = R.string.add_comment.asString()
+    private val mAddVote = R.string.add_vote.asString()
 
     private lateinit var mDialogType: AddFeedbackDialogType
     private lateinit var mFeedbackSentListener: FeedbackSentListener
@@ -65,7 +68,7 @@ class AddFeedbackDialogFragment : DialogFragment() {
         rootView.feedbackDialog_input_subject.inputType = InputType.TYPE_TEXT_FLAG_MULTI_LINE
         rootView.feedbackDialog_input_subject.setHorizontallyScrolling(false)
         rootView.feedbackDialog_input_subject.maxLines = 3
-        rootView.feedbackDialog_input_subject.keyListener = TextKeyListener(TextKeyListener.Capitalize.SENTENCES,true)
+        rootView.feedbackDialog_input_subject.keyListener = TextKeyListener(TextKeyListener.Capitalize.SENTENCES, true)
 
         // set keyboard button to done and capitalize sentence
         rootView.feedbackDialog_input_description.imeOptions = EditorInfo.IME_ACTION_DONE
@@ -73,18 +76,23 @@ class AddFeedbackDialogFragment : DialogFragment() {
         rootView.feedbackDialog_input_description.inputType = InputType.TYPE_TEXT_FLAG_MULTI_LINE
         rootView.feedbackDialog_input_description.setHorizontallyScrolling(false)
         rootView.feedbackDialog_input_description.maxLines = 10
-        rootView.feedbackDialog_input_description.keyListener = TextKeyListener(TextKeyListener.Capitalize.SENTENCES,true)
+        rootView.feedbackDialog_input_description.keyListener = TextKeyListener(TextKeyListener.Capitalize.SENTENCES, true)
 
         // adjust layout according to comment or vote selection
         if (mDialogType == AddFeedbackDialogType.COMMENT) {
             rootView.feedbackDialog_layout_subject.visibility = View.GONE
             rootView.feedbackDialog_inputLayout_description.hint = mReviewString
+            rootView.feedbackDialog_text_title.text = mAddComment
+        } else {
+            rootView.feedbackDialog_layout_subject.visibility = View.VISIBLE
+            rootView.feedbackDialog_inputLayout_description.hint = mDescriptionString
+            rootView.feedbackDialog_text_title.text = mAddVote
         }
 
         val dialog = AlertDialog.Builder(context)
                 .setView(rootView)
                 .setCancelable(true)
-                .setPositiveButton(mSendString,null)
+                .setPositiveButton(mSendString, null)
                 .setNegativeButton(mCancelString) { _, _ ->
                     dismiss()
                 }

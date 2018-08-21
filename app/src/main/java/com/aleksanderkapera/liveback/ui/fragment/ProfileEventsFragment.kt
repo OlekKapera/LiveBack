@@ -35,9 +35,13 @@ class ProfileEventsFragment : BaseFragment() {
 
     override fun getLayoutRes(): Int = R.layout.fragment_profile_events
 
-    override fun setupViews(rootView: View) {
-        mEvents = arguments?.getSerializable(BUNDLE_PROFILE_EVENTS) as MutableList<Event>
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
+        mEvents = arguments?.getSerializable(BUNDLE_PROFILE_EVENTS) as MutableList<Event>
+    }
+
+    override fun setupViews(rootView: View) {
         context?.let {
             mEventsAdapter = EventsRecyclerAdapter(it)
             mEventsAdapter.addData(mEvents)

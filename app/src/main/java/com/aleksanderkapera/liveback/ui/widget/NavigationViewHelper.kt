@@ -36,10 +36,11 @@ class NavigationViewHelper(private val activity: MainActivity, private val drawe
 
     private val onProfileClick = View.OnClickListener {
         drawer.closeDrawer(Gravity.START)
-        if (LoggedUser.uid.isEmpty())
-            Toast.makeText(activity, needToLogin, Toast.LENGTH_SHORT).show()
-        else
-            activity.showFragment(ProfileFragment.newInstance(LoggedUser.uid))
+        when {
+            LoggedUser.uid.isEmpty() -> Toast.makeText(activity, needToLogin, Toast.LENGTH_SHORT).show()
+            (activity.getLastFragment() as? ProfileFragment)?.mUserid == LoggedUser.uid -> activity.showFragment(ProfileFragment.newInstance(LoggedUser.uid))
+            else -> activity.putFragment(ProfileFragment.newInstance(LoggedUser.uid),false)
+        }
     }
 
     private val onAddEventClick = View.OnClickListener {

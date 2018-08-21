@@ -78,6 +78,7 @@
     <string name="months_short">mo</string>
     <string name="years_short">y</string>
     <string name="add_comment">Add comment</string>
+    <string name="add_vote">Add vote</string>
     <string name="add_suggestion">Add suggestion</string>
     <string name="subject">Subject</string>
     <string name="comment_successful">Comment added successfully!</string>

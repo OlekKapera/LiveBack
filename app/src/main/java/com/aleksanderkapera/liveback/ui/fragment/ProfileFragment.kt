@@ -42,7 +42,7 @@ class ProfileFragment : BaseFragment() {
     private var currentOffset = 0
     private val breakPoint = -dpToPx(48)
 
-    private var mUserid = ""
+    var mUserid = ""
     private var mUser: User? = null
     private var mComments = mutableListOf<Comment>()
     private var mEvents = mutableListOf<Event>()

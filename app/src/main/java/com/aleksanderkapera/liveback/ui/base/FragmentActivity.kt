@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import com.aleksanderkapera.liveback.R
 import java.util.*
-import kotlin.NoSuchElementException
 import kotlin.collections.ArrayList
 
 /**
@@ -13,7 +12,7 @@ import kotlin.collections.ArrayList
  * customizable and have more features compared to android's fragment manager backstack.
  * NOTE: Always set your activity container as "container"
  */
-abstract class FragmentActivity: BaseActivity() {
+abstract class FragmentActivity : BaseActivity() {
 
     interface OnBackPressListener {
         /**
@@ -28,17 +27,17 @@ abstract class FragmentActivity: BaseActivity() {
 
         fragmentBackStack = LinkedList()
 
-        if(savedInstanceState == null){
+        if (savedInstanceState == null) {
             putDefaultFragment()
         } else {
             val frags = savedInstanceState.getStringArrayList(ARG_SAVE_FRAGMENTS)
 
-            if(frags.isNotEmpty()){
+            if (frags.isNotEmpty()) {
                 fragmentBackStack.clear()
                 val transaction = supportFragmentManager.beginTransaction()
-                for(fragmentString: String in frags){
+                for (fragmentString: String in frags) {
                     val fragment = supportFragmentManager.findFragmentByTag(fragmentString)
-                    if(fragment != null) transaction.hide(fragment)
+                    if (fragment != null) transaction.hide(fragment)
                     fragmentBackStack.add(fragment as BaseFragment)
                 }
                 transaction.show(fragmentBackStack.last)
@@ -55,21 +54,23 @@ abstract class FragmentActivity: BaseActivity() {
 
 
         // do not allow back button if fragment does not allow it.
-        if(!topFragment.allowBackButton())return
+        if (!topFragment.allowBackButton()) return
 
-        if(topFragment is OnBackPressListener){
+        if (topFragment is OnBackPressListener) {
             val consumed = (topFragment as OnBackPressListener).onBackPressed()
-            if(consumed)return
+            if (consumed) return
         }
 
         popFragment()
 
         // finish activity if no fragment in backstack
-        if(fragmentBackStack.isEmpty()) finish()
+        if (fragmentBackStack.isEmpty()) finish()
     }
 
     //region FRAGMENTS
-    protected fun putDefaultFragment() {putFragment(getDefaultFragment(),true)}
+    protected fun putDefaultFragment() {
+        putFragment(getDefaultFragment(), true)
+    }
 
     protected abstract fun getDefaultFragment(): BaseFragment
 
@@ -81,26 +82,26 @@ abstract class FragmentActivity: BaseActivity() {
      * @param fragment       fragment to show
      * @param clearBackStack clear fragment back stack
      */
-    fun putFragment(fragment: BaseFragment, clearBackStack: Boolean, removeLast: Boolean = false){
+    fun putFragment(fragment: BaseFragment, clearBackStack: Boolean, removeLast: Boolean = false) {
         val transaction = supportFragmentManager
                 .beginTransaction()
                 .setCustomAnimations(fragment.getEnterAnimation(), fragment.getExitAnimation())
 
         try {
             val top = fragmentBackStack.last
-            if(removeLast){
+            if (removeLast) {
                 fragmentBackStack.remove(top)
                 transaction.remove(top)
             } else {
                 transaction.hide(top)
             }
-        } catch (e: NoSuchElementException){
+        } catch (e: NoSuchElementException) {
             // no element in stack
         }
 
         //clear backstack if needed
-        if(clearBackStack){
-            for (f: Fragment in fragmentBackStack){
+        if (clearBackStack) {
+            for (f: Fragment in fragmentBackStack) {
                 transaction.remove(f)
             }
             fragmentBackStack.clear()
@@ -112,19 +113,19 @@ abstract class FragmentActivity: BaseActivity() {
         transaction.commit()
     }
 
-    fun getLastFragment(): BaseFragment?{
+    fun getLastFragment(): BaseFragment? {
         return try {
             fragmentBackStack.last
-        } catch (e: NoSuchElementException){
+        } catch (e: NoSuchElementException) {
             e.printStackTrace()
             null
         }
     }
 
-    override  fun onSaveInstanceState(outState: Bundle) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         val fragments = ArrayList<String>()
-        for(f: Fragment in fragmentBackStack){
+        for (f: Fragment in fragmentBackStack) {
             fragments.add(f.javaClass.name)
         }
         outState.putStringArrayList(ARG_SAVE_FRAGMENTS, fragments)
@@ -134,8 +135,8 @@ abstract class FragmentActivity: BaseActivity() {
         private const val ARG_SAVE_FRAGMENTS = "saved_fragments"
     }
 
-    fun popFragment(){
-        try{
+    fun popFragment() {
+        try {
             // fragment on top - remove this fragment
             val top = fragmentBackStack.last
             fragmentBackStack.removeLast()
@@ -147,18 +148,18 @@ abstract class FragmentActivity: BaseActivity() {
                     .setCustomAnimations(top.getEnterAnimation(), top.getExitAnimation())
                     .remove(top)
                     .show(toShow).commit()
-        } catch (e: NoSuchElementException){
+        } catch (e: NoSuchElementException) {
             // no element in stack
         }
     }
 
-    fun showTopFragment(){
+    fun showTopFragment() {
         try {
             supportFragmentManager.beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .show(fragmentBackStack.last)
                     .commit()
-        } catch (e: NoSuchElementException){
+        } catch (e: NoSuchElementException) {
             e.printStackTrace()
         }
     }
@@ -166,18 +167,21 @@ abstract class FragmentActivity: BaseActivity() {
     override fun showFragment(fragment: BaseFragment) {
         val toShow: BaseFragment? = supportFragmentManager.findFragmentByTag(fragment.javaClass.name) as BaseFragment?
 
-        if (toShow != null) {
-            supportFragmentManager
-                    .beginTransaction()
-                    .show(toShow)
-                    .commit()
-            fragmentBackStack.removeAt(fragmentBackStack.indexOf(toShow))
-            fragmentBackStack.add(toShow)
-        } else {
-            putFragment(fragment, false)
+        if (toShow != getLastFragment()) {
+            if (toShow != null) {
+                popFragment()
+                supportFragmentManager
+                        .beginTransaction()
+                        .show(toShow)
+                        .commit()
+                fragmentBackStack.removeAt(fragmentBackStack.indexOf(toShow))
+                fragmentBackStack.add(toShow)
+            } else {
+                putFragment(fragment, false)
+            }
         }
     }
 
-    fun clearFragmentBackStack() =  fragmentBackStack.clear()
+    fun clearFragmentBackStack() = fragmentBackStack.clear()
     //endregion
 }
