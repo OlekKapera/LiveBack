@@ -1,6 +1,7 @@
 package com.aleksanderkapera.liveback.ui.fragment
 
 import android.animation.Animator
+import android.app.Activity
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
@@ -10,6 +11,7 @@ import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.Comment
 import com.aleksanderkapera.liveback.model.Event
 import com.aleksanderkapera.liveback.model.User
+import com.aleksanderkapera.liveback.ui.activity.SettingsActivity
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.ui.widget.EmptyScreenView
 import com.aleksanderkapera.liveback.util.*
@@ -94,6 +96,8 @@ class ProfileFragment : BaseFragment() {
         setToolbarAnimation()
         setupTabs()
         getProfile()
+
+        profile_button_settings.setOnClickListener { SettingsActivity.startActivity(activity as Activity) }
     }
 
     /**
@@ -105,9 +109,9 @@ class ProfileFragment : BaseFragment() {
             profile_text_profileName.text = user.username
 
             if (user.uid == LoggedUser.uid)
-                menuSettings.visibility = View.VISIBLE
+                profile_button_settings.visibility = View.VISIBLE
             else
-                menuSettings.visibility = View.GONE
+                profile_button_settings.visibility = View.GONE
 
             user.profilePicPath?.let {
                 val storageRef = FirebaseStorage.getInstance().getReference(it)

@@ -89,6 +89,17 @@
     <string name="category">Category</string>
     <string name="successful_add">Event added successfully!</string>
 
+    <!--Settings-->
+    <string name="change_password">Change Password</string>
+    <string name="change_password_message">If you want to change your password, tap here.</string>
+    <string name="notifications">Notifications</string>
+    <string name="notification_comment_your">Comment added on your event</string>
+    <string name="notification_comment_fav">Comment added on favorited event</string>
+    <string name="notification_vote_your">Vote added on your event</string>
+    <string name="notification_vote_fav">Vote added on favorited event</string>
+    <string name="reminder">Reminder</string>
+    <string name="name">Name</string>
+
     <!--Categories-->
     <string name="concert">Concert</string>
     <string name="free_time">Free Time</string>

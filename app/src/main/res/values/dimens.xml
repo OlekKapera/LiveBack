@@ -48,4 +48,8 @@
 
     <!--profile-->
     <dimen name="profile_circleImage_size">82dp</dimen>
+
+    <!--settings-->
+    <dimen name="settings_circleImage_size">128dp</dimen>
+
 </resources>

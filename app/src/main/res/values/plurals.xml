@@ -5,4 +5,12 @@
         <item quantity="one">%d person likes this event</item>
         <item quantity="other">%d people like this event</item>
     </plurals>
+
+    <plurals name="settings_reminder">
+        <item quantity="zero">%d minutes before</item>
+        <item quantity="one">%d minute before</item>
+        <item quantity="few">%d minutes before</item>
+        <item quantity="many">%d minutes before</item>
+        <item quantity="other">%d minutes before</item>
+    </plurals>
 </resources>

@@ -48,9 +48,14 @@
 
         <activity
             android:name=".ui.activity.AddEventActivity"
-            android:label="@string/title"
-            android:theme="@style/VisibleNavigation"
-            android:screenOrientation="sensorPortrait"/>
+            android:label="@string/app_name"
+            android:screenOrientation="sensorPortrait"
+            android:theme="@style/VisibleNavigation" />
+
+        <activity
+            android:name=".ui.activity.SettingsActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="sensorPortrait" />
     </application>
 
 </manifest>

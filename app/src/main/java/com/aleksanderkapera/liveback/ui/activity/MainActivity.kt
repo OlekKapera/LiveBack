@@ -135,6 +135,12 @@ class MainActivity : FragmentActivity() {
                             mStorageRef = FirebaseStorage.getInstance().getReference(it)
                             LoggedUser.profilePicPath = it
                         }
+
+                        LoggedUser.commentAddedOnYour = user.commentAddedOnYour
+                        LoggedUser.commentAddedOnFav = user.commentAddedOnFav
+                        LoggedUser.voteAddedOnYour = user.voteAddedOnYour
+                        LoggedUser.voteAddedOnFav = user.voteAddedOnFav
+                        LoggedUser.reminder = user.reminder
                     }
                 }
                 else -> showToast(R.string.getUser_error)
