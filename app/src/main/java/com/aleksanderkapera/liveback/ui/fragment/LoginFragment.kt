@@ -11,6 +11,7 @@ import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.activity.SigningActivity
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
+import com.aleksanderkapera.liveback.util.asString
 import com.aleksanderkapera.liveback.util.decodeSampledBitmapFromResource
 import com.aleksanderkapera.liveback.util.getNavigationBarHeight
 import com.google.firebase.auth.FirebaseAuth
@@ -21,6 +22,8 @@ import kotlinx.android.synthetic.main.fragment_login.*
  * Created by kapera on 05-Jul-18.
  */
 class LoginFragment : BaseFragment() {
+
+    private val incorrectCredentials = R.string.incorrect_email_password.asString()
 
     companion object {
         fun newInstance(): BaseFragment = LoginFragment()
@@ -57,7 +60,7 @@ class LoginFragment : BaseFragment() {
             if (it.isSuccessful) {
                 MainActivity.startActivity(activity as Activity, false)
             } else {
-                Toast.makeText(context, "Error with logging in", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, incorrectCredentials, Toast.LENGTH_SHORT).show()
             }
             //hide loader
             (activity as SigningActivity).signing_view_load.hide()

@@ -343,6 +343,10 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                         it.add(commentPojo)
                         mCommentFragment.commentsAdapter.replaceData(it)
                     }
+                    mEvent?.let {
+                        it.comments++
+                        mFireStore.document("events/${mEvent?.eventUid}").update("comments", it.comments)
+                    }
                 }
                 else -> showToast(mCommentFailString)
             }
@@ -367,6 +371,10 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                     mVotes?.let {
                         it.add(votePojo)
                         mVotesFragment.votesAdapter.replaceData(it)
+                    }
+                    mEvent?.let {
+                        it.votes++
+                        mFireStore.document("events/${it.eventUid}").update("votes", it.votes)
                     }
                 }
                 else -> showToast(mVoteFailString)

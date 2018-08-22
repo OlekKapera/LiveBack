@@ -7,6 +7,7 @@
     <string name="send">Send</string>
 
     <!-- Error messages-->
+    <string name="generic_error">Something went wrong! Please, try again later</string>
     <string name="required_field">This field is required!</string>
     <string name="incorrect_email">Enter correct email address</string>
     <string name="short_password">Password needs to be at least 8 characters long</string>
@@ -29,6 +30,9 @@
     <string name="down_vote_error">Couldn\'t downvote! Please, try again later.</string>
     <string name="need_to_login">You need to login to access this feature!</string>
     <string name="profile_error">Couldn\'t retrieve profile! Try again later.</string>
+    <string name="old_matches_new">Old password cannot match new one!</string>
+    <string name="incorrect_email_password">Incorrect email or password!</string>
+    <string name="incorrect_password">Enter correct old password!</string>
 
     <!--Main Activity-->
     <string name="search">Search</string>
@@ -102,6 +106,7 @@
     <string name="old_password">Old password</string>
     <string name="new_password">New password</string>
     <string name="confirm_pass">Confirm password</string>
+    <string name="success_password_change">Password changed successfully.</string>
 
     <!--Categories-->
     <string name="concert">Concert</string>
