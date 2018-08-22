@@ -6,7 +6,10 @@ import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.ui.base.BaseActivity
+import com.aleksanderkapera.liveback.ui.fragment.ChangePasswordDialogFragment
+import com.aleksanderkapera.liveback.util.TAG_SETTINGS_CHANGE_PASSWORD
 import com.aleksanderkapera.liveback.util.getStatusBarHeight
+import kotlinx.android.synthetic.main.activity_settings.*
 import kotlinx.android.synthetic.main.app_bar_settings.*
 
 /**
@@ -41,5 +44,6 @@ class SettingsActivity : BaseActivity() {
         settings_layout_toolbar.layoutParams = toolbarParams
 
         settings_button_accept.setOnClickListener { }
+        settings_container_password.setOnClickListener { ChangePasswordDialogFragment.newInstance().show(supportFragmentManager, TAG_SETTINGS_CHANGE_PASSWORD) }
     }
 }

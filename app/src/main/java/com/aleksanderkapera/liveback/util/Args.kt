@@ -14,6 +14,8 @@ const val BUNDLE_PROFILE_EVENTS = "Bundle Profile Events"
 
 const val TAG_REGISTER_DIALOG = "Register Dialog Tag"
 const val TAG_ADD_FEEDBACK = "Add Feedback Tag"
+const val TAG_SETTINGS_CHANGE_PASSWORD = "Settings Change Password Tag"
+const val TAG_SETTINGS_REMINDER = "Settings Reminder Tag"
 
 const val REQUEST_TARGET_EVENT_FRAGMENT = 25
 

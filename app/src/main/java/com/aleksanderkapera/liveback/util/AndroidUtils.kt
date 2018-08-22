@@ -7,6 +7,7 @@ import android.os.Build
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.CoordinatorLayout
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.res.ResourcesCompat
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
@@ -32,6 +33,8 @@ fun Int.asString() = context.getString(this)
 fun Int.asStringArray() = resources.getStringArray(this)
 
 fun Int.asPluralsString(number: Int) = resources.getQuantityString(this, number,number)
+
+fun Int.asFont() = ResourcesCompat.getFont(context,this)
 
 fun hideKeyboard(activity: Activity) {
     val view = activity.currentFocus
