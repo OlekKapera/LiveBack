@@ -36,7 +36,7 @@ class ProfileFragment : BaseFragment() {
     private val mEventsErrorString = R.string.events_error.asString()
     private val mCommentsErrorString = R.string.comments_error.asString()
 
-    private val mProfilePhoto = R.drawable.ic_round_user_solid.asDrawable()
+    private val mProfilePhoto = R.drawable.ic_user_round_solid.asDrawable()
     private val mBackgroundPhoto = R.drawable.bg_add_event.asDrawable()
 
     private var isFaded = false

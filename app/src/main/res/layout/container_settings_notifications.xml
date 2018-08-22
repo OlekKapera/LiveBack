@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardUseCompatPadding="true"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/spacing16">
+
+        <TextView
+            android:id="@+id/settings_text_notiTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@string/font_family_bold"
+            android:text="@string/notifications"
+            android:textSize="@dimen/text18"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/settings_text_yourEvent"
+            style="@style/SettingsNotificationText"
+            android:text="@string/notification_comment_your"
+            app:layout_constraintEnd_toStartOf="@id/settings_switch_yourEvent"
+            app:layout_constraintStart_toStartOf="@id/settings_text_notiTitle"
+            app:layout_constraintTop_toBottomOf="@id/settings_text_notiTitle" />
+
+        <Switch
+            android:id="@+id/settings_switch_yourEvent"
+            style="@style/SettingsNotificationSwitch"
+            app:layout_constraintBottom_toBottomOf="@id/settings_text_yourEvent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/settings_text_yourEvent" />
+
+        <TextView
+            android:id="@+id/settings_text_favEvent"
+            style="@style/SettingsNotificationText"
+            android:text="@string/notification_comment_fav"
+            app:layout_constraintEnd_toStartOf="@id/settings_switch_favEvent"
+            app:layout_constraintStart_toStartOf="@id/settings_text_yourEvent"
+            app:layout_constraintTop_toBottomOf="@id/settings_text_yourEvent" />
+
+        <Switch
+            android:id="@+id/settings_switch_favEvent"
+            style="@style/SettingsNotificationSwitch"
+            app:layout_constraintBottom_toBottomOf="@id/settings_text_favEvent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/settings_text_favEvent" />
+
+        <TextView
+            android:id="@+id/settings_text_yourVote"
+            style="@style/SettingsNotificationText"
+            android:text="@string/notification_vote_your"
+            app:layout_constraintEnd_toStartOf="@id/settings_switch_yourVote"
+            app:layout_constraintStart_toStartOf="@id/settings_text_favEvent"
+            app:layout_constraintTop_toBottomOf="@id/settings_text_favEvent" />
+
+        <Switch
+            android:id="@+id/settings_switch_yourVote"
+            style="@style/SettingsNotificationSwitch"
+            app:layout_constraintBottom_toBottomOf="@id/settings_text_yourVote"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/settings_text_yourVote" />
+
+        <TextView
+            android:id="@+id/settings_text_favVote"
+            style="@style/SettingsNotificationText"
+            android:text="@string/notification_vote_fav"
+            app:layout_constraintEnd_toStartOf="@id/settings_switch_favVote"
+            app:layout_constraintStart_toStartOf="@id/settings_text_yourVote"
+            app:layout_constraintTop_toBottomOf="@id/settings_text_yourVote" />
+
+        <Switch
+            android:id="@+id/settings_switch_favVote"
+            style="@style/SettingsNotificationSwitch"
+            app:layout_constraintBottom_toBottomOf="@id/settings_text_favVote"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/settings_text_favVote" />
+    </android.support.constraint.ConstraintLayout>
+</android.support.v7.widget.CardView>

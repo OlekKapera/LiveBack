@@ -162,7 +162,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                         .load(FirebaseStorage.getInstance().getReference(event.userProfilePath))
                         .into(event_image_profile)
             } else
-                event_image_profile.setImageDrawable(R.drawable.ic_round_user.asDrawable())
+                event_image_profile.setImageDrawable(R.drawable.ic_user_round.asDrawable())
 
             event_text_eventName.text = event.title
 

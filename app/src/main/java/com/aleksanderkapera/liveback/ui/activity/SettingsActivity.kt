@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
-import android.support.design.widget.CollapsingToolbarLayout
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.ui.base.BaseActivity
 import com.aleksanderkapera.liveback.util.getStatusBarHeight

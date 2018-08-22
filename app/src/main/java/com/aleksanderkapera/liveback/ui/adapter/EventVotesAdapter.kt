@@ -65,7 +65,7 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val loader: 
                             .load(mStorageRef)
                             .into(itemView.eventVote_image_profile)
                 } else
-                    itemView.eventVote_image_profile.setImageDrawable(R.drawable.ic_round_user_solid.asDrawable())
+                    itemView.eventVote_image_profile.setImageDrawable(R.drawable.ic_user_round_solid.asDrawable())
             }
 
             if (item.upVotes.contains(LoggedUser.uid)) {

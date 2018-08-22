@@ -8,7 +8,6 @@ import com.aleksanderkapera.liveback.model.Comment
 import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.fragment.ProfileFragment
 import com.aleksanderkapera.liveback.util.asDrawable
-import com.aleksanderkapera.liveback.util.context
 import com.aleksanderkapera.liveback.util.longToStringAgo
 import com.bumptech.glide.Glide
 import com.firebase.ui.storage.images.FirebaseImageLoader
@@ -47,7 +46,7 @@ class EventCommentsAdapter(val context: Context) : BaseRecyclerAdapter<EventComm
                             .load(mStorageRef)
                             .into(itemView.eventComment_image_profile)
                 } else
-                    itemView.eventComment_image_profile.setImageDrawable(R.drawable.ic_round_user_solid.asDrawable())
+                    itemView.eventComment_image_profile.setImageDrawable(R.drawable.ic_user_round_solid.asDrawable())
             }
         }
 

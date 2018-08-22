@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,7 +11,8 @@
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -22,28 +23,34 @@
                 android:layout_width="@dimen/settings_circleImage_size"
                 android:layout_height="@dimen/settings_circleImage_size"
                 android:layout_marginTop="@dimen/spacing32"
+                android:src="@drawable/ic_user_round_solid"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <include
+                android:id="@+id/settings_container_credentials"
+                style="@style/SettingsContainer"
+                layout="@layout/container_settings_credentials"
+                app:layout_constraintTop_toBottomOf="@id/settings_image_profile" />
 
-                <com.aleksanderkapera.liveback.ui.widget.InputView
-                    android:id="@+id/settings_input_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:inputHint="@string/name"
-                    app:inputIcon="@drawable/ic_profile" />
+            <include
+                android:id="@+id/settings_container_password"
+                style="@style/SettingsContainer"
+                layout="@layout/container_settings_password"
+                app:layout_constraintTop_toBottomOf="@id/settings_container_credentials" />
 
-                <com.aleksanderkapera.liveback.ui.widget.InputView
-                    android:id="@+id/settings_input_email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:inputHint="@string/name"
-                    app:inputIcon="@drawable/ic_profile" />
-            </android.support.v7.widget.CardView>
+            <include
+                android:id="@+id/settings_container_notifications"
+                style="@style/SettingsContainer"
+                layout="@layout/container_settings_notifications"
+                app:layout_constraintTop_toBottomOf="@id/settings_container_password" />
+
+            <include
+                android:id="@+id/settings_container_reminder"
+                style="@style/SettingsContainer"
+                layout="@layout/container_settings_reminder"
+                app:layout_constraintTop_toBottomOf="@id/settings_container_notifications" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v4.widget.NestedScrollView>
-</android.support.constraint.ConstraintLayout>
+</android.support.design.widget.CoordinatorLayout>

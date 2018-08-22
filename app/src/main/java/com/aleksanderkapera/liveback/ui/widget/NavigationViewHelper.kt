@@ -10,6 +10,7 @@ import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.User
 import com.aleksanderkapera.liveback.ui.activity.AddEventActivity
 import com.aleksanderkapera.liveback.ui.activity.MainActivity
+import com.aleksanderkapera.liveback.ui.activity.SettingsActivity
 import com.aleksanderkapera.liveback.ui.activity.SigningActivity
 import com.aleksanderkapera.liveback.ui.fragment.ProfileFragment
 import com.aleksanderkapera.liveback.util.*
@@ -39,7 +40,7 @@ class NavigationViewHelper(private val activity: MainActivity, private val drawe
         when {
             LoggedUser.uid.isEmpty() -> Toast.makeText(activity, needToLogin, Toast.LENGTH_SHORT).show()
             (activity.getLastFragment() as? ProfileFragment)?.mUserid == LoggedUser.uid -> activity.showFragment(ProfileFragment.newInstance(LoggedUser.uid))
-            else -> activity.putFragment(ProfileFragment.newInstance(LoggedUser.uid),false)
+            else -> activity.putFragment(ProfileFragment.newInstance(LoggedUser.uid), false)
         }
     }
 
@@ -56,7 +57,7 @@ class NavigationViewHelper(private val activity: MainActivity, private val drawe
         if (LoggedUser.uid.isEmpty())
             Toast.makeText(activity, needToLogin, Toast.LENGTH_SHORT).show()
         else
-            Toast.makeText(activity, "SETTINGS", Toast.LENGTH_SHORT).show()
+            SettingsActivity.startActivity(activity)
     }
 
     /**
@@ -88,6 +89,7 @@ class NavigationViewHelper(private val activity: MainActivity, private val drawe
 
         updateViews(null, null)
 
+        activity.navigation_header_image.setOnClickListener(onProfileClick)
         activity.navigation_row_events.setOnClickListener(onEventsClick)
         activity.navigation_row_profile.setOnClickListener(onProfileClick)
         activity.navigation_row_addEvent.setOnClickListener(onAddEventClick)
@@ -119,7 +121,7 @@ class NavigationViewHelper(private val activity: MainActivity, private val drawe
                     .load(profilePic)
                     .into(activity.navigation_header_image)
         } ?: run {
-            activity.navigation_header_image.setImageDrawable(R.drawable.ic_round_user.asDrawable())
+            activity.navigation_header_image.setImageDrawable(R.drawable.ic_user_round.asDrawable())
         }
     }
 

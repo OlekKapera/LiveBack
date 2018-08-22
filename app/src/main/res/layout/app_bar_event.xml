@@ -57,7 +57,7 @@
                 android:layout_width="@dimen/collapsing_circleImage_size"
                 android:layout_height="@dimen/collapsing_circleImage_size"
                 android:layout_marginTop="@dimen/spacing32"
-                tools:src="@drawable/ic_round_user"
+                tools:src="@drawable/ic_user_round"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

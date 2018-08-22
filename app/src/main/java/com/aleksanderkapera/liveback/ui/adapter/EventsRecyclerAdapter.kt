@@ -52,7 +52,7 @@ class EventsRecyclerAdapter(val context: Context) : BaseRecyclerAdapter<EventsRe
                             .load(mStorageRef)
                             .into(itemView.cardMain_image_profile)
                 } else
-                    itemView.cardMain_image_profile.setImageDrawable(R.drawable.ic_round_user_solid.asDrawable())
+                    itemView.cardMain_image_profile.setImageDrawable(R.drawable.ic_user_round_solid.asDrawable())
             }
 
             item.backgroundPicturePath?.let {
