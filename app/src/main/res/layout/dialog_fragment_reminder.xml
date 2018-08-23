@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_rounded_white">
+
+    <TextView
+        android:id="@+id/reminderDialog_text_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing16"
+        android:layout_marginTop="@dimen/spacing16"
+        android:fontFamily="@string/font_family_regular"
+        android:text="@string/add_reminder"
+        android:textSize="@dimen/text20"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/reminderDialog_view_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/spacing16"
+        android:background="@color/lightGrey"
+        app:layout_constraintTop_toBottomOf="@id/reminderDialog_text_title" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/reminderDialog_layout_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:overScrollMode="always"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@id/reminderDialog_button_negative"
+        app:layout_constraintTop_toBottomOf="@id/reminderDialog_view_line">
+
+        <RadioGroup
+            android:id="@+id/reminderDialog_layout_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/spacing24"
+            android:paddingStart="@dimen/spacing24">
+
+            <RadioButton
+                android:id="@+id/reminderDialog_button_none"
+                style="@style/SettingsReminderButton"
+                android:text="@string/none" />
+
+            <View style="@style/SettingsReminderLine" />
+
+            <RadioButton
+                android:id="@+id/reminderDialog_button_ten"
+                style="@style/SettingsReminderButton"
+                android:text="@string/ten_before" />
+
+            <View style="@style/SettingsReminderLine" />
+
+            <RadioButton
+                android:id="@+id/reminderDialog_button_thirty"
+                style="@style/SettingsReminderButton"
+                android:text="@string/thirty_before" />
+
+            <View style="@style/SettingsReminderLine" />
+
+            <RadioButton
+                android:id="@+id/reminderDialog_button_hour"
+                style="@style/SettingsReminderButton"
+                android:text="@string/hour_before" />
+
+            <View style="@style/SettingsReminderLine" />
+
+            <RadioButton
+                android:id="@+id/reminderDialog_button_twoHours"
+                style="@style/SettingsReminderButton"
+                android:text="@string/two_hours_before" />
+
+            <View style="@style/SettingsReminderLine" />
+
+            <RadioButton
+                android:id="@+id/reminderDialog_button_threeHours"
+                style="@style/SettingsReminderButton"
+                android:text="@string/three_hours_before" />
+
+            <View style="@style/SettingsReminderLine" />
+
+            <RadioButton
+                android:id="@+id/reminderDialog_button_sixHours"
+                style="@style/SettingsReminderButton"
+                android:text="@string/six_hours_before" />
+
+            <View style="@style/SettingsReminderLine" />
+
+            <RadioButton
+                android:id="@+id/reminderDialog_button_twelveHours"
+                style="@style/SettingsReminderButton"
+                android:text="@string/twelve_hours_before" />
+
+            <View style="@style/SettingsReminderLine" />
+
+            <RadioButton
+                android:id="@+id/reminderDialog_button_twentyFourHours"
+                style="@style/SettingsReminderButton"
+                android:text="@string/twenty_four_hours_before" />
+
+            <View style="@style/SettingsReminderLine" />
+        </RadioGroup>
+    </android.support.v4.widget.NestedScrollView>
+
+    <Button
+        android:id="@+id/reminderDialog_button_negative"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing16"
+        android:layout_marginEnd="@dimen/spacing24"
+        android:layout_marginStart="@dimen/spacing24"
+        android:layout_marginTop="@dimen/spacing16"
+        android:background="@drawable/bg_rounded_grey"
+        android:fontFamily="@string/font_family_regular"
+        android:text="@string/cancel"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reminderDialog_layout_scroll" />
+
+    <com.aleksanderkapera.liveback.ui.widget.LoadView
+        android:id="@+id/reminderDialog_view_load"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:elevation="20dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</android.support.constraint.ConstraintLayout>

@@ -12,7 +12,7 @@ data class User(val uid: String = "",
                 var commentAddedOnFav: Boolean = true,
                 var voteAddedOnYour: Boolean = true,
                 var voteAddedOnFav: Boolean = true,
-                var reminder: Int = 0) {
+                var reminder: Int = 60) {
     constructor() : this("", "", "", "", true,
-            true, true, true, 0)
+            true, true, true, 60)
 }

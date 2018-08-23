@@ -13,7 +13,7 @@ class LoggedUser {
         var commentAddedOnFav = true
         var voteAddedOnYour = true
         var voteAddedOnFav = true
-        var reminder = 0
+        var reminder = 60
 
         fun clear() {
             uid = ""
@@ -24,7 +24,7 @@ class LoggedUser {
             commentAddedOnFav = true
             voteAddedOnYour = true
             voteAddedOnFav = true
-            reminder = 0
+            reminder = 60
         }
     }
 }

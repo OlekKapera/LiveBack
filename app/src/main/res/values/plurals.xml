@@ -6,7 +6,7 @@
         <item quantity="other">%d people like this event</item>
     </plurals>
 
-    <plurals name="settings_reminder">
+    <plurals name="settings_reminder_minutes">
         <item quantity="zero">%d minutes before</item>
         <item quantity="one">%d minute before</item>
         <item quantity="few">%d minutes before</item>

@@ -102,11 +102,21 @@
     <string name="notification_vote_your">Vote added on your event</string>
     <string name="notification_vote_fav">Vote added on favorited event</string>
     <string name="reminder">Reminder</string>
+    <string name="add_reminder">Add reminder</string>
     <string name="name">Name</string>
     <string name="old_password">Old password</string>
     <string name="new_password">New password</string>
     <string name="confirm_pass">Confirm password</string>
     <string name="success_password_change">Password changed successfully.</string>
+    <string name="none">None</string>
+    <string name="ten_before">10 minutes before</string>
+    <string name="thirty_before">30 minutes before</string>
+    <string name="hour_before">1 hour before</string>
+    <string name="two_hours_before">2 hours before</string>
+    <string name="three_hours_before">3 hours before</string>
+    <string name="six_hours_before">6 hours before</string>
+    <string name="twelve_hours_before">12 hours before</string>
+    <string name="twenty_four_hours_before">24 hours before</string>
 
     <!--Categories-->
     <string name="concert">Concert</string>

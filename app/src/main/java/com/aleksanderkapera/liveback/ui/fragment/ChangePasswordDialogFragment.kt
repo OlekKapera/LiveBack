@@ -1,7 +1,5 @@
 package com.aleksanderkapera.liveback.ui.fragment
 
-import android.app.AlertDialog
-import android.app.Dialog
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
@@ -21,8 +19,6 @@ import kotlinx.android.synthetic.main.dialog_fragment_change_password.view.*
  */
 class ChangePasswordDialogFragment : DialogFragment() {
 
-    private val changePassword = R.string.change_password.asString()
-    private val cancel = R.string.cancel.asString()
     private val shortPassword = R.string.short_password.asString()
     private val oldMatchesNew = R.string.old_matches_new.asString()
     private val dontMatchPass = R.string.different_passwords.asString()
@@ -50,9 +46,7 @@ class ChangePasswordDialogFragment : DialogFragment() {
         super.onResume()
     }
 
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val inflater = LayoutInflater.from(context)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.dialog_fragment_change_password, null)
 
         FirebaseAuth.getInstance().currentUser?.let {
@@ -61,22 +55,10 @@ class ChangePasswordDialogFragment : DialogFragment() {
 
         setFieldValidation(rootView)
 
-        val dialog = AlertDialog.Builder(context)
-                .setView(rootView)
-                .setCancelable(true)
-                .setPositiveButton(changePassword, null)
-                .setNegativeButton(cancel) { _, _ ->
-                    dismiss()
-                }
-                .create()
-        dialog.show()
+        rootView.passwordDialog_button_positive.setOnClickListener { positiveButtonClick(rootView) }
+        rootView.passwordDialog_button_negative.setOnClickListener { dismiss() }
 
-        // set positive button action to validate fields
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-            positiveButtonClick(rootView)
-        }
-
-        return dialog
+        return rootView
     }
 
     /**
@@ -91,6 +73,7 @@ class ChangePasswordDialogFragment : DialogFragment() {
         val newPassword = rootView.passwordDialog_input_new.text.toString()
 
         if (isOldValidated && isNewValidated && isConfirmValidated) {
+            rootView.passwordDialog_view_load.show()
             val credentials = EmailAuthProvider.getCredential(LoggedUser.email, oldPassword)
             mAuthUser.reauthenticate(credentials).addOnCompleteListener {
                 when {
@@ -106,10 +89,12 @@ class ChangePasswordDialogFragment : DialogFragment() {
                                     dismiss()
                                 }
                             }
+                            rootView.passwordDialog_view_load.hide()
                         }
                     }
                     else -> {
                         rootView.passwordDialog_layout_old.error = incorrectOldPassword
+                        rootView.passwordDialog_view_load.hide()
                     }
                 }
             }

@@ -188,4 +188,22 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">@dimen/spacing4</item>
     </style>
+
+    <style name="SettingsReminderButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layoutDirection">rtl</item>
+        <item name="android:paddingLeft">@dimen/spacing4</item>
+        <item name="android:colorControlNormal">@color/bgColor</item>
+        <item name="android:colorControlActivated">@color/colorAccent</item>
+        <item name="android:paddingTop">@dimen/spacing16</item>
+        <item name="android:paddingBottom">@dimen/spacing16</item>
+        <item name="android:textAlignment">viewEnd</item>
+    </style>
+
+    <style name="SettingsReminderLine">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.5dp</item>
+        <item name="android:background">@color/bgColor</item>
+    </style>
 </resources>

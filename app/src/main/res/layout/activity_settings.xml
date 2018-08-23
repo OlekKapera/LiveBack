@@ -53,4 +53,11 @@
                 app:layout_constraintTop_toBottomOf="@id/settings_container_notifications" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v4.widget.NestedScrollView>
+
+    <com.aleksanderkapera.liveback.ui.widget.LoadView
+        android:id="@+id/settings_view_load"
+        android:visibility="gone"
+        android:elevation="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </android.support.design.widget.CoordinatorLayout>
