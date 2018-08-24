@@ -8,13 +8,11 @@ import android.widget.RelativeLayout
 import android.widget.Toast
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.User
-import com.aleksanderkapera.liveback.ui.activity.AddEventActivity
-import com.aleksanderkapera.liveback.ui.activity.MainActivity
-import com.aleksanderkapera.liveback.ui.activity.SettingsActivity
-import com.aleksanderkapera.liveback.ui.activity.SigningActivity
+import com.aleksanderkapera.liveback.ui.activity.*
 import com.aleksanderkapera.liveback.ui.fragment.ProfileFragment
 import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.StringSignature
 import com.firebase.ui.storage.images.FirebaseImageLoader
 import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.activity_main.*
@@ -57,7 +55,7 @@ class NavigationViewHelper(private val activity: MainActivity, private val drawe
         if (LoggedUser.uid.isEmpty())
             Toast.makeText(activity, needToLogin, Toast.LENGTH_SHORT).show()
         else
-            SettingsActivity.startActivity(activity)
+            SettingsActivity.startActivity(activity, SettingsCaller.MAIN_ACTIVITY)
     }
 
     /**
@@ -119,6 +117,7 @@ class NavigationViewHelper(private val activity: MainActivity, private val drawe
             Glide.with(activity)
                     .using(FirebaseImageLoader())
                     .load(profilePic)
+                    .signature(StringSignature(user?.profilePicTime.toString()))
                     .into(activity.navigation_header_image)
         } ?: run {
             activity.navigation_header_image.setImageDrawable(R.drawable.ic_user_round.asDrawable())

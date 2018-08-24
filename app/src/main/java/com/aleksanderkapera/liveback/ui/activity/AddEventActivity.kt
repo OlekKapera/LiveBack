@@ -274,8 +274,6 @@ class AddEventActivity : BaseActivity() {
         if (areValid(title, description, address, date)) {
             val event = Event()
             event.userUid = LoggedUser.uid
-            event.userName = LoggedUser.username
-            event.userProfilePath = LoggedUser.profilePicPath
             event.title = title
             event.description = description
             event.address = address

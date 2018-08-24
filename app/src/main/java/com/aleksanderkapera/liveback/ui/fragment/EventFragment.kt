@@ -15,12 +15,14 @@ import android.view.View
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.Comment
 import com.aleksanderkapera.liveback.model.Event
+import com.aleksanderkapera.liveback.model.User
 import com.aleksanderkapera.liveback.model.Vote
 import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.ui.widget.EmptyScreenView
 import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.StringSignature
 import com.firebase.ui.storage.images.FirebaseImageLoader
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
@@ -58,6 +60,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     private lateinit var mEventDoc: DocumentReference
 
     private var mEvent: Event? = null
+    private var mUser: User? = null
     private var mComments: MutableList<Comment>? = null
     private var mVotes: MutableList<Vote>? = null
     private var mIsLiked = false
@@ -68,10 +71,11 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     private var currentTab = 0
 
     companion object {
-        fun newInstance(event: Event): BaseFragment {
+        fun newInstance(event: Event, user: User): BaseFragment {
             val fragment = EventFragment()
             val bundle = Bundle()
             bundle.putParcelable(BUNDLE_EVENT, event)
+            bundle.putParcelable(BUNDLE_EVENT_USER, user)
             fragment.arguments = bundle
 
             return fragment
@@ -86,6 +90,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
         //retrieve event from main fragment
         arguments?.let {
             mEvent = it.getParcelable(BUNDLE_EVENT)
+            mUser = it.getParcelable(BUNDLE_EVENT_USER)
         }
 
         mFireStore = FirebaseFirestore.getInstance()
@@ -148,6 +153,8 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
      */
     private fun setToolbarViews() {
         mEvent?.let { event ->
+            event_text_eventName.text = event.title
+
             if (event.backgroundPicturePath.isNotEmpty()) {
                 Glide.with(context)
                         .using(FirebaseImageLoader())
@@ -155,18 +162,20 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                         .into(event_image_background)
             } else
                 setBackgroundCategory(event.category, event_image_background)
+        }
+        mUser?.let { user ->
+            user.profilePicPath?.let {
+                if (it.isNotEmpty()) {
+                    Glide.with(context)
+                            .using(FirebaseImageLoader())
+                            .load(FirebaseStorage.getInstance().getReference(it))
+                            .signature(StringSignature(user.profilePicTime.toString()))
+                            .into(event_image_profile)
+                } else
+                    event_image_profile.setImageDrawable(R.drawable.ic_user_round.asDrawable())
+            }
 
-            if (event.userProfilePath.isNotEmpty()) {
-                Glide.with(context)
-                        .using(FirebaseImageLoader())
-                        .load(FirebaseStorage.getInstance().getReference(event.userProfilePath))
-                        .into(event_image_profile)
-            } else
-                event_image_profile.setImageDrawable(R.drawable.ic_user_round.asDrawable())
-
-            event_text_eventName.text = event.title
-
-            event_image_profile.setOnClickListener { (activity as MainActivity).showFragment(ProfileFragment.newInstance(event.userUid)) }
+            event_image_profile.setOnClickListener { (activity as MainActivity).showFragment(ProfileFragment.newInstance(user.uid)) }
         }
     }
 
@@ -331,8 +340,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     private fun addComment(review: String) {
         val commentRef = mFireStore.collection("events/${mEvent?.eventUid}/comments").document()
 
-        val commentPojo = Comment(commentRef.id, LoggedUser.username, review, System.currentTimeMillis(),
-                LoggedUser.profilePicPath, LoggedUser.uid)
+        val commentPojo = Comment(commentRef.id, review, System.currentTimeMillis(), LoggedUser.uid)
 
         event_view_load.show()
         mFireStore.collection("events/${mEvent?.eventUid}/comments").add(commentPojo).addOnCompleteListener {
@@ -362,7 +370,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     private fun addVote(title: String, description: String) {
         val voteRef = mFireStore.collection("events/${mEvent?.eventUid}/votes").document()
 
-        val votePojo = Vote(voteRef.id, title, description, LoggedUser.uid, LoggedUser.profilePicPath, mutableListOf(), mutableListOf())
+        val votePojo = Vote(voteRef.id, title, description, LoggedUser.uid, mutableListOf(), mutableListOf())
         event_view_load.show()
         voteRef.set(votePojo).addOnCompleteListener {
             when {

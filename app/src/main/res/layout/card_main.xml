@@ -43,6 +43,7 @@
             android:layout_width="@dimen/card_profile_size"
             android:layout_height="@dimen/card_profile_size"
             android:layout_marginStart="@dimen/spacing16"
+            android:src="@color/bgColor"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/cardMain_guideline_horizontal" />
 

@@ -23,7 +23,7 @@
                 android:layout_width="@dimen/settings_circleImage_size"
                 android:layout_height="@dimen/settings_circleImage_size"
                 android:layout_marginTop="@dimen/spacing32"
-                android:src="@drawable/ic_user_round_solid"
+                android:src="@color/lightGrey"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -56,8 +56,8 @@
 
     <com.aleksanderkapera.liveback.ui.widget.LoadView
         android:id="@+id/settings_view_load"
-        android:visibility="gone"
-        android:elevation="20dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:elevation="20dp"
+        android:visibility="gone" />
 </android.support.design.widget.CoordinatorLayout>

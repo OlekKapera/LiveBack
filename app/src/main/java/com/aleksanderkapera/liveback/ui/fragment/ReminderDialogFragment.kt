@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.ui.activity.SettingsActivity
 import com.aleksanderkapera.liveback.util.LoggedUser
+import kotlinx.android.synthetic.main.container_settings_reminder.*
 import kotlinx.android.synthetic.main.dialog_fragment_reminder.view.*
 
 /**
@@ -56,7 +57,7 @@ class ReminderDialogFragment : DialogFragment() {
                 R.id.reminderDialog_button_twelveHours -> LoggedUser.reminder = 720
                 R.id.reminderDialog_button_twentyFourHours -> LoggedUser.reminder = 1440
             }
-            (activity as SettingsActivity).setupViews()
+            (activity as SettingsActivity).updateReminderText()
             dismiss()
         }
 

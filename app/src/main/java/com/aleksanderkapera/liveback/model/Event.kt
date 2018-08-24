@@ -9,8 +9,6 @@ import android.os.Parcelable
 
 data class Event(var eventUid: String = "",
                  var userUid: String = "",
-                 var userName: String = "",
-                 var userProfilePath: String = "",
                  var title: String = "",
                  var description: String = "",
                  var address: String = "",
@@ -27,8 +25,6 @@ data class Event(var eventUid: String = "",
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
             parcel.readLong(),
             parcel.readString(),
             parcel.readString(),
@@ -36,13 +32,11 @@ data class Event(var eventUid: String = "",
             parcel.readInt(),
             parcel.readInt())
 
-    constructor() : this("", "", "", "", "", "", "", 0, "", "", mutableListOf(), 0, 0)
+    constructor() : this("", "", "", "", "", 0, "", "", mutableListOf(), 0, 0)
 
     override fun writeToParcel(write: Parcel?, flags: Int) {
         write?.writeString(eventUid)
         write?.writeString(userUid)
-        write?.writeString(userName)
-        write?.writeString(userProfilePath)
         write?.writeLong(date)
         write?.writeString(title)
         write?.writeString(description)

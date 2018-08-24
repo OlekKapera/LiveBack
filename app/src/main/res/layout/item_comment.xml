@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/spacing4"
-    xmlns:tools="http://schemas.android.com/tools"
     app:cardUseCompatPadding="true">
 
     <android.support.constraint.ConstraintLayout
@@ -19,7 +19,7 @@
             android:id="@+id/eventComment_image_profile"
             android:layout_width="@dimen/collapsing_circleImage_size"
             android:layout_height="@dimen/collapsing_circleImage_size"
-            tools:src="@drawable/mari_profile"
+            android:src="@color/bgColor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -27,17 +27,17 @@
         <TextView
             android:id="@+id/eventComment_text_title"
             style="@style/EventTitle"
-            tools:text="Birgit Kos"
             app:layout_constraintStart_toEndOf="@id/eventComment_image_profile"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Birgit Kos" />
 
         <TextView
             android:id="@+id/eventComment_text_description"
             style="@style/EventDescription"
-            tools:text="I love it! You are awesome!"
             app:layout_constraintEnd_toStartOf="@id/eventComment_text_time"
             app:layout_constraintStart_toStartOf="@id/eventComment_text_title"
-            app:layout_constraintTop_toBottomOf="@id/eventComment_text_title" />
+            app:layout_constraintTop_toBottomOf="@id/eventComment_text_title"
+            tools:text="I love it! You are awesome!" />
 
         <TextView
             android:id="@+id/eventComment_text_time"
@@ -47,9 +47,9 @@
             android:drawableStart="@drawable/ic_clock"
             android:fontFamily="@string/font_family_regular"
             android:textAlignment="center"
-            tools:text="2m"
             android:textColor="@color/lightGrey"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="2m" />
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

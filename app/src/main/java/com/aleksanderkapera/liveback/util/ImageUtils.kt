@@ -3,6 +3,7 @@ package com.aleksanderkapera.liveback.util
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Environment
 import android.widget.ImageView
 import com.aleksanderkapera.liveback.R
@@ -110,6 +111,12 @@ fun getBytesFromBitmap(bitmap: Bitmap?, quality: Int): ByteArray {
     return stream.toByteArray()
 }
 
+fun deletePhotoContent(imageUri: Uri?): Boolean {
+    if (imageUri == null) return false
+    val deleted = context.contentResolver.delete(imageUri, null, null)
+    // deleted value represents number of deleted rows
+    return deleted > 0
+}
 /**
  * Set background image when user hasn't provided one according to event category
  */

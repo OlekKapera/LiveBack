@@ -14,6 +14,7 @@ class LoggedUser {
         var voteAddedOnYour = true
         var voteAddedOnFav = true
         var reminder = 60
+        var profilePicTime: Long = 0
 
         fun clear() {
             uid = ""
@@ -25,6 +26,7 @@ class LoggedUser {
             voteAddedOnYour = true
             voteAddedOnFav = true
             reminder = 60
+            profilePicTime = 0
         }
     }
 }

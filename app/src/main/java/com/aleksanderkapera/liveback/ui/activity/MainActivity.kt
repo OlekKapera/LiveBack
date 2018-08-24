@@ -130,6 +130,7 @@ class MainActivity : FragmentActivity() {
                         LoggedUser.username = user.username
                         LoggedUser.email = user.email
                         LoggedUser.uid = user.uid
+                        LoggedUser.profilePicTime = user.profilePicTime
 
                         user.profilePicPath?.let {
                             mStorageRef = FirebaseStorage.getInstance().getReference(it)

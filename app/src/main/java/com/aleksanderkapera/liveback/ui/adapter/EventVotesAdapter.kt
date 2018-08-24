@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.aleksanderkapera.liveback.R
+import com.aleksanderkapera.liveback.model.User
 import com.aleksanderkapera.liveback.model.Vote
 import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.fragment.ProfileFragment
@@ -14,6 +15,7 @@ import com.aleksanderkapera.liveback.util.asColor
 import com.aleksanderkapera.liveback.util.asDrawable
 import com.aleksanderkapera.liveback.util.asString
 import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.StringSignature
 import com.firebase.ui.storage.images.FirebaseImageLoader
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
@@ -37,6 +39,7 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val loader: 
         private lateinit var item: Vote
         private lateinit var mStorageRef: StorageReference
         private lateinit var mVoteRef: DocumentReference
+        private val mUsersRef = FirebaseFirestore.getInstance().collection("users")
 
         private val mUpVoteString = R.string.up_vote_error.asString()
         private val mDownVoteString = R.string.down_vote_error.asString()
@@ -57,15 +60,24 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val loader: 
 
             itemView.eventVote_image_profile.setOnClickListener { (context as MainActivity).showFragment(ProfileFragment.newInstance(item.voteAuthorUid)) }
 
-            item.profilePictureUrl.let {
-                if (it.isNotEmpty()) {
-                    mStorageRef = FirebaseStorage.getInstance().getReference(it)
-                    Glide.with(context)
-                            .using(FirebaseImageLoader())
-                            .load(mStorageRef)
-                            .into(itemView.eventVote_image_profile)
-                } else
-                    itemView.eventVote_image_profile.setImageDrawable(R.drawable.ic_user_round_solid.asDrawable())
+            mUsersRef.document(item.voteAuthorUid).get().addOnCompleteListener {
+                when {
+                    it.isSuccessful -> {
+                        it.result.toObject(User::class.java)?.let { user ->
+                            user.profilePicPath?.let {
+                                if (it.isNotEmpty()) {
+                                    mStorageRef = FirebaseStorage.getInstance().getReference(it)
+                                    Glide.with(context)
+                                            .using(FirebaseImageLoader())
+                                            .load(mStorageRef)
+                                            .signature(StringSignature(user.profilePicTime.toString()))
+                                            .into(itemView.eventVote_image_profile)
+                                } else
+                                    itemView.eventVote_image_profile.setImageDrawable(R.drawable.ic_user_round_solid.asDrawable())
+                            }
+                        }
+                    }
+                }
             }
 
             if (item.upVotes.contains(LoggedUser.uid)) {

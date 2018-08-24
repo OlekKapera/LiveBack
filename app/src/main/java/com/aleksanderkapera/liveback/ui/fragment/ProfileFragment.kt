@@ -12,10 +12,12 @@ import com.aleksanderkapera.liveback.model.Comment
 import com.aleksanderkapera.liveback.model.Event
 import com.aleksanderkapera.liveback.model.User
 import com.aleksanderkapera.liveback.ui.activity.SettingsActivity
+import com.aleksanderkapera.liveback.ui.activity.SettingsCaller
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.ui.widget.EmptyScreenView
 import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.StringSignature
 import com.firebase.ui.storage.images.FirebaseImageLoader
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -97,7 +99,12 @@ class ProfileFragment : BaseFragment() {
         setupTabs()
         getProfile()
 
-        profile_button_settings.setOnClickListener { SettingsActivity.startActivity(activity as Activity) }
+        profile_button_settings.setOnClickListener { SettingsActivity.startActivity(activity as Activity, SettingsCaller.PROFILE_FRAGMENT) }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getProfile()
     }
 
     /**
@@ -119,11 +126,13 @@ class ProfileFragment : BaseFragment() {
                 Glide.with(context)
                         .using(FirebaseImageLoader())
                         .load(storageRef)
+                        .signature(StringSignature(user.profilePicTime.toString()))
                         .into(profile_image_profile)
 
                 Glide.with(context)
                         .using(FirebaseImageLoader())
                         .load(storageRef)
+                        .signature(StringSignature(user.profilePicTime.toString()))
                         .into(profile_image_background)
             } ?: run {
                 profile_image_profile.setImageDrawable(mProfilePhoto)
