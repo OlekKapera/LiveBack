@@ -206,11 +206,11 @@ class AddEventActivity : BaseActivity() {
         val docRef = mFireStore.collection("events").document()
         mEvent.eventUid = docRef.id
 
-        mFireStore.collection("events").add(mEvent).addOnCompleteListener {
+        docRef.set(mEvent).addOnCompleteListener {
             when {
                 it.isSuccessful -> {
                     showToast(R.string.successful_add)
-                    MainActivity.startActivity(this,LoggedUser.uid.isEmpty())
+                    MainActivity.startActivity(this, LoggedUser.uid.isEmpty())
                 }
                 else -> showToast(R.string.addEvent_error)
             }

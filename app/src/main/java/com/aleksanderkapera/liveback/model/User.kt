@@ -10,7 +10,7 @@ import android.os.Parcelable
 data class User(val uid: String = "",
                 val username: String = "",
                 val email: String = "",
-                var profilePicPath: String? = "",
+                var profilePicPath: String = "",
                 var commentAddedOnYour: Boolean = true,
                 var commentAddedOnFav: Boolean = true,
                 var voteAddedOnYour: Boolean = true,

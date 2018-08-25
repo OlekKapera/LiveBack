@@ -343,7 +343,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
         val commentPojo = Comment(commentRef.id, review, System.currentTimeMillis(), LoggedUser.uid)
 
         event_view_load.show()
-        mFireStore.collection("events/${mEvent?.eventUid}/comments").add(commentPojo).addOnCompleteListener {
+        commentRef.set(commentPojo).addOnCompleteListener {
             when {
                 it.isSuccessful -> {
                     showToast(mCommentSuccString)

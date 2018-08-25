@@ -13,8 +13,8 @@ import android.widget.Switch
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.ui.base.BaseActivity
 import com.aleksanderkapera.liveback.ui.fragment.ChangePasswordDialogFragment
+import com.aleksanderkapera.liveback.ui.fragment.DeleteAccountDialogFragment
 import com.aleksanderkapera.liveback.ui.fragment.ImagePickerDialogFragment
-import com.aleksanderkapera.liveback.ui.fragment.ProfileFragment
 import com.aleksanderkapera.liveback.ui.fragment.ReminderDialogFragment
 import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.Glide
@@ -75,7 +75,9 @@ class SettingsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         mFireStore = FirebaseFirestore.getInstance()
-        mStorageRef = FirebaseStorage.getInstance().reference.child(LoggedUser.profilePicPath)
+
+        if (LoggedUser.profilePicPath.isNotEmpty())
+            mStorageRef = FirebaseStorage.getInstance().reference.child(LoggedUser.profilePicPath)
 
         mPreviousElement = intent.extras?.get(INTENT_SETTINGS_ELEMENTS) as SettingsCaller
 
@@ -99,6 +101,7 @@ class SettingsActivity : BaseActivity() {
         settings_image_profile.setOnClickListener { ImagePickerDialogFragment.newInstance().show(supportFragmentManager, TAG_SETTINGS_IMAGE) }
         settings_container_password.setOnClickListener { ChangePasswordDialogFragment.newInstance().show(supportFragmentManager, TAG_SETTINGS_CHANGE_PASSWORD) }
         settings_container_reminder.setOnClickListener { ReminderDialogFragment.newInstance().show(supportFragmentManager, TAG_SETTINGS_REMINDER) }
+        settings_container_delete.setOnClickListener { DeleteAccountDialogFragment.newInstance().show(supportFragmentManager, TAG_SETTINGS_DELETE) }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

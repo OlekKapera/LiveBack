@@ -132,10 +132,9 @@ class MainActivity : FragmentActivity() {
                         LoggedUser.uid = user.uid
                         LoggedUser.profilePicTime = user.profilePicTime
 
-                        user.profilePicPath?.let {
-                            mStorageRef = FirebaseStorage.getInstance().getReference(it)
-                            LoggedUser.profilePicPath = it
-                        }
+                        if (user.profilePicPath.isNotEmpty())
+                            mStorageRef = FirebaseStorage.getInstance().getReference(user.profilePicPath)
+                        LoggedUser.profilePicPath = user.profilePicPath
 
                         LoggedUser.commentAddedOnYour = user.commentAddedOnYour
                         LoggedUser.commentAddedOnFav = user.commentAddedOnFav

@@ -51,6 +51,11 @@
                 style="@style/SettingsContainer"
                 layout="@layout/container_settings_reminder"
                 app:layout_constraintTop_toBottomOf="@id/settings_container_notifications" />
+
+            <include android:id="@+id/settings_container_delete"
+                style="@style/SettingsContainer"
+                layout="@layout/container_settings_delete"
+                app:layout_constraintTop_toBottomOf="@id/settings_container_reminder"/>
         </android.support.constraint.ConstraintLayout>
     </android.support.v4.widget.NestedScrollView>
 

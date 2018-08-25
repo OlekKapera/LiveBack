@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/spacing8"
+        android:paddingEnd="@dimen/spacing24"
+        android:paddingStart="@dimen/spacing24"
+        android:paddingTop="@dimen/spacing24">
+
+        <TextView
+            android:id="@+id/deleteDialog_text_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@string/font_family_regular"
+            android:text="@string/delete_account_question"
+            android:textSize="@dimen/text20"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/deleteDialog_text_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing24"
+            android:text="@string/delete_account_message"
+            app:layout_constraintTop_toBottomOf="@id/deleteDialog_text_title" />
+
+        <Button
+            android:id="@+id/deleteDialog_button_positive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing24"
+            android:background="@color/transparent"
+            android:text="@string/delete_account"
+            android:textColor="@color/red"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/deleteDialog_text_message" />
+
+        <Button
+            android:id="@+id/deleteDialog_button_negative"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/spacing4"
+            android:background="@color/transparent"
+            android:text="@string/cancel"
+            app:layout_constraintEnd_toStartOf="@id/deleteDialog_button_positive"
+            app:layout_constraintTop_toTopOf="@id/deleteDialog_button_positive" />
+    </android.support.constraint.ConstraintLayout>
+
+    <com.aleksanderkapera.liveback.ui.widget.LoadView
+        android:id="@+id/deleteDialog_view_load"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:elevation="20dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</android.support.constraint.ConstraintLayout>

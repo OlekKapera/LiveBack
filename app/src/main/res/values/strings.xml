@@ -33,7 +33,8 @@
     <string name="old_matches_new">Old password cannot match new one!</string>
     <string name="incorrect_email_password">Incorrect email or password!</string>
     <string name="incorrect_password">Enter correct old password!</string>
-    <string name="profile_update_error">Couldn\t update profile! Please, try again later.</string>
+    <string name="profile_update_error">Couldn\'t update profile! Please, try again later.</string>
+    <string name="delete_account_error">Couldn\'t delete account! Please, try again later.</string>
 
     <!--Main Activity-->
     <string name="search">Search</string>
@@ -119,6 +120,11 @@
     <string name="twelve_hours_before">12 hours before</string>
     <string name="twenty_four_hours_before">24 hours before</string>
     <string name="profile_successful">Profile updated successfully!</string>
+    <string name="delete_account">Delete account</string>
+    <string name="delete_account_question">Delete account?</string>
+    <string name="delete_account_info">If you want to delete your account, tap here.</string>
+    <string name="delete_account_message">This will permanently delete your account and all data associated with it. Are you sure?</string>
+    <string name="delete_account_successful">Your account was deleted successfully.</string>
 
     <!--Categories-->
     <string name="concert">Concert</string>

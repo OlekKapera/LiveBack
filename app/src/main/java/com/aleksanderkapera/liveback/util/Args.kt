@@ -18,6 +18,7 @@ const val TAG_ADD_FEEDBACK = "Add Feedback Tag"
 const val TAG_SETTINGS_CHANGE_PASSWORD = "Settings Change Password Tag"
 const val TAG_SETTINGS_REMINDER = "Settings Reminder Tag"
 const val TAG_SETTINGS_IMAGE = "Settings Image Tag"
+const val TAG_SETTINGS_DELETE = "Settings Delete Tag"
 
 const val REQUEST_TARGET_EVENT_FRAGMENT = 25
 

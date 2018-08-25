@@ -120,8 +120,8 @@ class ProfileFragment : BaseFragment() {
             else
                 profile_button_settings.visibility = View.GONE
 
-            user.profilePicPath?.let {
-                val storageRef = FirebaseStorage.getInstance().getReference(it)
+            if (user.profilePicPath.isNotEmpty()) {
+                val storageRef = FirebaseStorage.getInstance().getReference(user.profilePicPath)
 
                 Glide.with(context)
                         .using(FirebaseImageLoader())
@@ -134,7 +134,7 @@ class ProfileFragment : BaseFragment() {
                         .load(storageRef)
                         .signature(StringSignature(user.profilePicTime.toString()))
                         .into(profile_image_background)
-            } ?: run {
+            } else {
                 profile_image_profile.setImageDrawable(mProfilePhoto)
                 profile_image_background.setImageDrawable(mBackgroundPhoto)
             }

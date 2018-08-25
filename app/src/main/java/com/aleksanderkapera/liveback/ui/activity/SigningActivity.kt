@@ -109,7 +109,7 @@ class SigningActivity : FragmentActivity() {
 
     fun uploadUser(userPojo: User) {
         mUsersRef.document(userPojo.uid).set(userPojo).addOnSuccessListener {
-            MainActivity.startActivity(this,false)
+            MainActivity.startActivity(this, false)
             Toast.makeText(this, R.string.welcome, Toast.LENGTH_SHORT).show()
         }.addOnFailureListener {
             Toast.makeText(this, R.string.signUp_error, Toast.LENGTH_SHORT).show()
@@ -129,8 +129,11 @@ class SigningActivity : FragmentActivity() {
 
         val uploadTask = childRef.putBytes(mUploadBytes)
         uploadTask.addOnSuccessListener {
-            userPojo.profilePicPath = it.metadata?.path
-            uploadUser(userPojo)
+            it.metadata?.let {
+                userPojo.profilePicPath = it.path
+                userPojo.profilePicTime = it.updatedTimeMillis
+                uploadUser(userPojo)
+            }
         }.addOnFailureListener {
 
             //hide loader

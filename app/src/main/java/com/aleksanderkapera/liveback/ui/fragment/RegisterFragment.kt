@@ -77,7 +77,7 @@ class RegisterFragment : BaseFragment() {
             mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
                 if (it.isSuccessful) {
                     val userId = mAuth.currentUser!!.uid
-                    val userPojo = User(userId, userName, email, null)
+                    val userPojo = User(userId, userName, email, "")
 
                     mImageUri?.let {
                         (activity as SigningActivity).uploadImage(it, userPojo)

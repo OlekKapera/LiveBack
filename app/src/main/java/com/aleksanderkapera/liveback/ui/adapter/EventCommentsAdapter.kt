@@ -42,17 +42,15 @@ class EventCommentsAdapter(val context: Context) : BaseRecyclerAdapter<EventComm
                     it.isSuccessful -> {
                         it.result.toObject(User::class.java)?.let { user ->
                             itemView.eventComment_text_title.text = user.username
-                            user.profilePicPath?.let {
-                                if (it.isNotEmpty()) {
-                                    mStorageRef = FirebaseStorage.getInstance().getReference(it)
-                                    Glide.with(context)
-                                            .using(FirebaseImageLoader())
-                                            .load(mStorageRef)
-                                            .signature(StringSignature(user.profilePicTime.toString()))
-                                            .into(itemView.eventComment_image_profile)
-                                } else
-                                    itemView.eventComment_image_profile.setImageDrawable(R.drawable.ic_user_round_solid.asDrawable())
-                            }
+                            if (user.profilePicPath.isNotEmpty()) {
+                                mStorageRef = FirebaseStorage.getInstance().getReference(user.profilePicPath)
+                                Glide.with(context)
+                                        .using(FirebaseImageLoader())
+                                        .load(mStorageRef)
+                                        .signature(StringSignature(user.profilePicTime.toString()))
+                                        .into(itemView.eventComment_image_profile)
+                            } else
+                                itemView.eventComment_image_profile.setImageDrawable(R.drawable.ic_user_round_solid.asDrawable())
                         }
                     }
                 }

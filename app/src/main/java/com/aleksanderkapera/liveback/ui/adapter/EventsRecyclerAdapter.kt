@@ -49,17 +49,15 @@ class EventsRecyclerAdapter(val context: Context) : BaseRecyclerAdapter<EventsRe
                             itemView.cardMain_text_name.text = user.username
                             mUser = user
 
-                            user.profilePicPath?.let {
-                                if (it.isNotEmpty()) {
-                                    mStorageRef = FirebaseStorage.getInstance().getReference(it)
-                                    Glide.with(context)
-                                            .using(FirebaseImageLoader())
-                                            .load(mStorageRef)
-                                            .signature(StringSignature(user.profilePicTime.toString()))
-                                            .into(itemView.cardMain_image_profile)
-                                } else
-                                    itemView.cardMain_image_profile.setImageDrawable(R.drawable.ic_user_round_solid.asDrawable())
-                            }
+                            if (user.profilePicPath.isNotEmpty()) {
+                                mStorageRef = FirebaseStorage.getInstance().getReference(user.profilePicPath)
+                                Glide.with(context)
+                                        .using(FirebaseImageLoader())
+                                        .load(mStorageRef)
+                                        .signature(StringSignature(user.profilePicTime.toString()))
+                                        .into(itemView.cardMain_image_profile)
+                            } else
+                                itemView.cardMain_image_profile.setImageDrawable(R.drawable.ic_user_round_solid.asDrawable())
                         }
                     }
                 }
