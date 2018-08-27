@@ -75,9 +75,7 @@ class SettingsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         mFireStore = FirebaseFirestore.getInstance()
-
-        if (LoggedUser.profilePicPath.isNotEmpty())
-            mStorageRef = FirebaseStorage.getInstance().reference.child(LoggedUser.profilePicPath)
+        mStorageRef = FirebaseStorage.getInstance().reference
 
         mPreviousElement = intent.extras?.get(INTENT_SETTINGS_ELEMENTS) as SettingsCaller
 
@@ -167,7 +165,7 @@ class SettingsActivity : BaseActivity() {
         if (LoggedUser.profilePicPath.isNotEmpty())
             Glide.with(this)
                     .using(FirebaseImageLoader())
-                    .load(mStorageRef)
+                    .load(mStorageRef.child(LoggedUser.profilePicPath))
                     .signature(StringSignature(LoggedUser.profilePicTime.toString()))
                     .into(settings_image_profile)
         else
@@ -216,7 +214,7 @@ class SettingsActivity : BaseActivity() {
      * Upload profile image and when successful then call user profile upload
      */
     private fun executeUpload() {
-        mStorageRef.putBytes(mUploadBytes).addOnCompleteListener {
+        mStorageRef.child("users/${LoggedUser.uid}").putBytes(mUploadBytes).addOnCompleteListener {
             when {
                 it.isSuccessful -> {
                     it.result.metadata?.let {

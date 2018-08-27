@@ -9,6 +9,7 @@ import android.text.method.TextKeyListener
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.util.BUNDLE_EVENT_DIALOG_TYPE
@@ -111,6 +112,18 @@ class AddFeedbackDialogFragment : DialogFragment() {
                         rootView.feedbackDialog_input_description.text.toString())
                 dismiss()
             }
+        }
+
+        // open soft keyboard when dialog is displayed
+        rootView.feedbackDialog_input_subject.setOnFocusChangeListener { _, b ->
+            if (b)
+                dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        }
+
+        // open soft keyboard when dialog is displayed
+        rootView.feedbackDialog_input_description.setOnFocusChangeListener { _, b ->
+            if (b)
+                dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         }
 
         return dialog

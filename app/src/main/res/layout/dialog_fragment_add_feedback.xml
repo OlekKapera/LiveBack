@@ -41,8 +41,6 @@
                 android:id="@+id/feedbackDialog_input_subject"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
                 android:hint="@string/subject"
                 android:inputType="textMultiLine"
                 android:scrollbars="vertical" />
@@ -78,8 +76,6 @@
                 android:id="@+id/feedbackDialog_input_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
                 android:inputType="textMultiLine" />
         </android.support.design.widget.TextInputLayout>
     </LinearLayout>

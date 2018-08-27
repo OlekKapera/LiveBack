@@ -25,7 +25,7 @@ class ChangePasswordDialogFragment : DialogFragment() {
     private val requiredField = R.string.required_field.asString()
     private val changeSuccessful = R.string.success_password_change.asString()
     private val genericError = R.string.generic_error.asString()
-    private val incorrectOldPassword = R.string.incorrect_password.asString()
+    private val incorrectOldPassword = R.string.incorrect_old_password.asString()
 
     private var isOldValidated = false
     private var isNewValidated = false

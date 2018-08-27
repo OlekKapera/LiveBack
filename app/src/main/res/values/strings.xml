@@ -32,7 +32,8 @@
     <string name="profile_error">Couldn\'t retrieve profile! Try again later.</string>
     <string name="old_matches_new">Old password cannot match new one!</string>
     <string name="incorrect_email_password">Incorrect email or password!</string>
-    <string name="incorrect_password">Enter correct old password!</string>
+    <string name="incorrect_old_password">Enter correct old password!</string>
+    <string name="incorrect_password">Enter correct password!</string>
     <string name="profile_update_error">Couldn\'t update profile! Please, try again later.</string>
     <string name="delete_account_error">Couldn\'t delete account! Please, try again later.</string>
 

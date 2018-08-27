@@ -3,7 +3,6 @@ package com.aleksanderkapera.liveback.ui.fragment
 import android.app.Activity
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,12 +11,14 @@ import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.util.LoggedUser
 import com.aleksanderkapera.liveback.util.asString
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.WriteBatch
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.android.synthetic.main.dialog_fragment_delete_account.*
 import kotlinx.android.synthetic.main.dialog_fragment_delete_account.view.*
 
 /**
@@ -27,6 +28,8 @@ class DeleteAccountDialogFragment : DialogFragment() {
 
     private val deleteSuccessful = R.string.delete_account_successful.asString()
     private val deleteError = R.string.delete_account_error.asString()
+    private val requiredField = R.string.required_field.asString()
+    private val incorrectPassword = R.string.incorrect_password.asString()
 
     private lateinit var mAuth: FirebaseAuth
     private lateinit var mUserDoc: DocumentReference
@@ -80,8 +83,28 @@ class DeleteAccountDialogFragment : DialogFragment() {
      * Deletes user's account all his events, comments and votes he posted
      */
     private fun positiveButtonClick() {
-        rootView.deleteDialog_view_load.show()
-        executeDelete()
+        reauthenticateAuth()
+    }
+
+    /**
+     * Reauthenticates user so he can be removed from server
+     */
+    private fun reauthenticateAuth() {
+        if (deleteDialog_input_password.text.isEmpty())
+            deleteDialog_layout_password.error = requiredField
+        else {
+            rootView.deleteDialog_view_load.show()
+            val credentials = EmailAuthProvider.getCredential(LoggedUser.email, deleteDialog_input_password.text.toString())
+            mAuth.currentUser?.reauthenticate(credentials)?.addOnCompleteListener {
+                when {
+                    it.isSuccessful -> executeDelete()
+                    else -> {
+                        deleteDialog_layout_password.error = incorrectPassword
+                        rootView.deleteDialog_view_load.hide()
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -143,12 +166,17 @@ class DeleteAccountDialogFragment : DialogFragment() {
                                     }
 
                                     val commentsSize = commentTask.result.documents.size
+                                    var eventComments = event.get("comments") as Long
+
                                     commentTask.result.documents.forEachIndexed { commentIndex, comment ->
-                                        if (event.get("userUid") == LoggedUser.uid || comment.get("commentAuthorUid") == LoggedUser.uid) {
-                                            // it's logged user's event or comment placed by user, delete comment
+                                        if (event.get("userUid") == LoggedUser.uid) {
+                                            // it's logged user's event, delete comment
                                             mBatch.delete(comment.reference)
-                                            Log.d("TAG", event.get("comments").toString())
-                                            mBatch.update(event.reference, "comments", ((event.get("comments") as Long) - 1).toInt())
+                                        } else if (comment.get("commentAuthorUid") == LoggedUser.uid) {
+                                            // it's comment placed by user, delete it and deduct one from comments counter
+                                            mBatch.delete(comment.reference)
+                                            eventComments--
+                                            mBatch.update(event.reference, "comments", eventComments)
                                         }
 
                                         if (mCommentEventIndex == eventsSize - 1 && commentIndex == commentsSize - 1) {
@@ -170,13 +198,15 @@ class DeleteAccountDialogFragment : DialogFragment() {
                                         commitBatch()
                                     }
                                     val votesSize = votesTask.result.documents.size
+                                    var eventVotes = event.get("votes") as Long
+
                                     votesTask.result.documents.forEachIndexed { voteIndex, vote ->
                                         when {
-                                            event.get("userUid") == LoggedUser.uid ||
-                                                    vote.get("voteAuthorUid") == LoggedUser.uid -> {
+                                            event.get("userUid") == LoggedUser.uid -> mBatch.delete(vote.reference)
+                                            vote.get("voteAuthorUid") == LoggedUser.uid -> {
                                                 mBatch.delete(vote.reference)
-                                                Log.d("TAG", event.get("votes").toString())
-                                                mBatch.update(event.reference, "votes", ((event.get("votes") as Long) - 1).toInt())
+                                                eventVotes--
+                                                mBatch.update(event.reference, "votes", eventVotes)
                                             }
                                             (vote.get("downVotes") as List<String>).contains(LoggedUser.uid) -> mBatch.update(vote.reference, "downVotes", FieldValue.arrayRemove(LoggedUser.uid))
                                             (vote.get("upVotes") as List<String>).contains(LoggedUser.uid) -> mBatch.update(vote.reference, "upVotes", FieldValue.arrayRemove(LoggedUser.uid))

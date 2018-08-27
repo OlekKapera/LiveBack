@@ -30,6 +30,21 @@
             android:text="@string/delete_account_message"
             app:layout_constraintTop_toBottomOf="@id/deleteDialog_text_title" />
 
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/deleteDialog_layout_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing24"
+            app:layout_constraintTop_toBottomOf="@id/deleteDialog_text_message">
+
+            <EditText
+                android:id="@+id/deleteDialog_input_password"
+                android:layout_width="match_parent"
+                android:inputType="textPassword"
+                android:layout_height="match_parent"
+                android:hint="@string/password" />
+        </android.support.design.widget.TextInputLayout>
+
         <Button
             android:id="@+id/deleteDialog_button_positive"
             android:layout_width="wrap_content"
@@ -40,7 +55,7 @@
             android:textColor="@color/red"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/deleteDialog_text_message" />
+            app:layout_constraintTop_toBottomOf="@id/deleteDialog_layout_password" />
 
         <Button
             android:id="@+id/deleteDialog_button_negative"
