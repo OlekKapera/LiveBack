@@ -19,6 +19,9 @@ import com.aleksanderkapera.liveback.ui.fragment.DatePickerDialogFragment
 import com.aleksanderkapera.liveback.ui.fragment.ImagePickerDialogFragment
 import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.StringSignature
+import com.firebase.ui.storage.images.FirebaseImageLoader
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -33,6 +36,9 @@ import java.util.*
  * Created by kapera on 30-Jul-18.
  */
 class AddEventActivity : BaseActivity() {
+
+    private val addEvent = R.string.add_event.asString()
+    private val editEvent = R.string.edit_event.asString()
 
     private lateinit var mFireStore: FirebaseFirestore
     private lateinit var mStorageRef: StorageReference
@@ -59,8 +65,10 @@ class AddEventActivity : BaseActivity() {
     private val categoryError = R.string.category_error.asString()
 
     companion object {
-        fun startActivity(activity: Activity) {
+        fun startActivity(activity: Activity, event: Event?) {
             val intent = Intent(activity, AddEventActivity::class.java)
+            intent.putExtra(INTENT_ADD_EVENT_EVENT, event)
+
             activity.startActivity(intent)
         }
     }
@@ -72,6 +80,12 @@ class AddEventActivity : BaseActivity() {
 
         mFireStore = FirebaseFirestore.getInstance()
         mStorageRef = FirebaseStorage.getInstance().reference
+
+        mEvent = Event()
+
+        (intent.getSerializableExtra(INTENT_ADD_EVENT_EVENT) as? Event)?.let {
+            mEvent = it
+        }
 
         // set toolbar
         setSupportActionBar(addEvent_layout_toolbar)
@@ -88,6 +102,7 @@ class AddEventActivity : BaseActivity() {
         addEvent_layout_toolbar.layoutParams = toolbarParams
 
         setupChips()
+        setupViews()
 
         addEvent_image_background.setOnClickListener(onAddBackgroundClick)
         addEvent_button_addBackground.setOnClickListener(onAddBackgroundClick)
@@ -108,7 +123,12 @@ class AddEventActivity : BaseActivity() {
 
         if (requestCode == ImagePickerDialogFragment.REQUEST_CAPTURE_IMAGE) {
             // Handle image returned from camera app. Load it into image view.
-            Glide.with(this).load(imageFilePath).into(addEvent_image_background)
+            mEvent?.let {
+                Glide.with(this)
+                        .load(imageFilePath)
+                        .signature(StringSignature(it.backgroundPictureTime.toString()))
+                        .into(addEvent_image_background)
+            }
             mBackgroundUri = Uri.parse(imageFilePath)
 
         } else if (requestCode == ImagePickerDialogFragment.REQUEST_CHOOSE_IMAGE && data != null) {
@@ -116,7 +136,9 @@ class AddEventActivity : BaseActivity() {
             val uri = data.data
 
             try {
-                Glide.with(this).load(uri).into(addEvent_image_background)
+                Glide.with(this)
+                        .load(uri)
+                        .into(addEvent_image_background)
                 mBackgroundUri = uri
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -134,6 +156,40 @@ class AddEventActivity : BaseActivity() {
     }
 
     /**
+     * Fill views with data when editing event
+     */
+    private fun setupViews() {
+        if (mEvent.eventUid.isNotEmpty()) {
+            addEvent_text_title.text = editEvent
+            addEvent_view_title.input_input_text.setText(mEvent.title)
+            addEvent_view_description.input_input_text.setText(mEvent.description)
+            addEvent_view_address.input_input_text.setText(mEvent.address)
+            addEvent_view_date.input_input_text.setText(convertLongToDate(mEvent.date, "d.M.yyyy HH:mm"))
+
+            if (mEvent.backgroundPicturePath.isNotEmpty()) {
+                Glide.with(this)
+                        .using(FirebaseImageLoader())
+                        .load(mStorageRef.child(mEvent.backgroundPicturePath))
+                        .into(addEvent_image_background)
+
+                addEvent_button_addBackground.visibility = View.GONE
+                addEvent_text_addBackground.visibility = View.GONE
+                addEvent_view_imageOverlay.visibility = View.VISIBLE
+            } else {
+                addEvent_button_addBackground.visibility = View.VISIBLE
+                addEvent_text_addBackground.visibility = View.VISIBLE
+                addEvent_view_imageOverlay.visibility = View.GONE
+                addEvent_image_background.setImageResource(R.drawable.bg_add_event)
+            }
+
+            addEvent_button_delete.visibility = View.VISIBLE
+        } else {
+            addEvent_button_delete.visibility = View.GONE
+            addEvent_text_title.text = addEvent
+        }
+    }
+
+    /**
      * Set date text in view when dialog was closed
      */
     fun updateDate() {
@@ -144,12 +200,20 @@ class AddEventActivity : BaseActivity() {
      * Setup mChips with categories
      */
     private fun setupChips() {
-        mChips?.forEach {
+        mSelectedChip = mEvent.category
+
+        mChips.forEachIndexed { index, s ->
             val chip = Chip(this, null, R.style.Widget_MaterialComponents_Chip_Choice)
-            chip.text = it
+            chip.text = s
             chip.isCheckable = true
             chip.setOnClickListener {
                 mSelectedChip = (it as Chip).text.toString()
+                addEvent_layout_chips.clearCheck()
+                addEvent_layout_chips.check(it.id)
+            }
+            if (s == mSelectedChip) {
+                chip.isChecked = true
+                addEvent_layout_chips.check(index + 1)
             }
 
             addEvent_layout_chips.addView(chip)
@@ -183,11 +247,17 @@ class AddEventActivity : BaseActivity() {
      * Upload background image and when successful then call event upload
      */
     private fun executeUpload() {
-        mStorageRef.child("events/${UUID.randomUUID()}").putBytes(mUploadBytes).addOnCompleteListener {
+        val path = if (mEvent.backgroundPicturePath.isNotEmpty())
+            mEvent.backgroundPicturePath
+        else
+            "events/${UUID.randomUUID()}"
+
+        mStorageRef.child(path).putBytes(mUploadBytes).addOnCompleteListener {
             when {
                 it.isSuccessful -> {
-                    it.result.metadata?.path?.let {
-                        mEvent.backgroundPicturePath = it
+                    it.result.metadata?.let {
+                        mEvent.backgroundPicturePath = it.path
+                        mEvent.backgroundPictureTime = it.updatedTimeMillis
                     }
                     executeEventUpload()
                 }
@@ -203,19 +273,24 @@ class AddEventActivity : BaseActivity() {
      * Upload only event pojo without background photo
      */
     private fun executeEventUpload() {
-        val docRef = mFireStore.collection("events").document()
-        mEvent.eventUid = docRef.id
+            val docRef: DocumentReference?
 
-        docRef.set(mEvent).addOnCompleteListener {
-            when {
-                it.isSuccessful -> {
-                    showToast(R.string.successful_add)
-                    MainActivity.startActivity(this, LoggedUser.uid.isEmpty())
+            if (mEvent.eventUid.isEmpty()) {
+                docRef = mFireStore.collection("events").document()
+                mEvent.eventUid = docRef.id
+            } else
+                docRef = mFireStore.document("events/${mEvent.eventUid}")
+
+            docRef.set(mEvent).addOnCompleteListener {
+                when {
+                    it.isSuccessful -> {
+                        showToast(R.string.successful_add)
+                        MainActivity.startActivity(this, LoggedUser.uid.isEmpty())
+                    }
+                    else -> showToast(R.string.addEvent_error)
                 }
-                else -> showToast(R.string.addEvent_error)
+                addEvent_view_load.hide()
             }
-            addEvent_view_load.hide()
-        }
     }
 
     /**
@@ -272,14 +347,12 @@ class AddEventActivity : BaseActivity() {
             date = convertStringToLongTime(addEvent_view_date.input_input_text.text.toString())
 
         if (areValid(title, description, address, date)) {
-            val event = Event()
-            event.userUid = LoggedUser.uid
-            event.title = title
-            event.description = description
-            event.address = address
-            event.date = date!!
-            event.category = mSelectedChip
-            mEvent = event
+            mEvent.userUid = LoggedUser.uid
+            mEvent.title = title
+            mEvent.description = description
+            mEvent.address = address
+            mEvent.date = date!!
+            mEvent.category = mSelectedChip
 
             addEventUpload()
         }

@@ -1,6 +1,7 @@
 package com.aleksanderkapera.liveback.ui.fragment
 
 import android.animation.Animator
+import android.app.Activity
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
@@ -17,6 +18,7 @@ import com.aleksanderkapera.liveback.model.Comment
 import com.aleksanderkapera.liveback.model.Event
 import com.aleksanderkapera.liveback.model.User
 import com.aleksanderkapera.liveback.model.Vote
+import com.aleksanderkapera.liveback.ui.activity.AddEventActivity
 import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.ui.widget.EmptyScreenView
@@ -74,7 +76,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
         fun newInstance(event: Event, user: User): BaseFragment {
             val fragment = EventFragment()
             val bundle = Bundle()
-            bundle.putParcelable(BUNDLE_EVENT, event)
+            bundle.putSerializable(BUNDLE_EVENT, event)
             bundle.putParcelable(BUNDLE_EVENT_USER, user)
             fragment.arguments = bundle
 
@@ -89,7 +91,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
 
         //retrieve event from main fragment
         arguments?.let {
-            mEvent = it.getParcelable(BUNDLE_EVENT)
+            mEvent = it.getSerializable(BUNDLE_EVENT) as Event
             mUser = it.getParcelable(BUNDLE_EVENT_USER)
         }
 
@@ -162,20 +164,27 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                         .into(event_image_background)
             } else
                 setBackgroundCategory(event.category, event_image_background)
-        }
-        mUser?.let { user ->
-            user.profilePicPath?.let {
-                if (it.isNotEmpty()) {
-                    Glide.with(context)
-                            .using(FirebaseImageLoader())
-                            .load(FirebaseStorage.getInstance().getReference(it))
-                            .signature(StringSignature(user.profilePicTime.toString()))
-                            .into(event_image_profile)
-                } else
-                    event_image_profile.setImageDrawable(R.drawable.ic_user_round.asDrawable())
-            }
 
-            event_image_profile.setOnClickListener { (activity as MainActivity).showFragment(ProfileFragment.newInstance(user.uid)) }
+            mUser?.let { user ->
+                user.profilePicPath?.let {
+                    if (it.isNotEmpty()) {
+                        Glide.with(context)
+                                .using(FirebaseImageLoader())
+                                .load(FirebaseStorage.getInstance().getReference(it))
+                                .signature(StringSignature(user.profilePicTime.toString()))
+                                .into(event_image_profile)
+                    } else
+                        event_image_profile.setImageDrawable(R.drawable.ic_user_round.asDrawable())
+                }
+
+                event_image_edit.visibility = when {
+                    event.userUid == LoggedUser.uid -> View.VISIBLE
+                    else -> View.GONE
+                }
+
+                event_image_edit.setOnClickListener { AddEventActivity.startActivity(activity as Activity, event) }
+                event_image_profile.setOnClickListener { (activity as MainActivity).showFragment(ProfileFragment.newInstance(user.uid)) }
+            }
         }
     }
 

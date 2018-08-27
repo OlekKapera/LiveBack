@@ -24,3 +24,4 @@ const val REQUEST_TARGET_EVENT_FRAGMENT = 25
 
 const val INTENT_MAIN_LOGGING = "Intent Main Logging"
 const val INTENT_SETTINGS_ELEMENTS = "Intent Settings Activity"
+const val INTENT_ADD_EVENT_EVENT = "Intent Add Event Activity Event"

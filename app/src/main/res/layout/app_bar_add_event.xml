@@ -26,6 +26,13 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/bg_add_event" />
 
+            <View
+                android:id="@+id/addEvent_view_imageOverlay"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/addEvent_bgImage_height"
+                android:visibility="gone"
+                android:background="@color/imageOverlay" />
+
             <ImageView
                 android:id="@+id/addEvent_button_addBackground"
                 android:layout_width="@dimen/icon64"
@@ -72,6 +79,13 @@
                 style="@style/AppTheme.Toolbar.Button"
                 android:layout_gravity="end"
                 app:srcCompat="@drawable/ic_tick" />
+
+            <ImageView
+                android:id="@+id/addEvent_button_delete"
+                style="@style/AppTheme.Toolbar.Button"
+                android:layout_gravity="end"
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_delete" />
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.CollapsingToolbarLayout>
 </android.support.design.widget.AppBarLayout>

@@ -95,6 +95,7 @@
     <string name="add_background">Add background</string>
     <string name="category">Category</string>
     <string name="successful_add">Event added successfully!</string>
+    <string name="edit_event">Edit Event</string>
 
     <!--Settings-->
     <string name="change_password">Change Password</string>

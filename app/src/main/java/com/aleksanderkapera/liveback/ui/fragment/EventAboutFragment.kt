@@ -26,7 +26,7 @@ class EventAboutFragment : BaseFragment() {
             val fragment = EventAboutFragment()
             val bundle = Bundle()
 
-            bundle.putParcelable(BUNDLE_EVENT_ABOUT, event)
+            bundle.putSerializable(BUNDLE_EVENT_ABOUT, event)
             fragment.arguments = bundle
 
             return fragment
@@ -36,8 +36,8 @@ class EventAboutFragment : BaseFragment() {
     override fun getLayoutRes(): Int = R.layout.fragment_event_about
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        arguments?.getParcelable<Event>(BUNDLE_EVENT_ABOUT)?.let {
-            mEvent = it
+        arguments?.getSerializable(BUNDLE_EVENT_ABOUT)?.let {
+            mEvent = it as Event
         }
 
         return super.onCreateView(inflater, container, savedInstanceState)

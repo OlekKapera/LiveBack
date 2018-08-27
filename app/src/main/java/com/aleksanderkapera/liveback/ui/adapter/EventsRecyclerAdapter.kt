@@ -76,6 +76,7 @@ class EventsRecyclerAdapter(val context: Context) : BaseRecyclerAdapter<EventsRe
                 Glide.with(context)
                         .using(FirebaseImageLoader())
                         .load(mStorageRef)
+                        .signature(StringSignature(item.backgroundPictureTime.toString()))
                         .into(itemView.cardMain_image_background)
             } else {
                 setBackgroundCategory(item.category, itemView.cardMain_image_background)

@@ -47,7 +47,7 @@ class NavigationViewHelper(private val activity: MainActivity, private val drawe
         if (LoggedUser.uid.isEmpty())
             Toast.makeText(activity, needToLogin, Toast.LENGTH_SHORT).show()
         else
-            AddEventActivity.startActivity(activity)
+            AddEventActivity.startActivity(activity, null)
     }
 
     private val onSettingsClick = View.OnClickListener {
