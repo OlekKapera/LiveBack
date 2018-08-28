@@ -9,7 +9,6 @@ import com.aleksanderkapera.liveback.ui.adapter.EventVotesAdapter
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.ui.widget.BottomOffsetDecoration
 import com.aleksanderkapera.liveback.util.*
-import kotlinx.android.synthetic.main.fragment_event.*
 import kotlinx.android.synthetic.main.fragment_event_vote.*
 import java.io.Serializable
 
@@ -18,7 +17,7 @@ import java.io.Serializable
  */
 class EventVoteFragment : BaseFragment() {
 
-    private var mVotes = listOf<Vote>()
+    var votes = listOf<Vote>()
     private var mEventUid = ""
     lateinit var votesAdapter: EventVotesAdapter
 
@@ -38,7 +37,7 @@ class EventVoteFragment : BaseFragment() {
     override fun getLayoutRes(): Int = R.layout.fragment_event_vote
 
     override fun setupViews(rootView: View) {
-        mVotes = arguments?.get(BUNDLE_EVENT_VOTE) as List<Vote>
+        votes = arguments?.get(BUNDLE_EVENT_VOTE) as List<Vote>
         mEventUid = arguments?.get(BUNDLE_EVENT_VOTE_UID) as String
         initAdapter()
     }
@@ -48,14 +47,14 @@ class EventVoteFragment : BaseFragment() {
      */
     private fun initAdapter() {
         context?.let {
-            votesAdapter = EventVotesAdapter(it, mEventUid, (parentFragment as EventFragment).event_view_load)
-            votesAdapter.replaceData(mVotes.sortedByDescending { vote -> vote.upVotes.size - vote.downVotes.size })
+            votesAdapter = EventVotesAdapter(it, mEventUid, parentFragment as EventFragment)
+            votesAdapter.replaceData(votes.sortedByDescending { vote -> vote.upVotes.size - vote.downVotes.size })
             val layout = LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
             eventVote_recycler_votes.layoutManager = layout
             eventVote_recycler_votes.adapter = votesAdapter
             eventVote_recycler_votes.addItemDecoration(BottomOffsetDecoration(getNavigationBarHeight()+ dpToPx(R.dimen.spacing16.asDimen().toInt())))
         }
 
-        (parentFragment as EventFragment).switchEmptyView(mVotes as MutableList<Any>, eventVote_recycler_votes, eventVote_view_emptyScreen)
+        (parentFragment as EventFragment).switchEmptyView(votes as MutableList<Any>, eventVote_recycler_votes, eventVote_view_emptyScreen)
     }
 }

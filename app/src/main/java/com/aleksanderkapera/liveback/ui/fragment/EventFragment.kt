@@ -1,6 +1,7 @@
 package com.aleksanderkapera.liveback.ui.fragment
 
 import android.animation.Animator
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
@@ -52,6 +53,10 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     private val mVoteSuccString = R.string.vote_successful.asString()
     private val mCommentFailString = R.string.comment_add_error.asString()
     private val mVoteFailString = R.string.vote_error.asString()
+    private val mCommentEditSuccString = R.string.comment_edit_successful.asString()
+    private val mVoteEditSuccString = R.string.vote_edit_successful.asString()
+    private val mCommentEditFailString = R.string.comment_edit_error.asString()
+    private val mVoteEditFailString = R.string.vote_edit_error.asString()
 
     private var isFaded = false
     private var isAnimating = false
@@ -61,14 +66,14 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     private lateinit var mFireStore: FirebaseFirestore
     private lateinit var mEventDoc: DocumentReference
 
-    private var mEvent: Event? = null
+    var event: Event? = null
     private var mUser: User? = null
     private var mComments: MutableList<Comment>? = null
     private var mVotes: MutableList<Vote>? = null
     private var mIsLiked = false
 
-    private lateinit var mCommentFragment: EventCommentsFragment
-    private lateinit var mVotesFragment: EventVoteFragment
+    lateinit var commentFragment: EventCommentsFragment
+    lateinit var votesFragment: EventVoteFragment
 
     private var currentTab = 0
 
@@ -91,14 +96,15 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
 
         //retrieve event from main fragment
         arguments?.let {
-            mEvent = it.getSerializable(BUNDLE_EVENT) as Event
+            event = it.getSerializable(BUNDLE_EVENT) as Event
             mUser = it.getParcelable(BUNDLE_EVENT_USER)
         }
 
         mFireStore = FirebaseFirestore.getInstance()
-        mEventDoc = mFireStore.document("events/${mEvent?.eventUid}")
+        mEventDoc = mFireStore.document("events/${event?.eventUid}")
     }
 
+    @SuppressLint("RestrictedApi")
     override fun setupViews(rootView: View) {
         // set toolbar
         appCompatActivity.setSupportActionBar(event_layout_toolbar)
@@ -124,13 +130,12 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
         else
             event_fab.visibility = View.VISIBLE
 
-        mEvent?.let {
+        event?.let {
             mIsLiked = it.likes.contains(LoggedUser.uid)
             if (mIsLiked)
                 event_fab.setImageDrawable(R.drawable.ic_heart_white.asDrawable())
             else
                 event_fab.setImageDrawable(R.drawable.ic_heart_outline.asDrawable())
-
             getComments()
         }
 
@@ -143,18 +148,18 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     /**
      * Handle events when user approves dialog messages
      */
-    override fun positiveButtonClicked(title: String, description: String) {
-        if (title.isEmpty())
-            addComment(description)
-        else
-            addVote(title, description)
+    override fun positiveButtonClicked(comment: Comment?, vote: Vote?) {
+        if (comment != null)
+            addComment(comment)
+        else if (vote != null)
+            addVote(vote)
     }
 
     /**
      * Fill toolbar with event data
      */
     private fun setToolbarViews() {
-        mEvent?.let { event ->
+        event?.let { event ->
             event_text_eventName.text = event.title
 
             if (event.backgroundPicturePath.isNotEmpty()) {
@@ -312,12 +317,12 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
         event_view_load.show()
 
         if (!mIsLiked) {
-            mFireStore.document("events/${mEvent?.eventUid}").update("likes", FieldValue.arrayUnion(LoggedUser.uid)).addOnCompleteListener {
+            mFireStore.document("events/${event?.eventUid}").update("likes", FieldValue.arrayUnion(LoggedUser.uid)).addOnCompleteListener {
                 event_view_load.hide()
                 when {
                     it.isSuccessful -> {
                         mIsLiked = true
-                        mEvent?.let {
+                        event?.let {
                             it.likes.add(LoggedUser.uid)
                             event_fab.setImageDrawable(R.drawable.ic_heart_white.asDrawable())
                             eventAbout_container_likes.eventItem_text_description.text = R.plurals.event_likes.asPluralsString(it.likes.size)
@@ -326,12 +331,12 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                 }
             }
         } else {
-            mFireStore.document("events/${mEvent?.eventUid}").update("likes", FieldValue.arrayRemove(LoggedUser.uid)).addOnCompleteListener {
+            mFireStore.document("events/${event?.eventUid}").update("likes", FieldValue.arrayRemove(LoggedUser.uid)).addOnCompleteListener {
                 event_view_load.hide()
                 when {
                     it.isSuccessful -> {
                         mIsLiked = false
-                        mEvent?.let {
+                        event?.let {
                             it.likes.remove(LoggedUser.uid)
                             event_fab.setImageDrawable(R.drawable.ic_heart_outline.asDrawable())
                             eventAbout_container_likes.eventItem_text_description.text = R.plurals.event_likes.asPluralsString(it.likes.size)
@@ -345,26 +350,44 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     /**
      * Adding comment for event
      */
-    private fun addComment(review: String) {
-        val commentRef = mFireStore.collection("events/${mEvent?.eventUid}/comments").document()
+    private fun addComment(comment: Comment) {
+        val newComment = comment.commentUid.isEmpty()
 
-        val commentPojo = Comment(commentRef.id, review, System.currentTimeMillis(), LoggedUser.uid)
+        val commentRef = when {
+            comment.commentUid.isEmpty() -> mFireStore.collection("events/${event?.eventUid}/comments").document()
+            else -> mFireStore.document("events/${event?.eventUid}/comments/${comment.commentUid}")
+        }
+        comment.commentUid = commentRef.id
 
         event_view_load.show()
-        commentRef.set(commentPojo).addOnCompleteListener {
+        commentRef.set(comment).addOnCompleteListener {
             when {
                 it.isSuccessful -> {
-                    showToast(mCommentSuccString)
-                    mComments?.let {
-                        it.add(commentPojo)
-                        mCommentFragment.commentsAdapter.replaceData(it)
-                    }
-                    mEvent?.let {
-                        it.comments++
-                        mFireStore.document("events/${mEvent?.eventUid}").update("comments", it.comments)
+                    if (newComment) {
+                        showToast(mCommentSuccString)
+                        mComments?.let {
+                            it.add(0,comment)
+                            commentFragment.commentsAdapter.replaceData(it)
+                        }
+                        event?.let {
+                            it.comments++
+                            mFireStore.document("events/${event?.eventUid}").update("comments", it.comments)
+                        }
+                    } else {
+                        showToast(mCommentEditSuccString)
+                        mComments?.let { comments ->
+                            for (index in 0 until comments.size) {
+                                if (comments[index].commentUid == comment.commentUid) {
+                                    comments.removeAt(index)
+                                    comments.add(0, comment)
+                                    break
+                                }
+                            }
+                            commentFragment.commentsAdapter.replaceData(comments)
+                        }
                     }
                 }
-                else -> showToast(mCommentFailString)
+                else -> if (comment.commentUid.isEmpty()) showToast(mCommentFailString) else showToast(mCommentEditFailString)
             }
 
             switchEmptyView(mComments as MutableList<Any>, eventComment_recycler_comments, eventComment_view_emptyScreen)
@@ -375,25 +398,44 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     /**
      * Adding vote
      */
-    private fun addVote(title: String, description: String) {
-        val voteRef = mFireStore.collection("events/${mEvent?.eventUid}/votes").document()
+    private fun addVote(vote: Vote) {
+        val newVote = vote.voteUid.isEmpty()
 
-        val votePojo = Vote(voteRef.id, title, description, LoggedUser.uid, mutableListOf(), mutableListOf())
+        val voteRef = when {
+            vote.voteUid.isEmpty() -> mFireStore.collection("events/${event?.eventUid}/votes").document()
+            else -> mFireStore.document("events/${event?.eventUid}/votes/${vote.voteUid}")
+        }
+        vote.voteUid = voteRef.id
+
         event_view_load.show()
-        voteRef.set(votePojo).addOnCompleteListener {
+        voteRef.set(vote).addOnCompleteListener {
             when {
                 it.isSuccessful -> {
-                    showToast(mVoteSuccString)
-                    mVotes?.let {
-                        it.add(votePojo)
-                        mVotesFragment.votesAdapter.replaceData(it)
-                    }
-                    mEvent?.let {
-                        it.votes++
-                        mFireStore.document("events/${it.eventUid}").update("votes", it.votes)
+                    if (newVote) {
+                        showToast(mVoteSuccString)
+                        mVotes?.let {
+                            it.add(0,vote)
+                            votesFragment.votesAdapter.replaceData(it)
+                        }
+                        event?.let {
+                            it.votes++
+                            mFireStore.document("events/${it.eventUid}").update("votes", it.votes)
+                        }
+                    } else {
+                        showToast(mVoteEditSuccString)
+                        mVotes?.let { votes ->
+                            for (index in 0 until votes.size) {
+                                if (votes[index].voteUid == vote.voteUid) {
+                                    votes.removeAt(index)
+                                    votes.add(0, vote)
+                                    break
+                                }
+                            }
+                            votesFragment.votesAdapter.replaceData(votes)
+                        }
                     }
                 }
-                else -> showToast(mVoteFailString)
+                else -> if (vote.voteUid.isEmpty()) showToast(mVoteFailString) else showToast(mVoteEditFailString)
             }
 
             switchEmptyView(mVotes as MutableList<Any>, eventVote_recycler_votes, eventVote_view_emptyScreen)
@@ -405,14 +447,14 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
      * Setup tab layout and view pager
      */
     private fun setupTabs() {
-        mEvent?.let {
+        event?.let {
             val adapter = ViewPagerAdapter(childFragmentManager)
-            mCommentFragment = EventCommentsFragment.newInstance(mComments)
-            mVotesFragment = EventVoteFragment.newInstance(mVotes, it.eventUid)
+            commentFragment = EventCommentsFragment.newInstance(mComments)
+            votesFragment = EventVoteFragment.newInstance(mVotes, it.eventUid)
 
             adapter.addFragment(EventAboutFragment.newInstance(it), mAboutString)
-            adapter.addFragment(mCommentFragment, mCommentsString)
-            adapter.addFragment(mVotesFragment, mVoteString)
+            adapter.addFragment(commentFragment, mCommentsString)
+            adapter.addFragment(votesFragment, mVoteString)
 
             event_layout_viewPager.adapter = adapter
             event_layout_tabs.setupWithViewPager(event_layout_viewPager)
@@ -467,12 +509,12 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                 switchLike()
             }
             1 -> {
-                val dialog = AddFeedbackDialogFragment.newInstance(AddFeedbackDialogType.COMMENT)
+                val dialog = AddFeedbackDialogFragment.newInstance(AddFeedbackDialogType.COMMENT, null, null)
                 dialog.setTargetFragment(this, REQUEST_TARGET_EVENT_FRAGMENT)
                 dialog.show(fragmentManager, TAG_ADD_FEEDBACK)
             }
             2 -> {
-                val dialog = AddFeedbackDialogFragment.newInstance(AddFeedbackDialogType.VOTE)
+                val dialog = AddFeedbackDialogFragment.newInstance(AddFeedbackDialogType.VOTE, null, null)
                 dialog.setTargetFragment(this, REQUEST_TARGET_EVENT_FRAGMENT)
                 dialog.show(fragmentManager, TAG_ADD_FEEDBACK)
             }

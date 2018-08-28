@@ -8,11 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.aleksanderkapera.liveback.R
+import com.aleksanderkapera.liveback.model.Comment
 import com.aleksanderkapera.liveback.model.Event
+import com.aleksanderkapera.liveback.model.Vote
 import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.fragment.DeleteDialogType
+import com.aleksanderkapera.liveback.ui.fragment.EventFragment
 import com.aleksanderkapera.liveback.util.BUNDLE_DELETE_DIALOG
-import com.aleksanderkapera.liveback.util.BUNDLE_DELETE_DIALOG_EVENT
 import com.aleksanderkapera.liveback.util.BUNDLE_DELETE_DIALOG_ITEM_ID
 import com.aleksanderkapera.liveback.util.asString
 import com.google.firebase.firestore.DocumentReference
@@ -21,6 +23,8 @@ import com.google.firebase.firestore.WriteBatch
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.dialog_fragment_delete.view.*
+import kotlinx.android.synthetic.main.fragment_event_comments.*
+import kotlinx.android.synthetic.main.fragment_event_vote.*
 
 /**
  * Created by kapera on 28-Aug-18.
@@ -50,17 +54,17 @@ class DeleteDialogFragment : DialogFragment() {
     private var mVotesDone = false
     private lateinit var rootView: View
 
+    private lateinit var mEventDocRef: DocumentReference
     private lateinit var mDocumentRef: DocumentReference
     private lateinit var mStorageRef: StorageReference
     private lateinit var mBatch: WriteBatch
 
     companion object {
-        fun newInstance(type: DeleteDialogType, event: Event, itemUid: String?): DeleteDialogFragment {
+        fun newInstance(type: DeleteDialogType, itemUid: String?): DeleteDialogFragment {
             val fragment = DeleteDialogFragment()
             val bundle = Bundle()
 
             bundle.putSerializable(BUNDLE_DELETE_DIALOG, type)
-            bundle.putSerializable(BUNDLE_DELETE_DIALOG_EVENT, event)
             bundle.putString(BUNDLE_DELETE_DIALOG_ITEM_ID, itemUid)
             fragment.arguments = bundle
 
@@ -78,24 +82,25 @@ class DeleteDialogFragment : DialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        rootView = inflater.inflate(R.layout.dialog_fragment_delete, null)
+        rootView = inflater.inflate(R.layout.dialog_fragment_delete, container, false)
 
         arguments?.let {
             mType = it.getSerializable(BUNDLE_DELETE_DIALOG) as DeleteDialogType
-            mEvent = it.getSerializable(BUNDLE_DELETE_DIALOG_EVENT) as Event
             mItemId = it.getString(BUNDLE_DELETE_DIALOG_ITEM_ID) ?: ""
         }
 
+        (targetFragment as EventFragment).event?.let {
+            mEvent = it
+        }
         mBatch = FirebaseFirestore.getInstance().batch()
         mStorageRef = FirebaseStorage.getInstance().reference
+        mEventDocRef = FirebaseFirestore.getInstance().document("events/${mEvent.eventUid}")
 
         when (mType) {
             DeleteDialogType.EVENT -> {
                 rootView.deleteDialog_text_title.text = deleteEventQuestion
                 rootView.deleteDialog_text_message.text = deleteEventMessage
                 rootView.deleteDialog_button_positive.text = deleteEvent
-
-                mDocumentRef = FirebaseFirestore.getInstance().document("events/${mEvent.eventUid}")
             }
 
             DeleteDialogType.COMMENT -> {
@@ -126,8 +131,11 @@ class DeleteDialogFragment : DialogFragment() {
      */
     private fun positiveButtonClick() {
         rootView.deleteDialog_view_load.show()
+        rootView.deleteDialog_view_load.visibility = View.VISIBLE
         when (mType) {
             DeleteDialogType.EVENT -> deleteImage()
+            DeleteDialogType.COMMENT -> deleteComment()
+            DeleteDialogType.VOTE -> deleteVote()
         }
     }
 
@@ -153,9 +161,9 @@ class DeleteDialogFragment : DialogFragment() {
      * Delete event and all its comments and votes
      */
     private fun deleteEvent() {
-        mBatch.delete(mDocumentRef)
+        mBatch.delete(mEventDocRef)
 
-        mDocumentRef.collection("comments").get().addOnCompleteListener { commentTask ->
+        mEventDocRef.collection("comments").get().addOnCompleteListener { commentTask ->
             when {
                 commentTask.isSuccessful -> {
                     commentTask.result.documents.forEach {
@@ -170,7 +178,7 @@ class DeleteDialogFragment : DialogFragment() {
             }
         }
 
-        mDocumentRef.collection("votes").get().addOnCompleteListener { votesTask ->
+        mEventDocRef.collection("votes").get().addOnCompleteListener { votesTask ->
             when {
                 votesTask.isSuccessful -> {
                     votesTask.result.documents.forEach {
@@ -196,8 +204,70 @@ class DeleteDialogFragment : DialogFragment() {
                     it.isSuccessful -> Toast.makeText(context, deleteEventSuccess, Toast.LENGTH_SHORT).show()
                     else -> Toast.makeText(context, deleteEventFail, Toast.LENGTH_SHORT).show()
                 }
-                MainActivity.startActivity(activity as Activity,false)
+                MainActivity.startActivity(activity as Activity, false)
                 rootView.deleteDialog_view_load.hide()
             }
+    }
+
+    /**
+     * Delete comment and update comments counter of an event
+     */
+    private fun deleteComment() {
+        mBatch.delete(mDocumentRef)
+        mBatch.update(mEventDocRef, "comments", mEvent.comments - 1)
+
+        mBatch.commit().addOnCompleteListener {
+            when {
+                it.isSuccessful -> {
+                    Toast.makeText(context, deleteCommentSuccess, Toast.LENGTH_SHORT).show()
+                    mEvent.comments--
+
+                    val comments = (targetFragment as EventFragment).commentFragment.comments as MutableList<Comment>
+                    for (index in 0 until comments.size) {
+                        if (comments[index].commentUid == mItemId) {
+                            comments.removeAt(index)
+                            break
+                        }
+                    }
+
+                    (targetFragment as EventFragment).commentFragment.commentsAdapter.replaceData(comments)
+                    (targetFragment as EventFragment).switchEmptyView(comments as MutableList<Any>, (targetFragment as EventFragment).eventComment_recycler_comments, (targetFragment as EventFragment).eventComment_view_emptyScreen)
+                }
+                else -> Toast.makeText(context, deleteCommentFail, Toast.LENGTH_SHORT).show()
+            }
+            dismiss()
+            rootView.deleteDialog_view_load.hide()
+        }
+    }
+
+    /**
+     * Delete vote and update votes counter of an event
+     */
+    private fun deleteVote() {
+        mBatch.delete(mDocumentRef)
+        mBatch.update(mEventDocRef, "votes", mEvent.votes - 1)
+
+        mBatch.commit().addOnCompleteListener {
+            when {
+                it.isSuccessful -> {
+                    Toast.makeText(context, deleteVoteSuccess, Toast.LENGTH_SHORT).show()
+                    mEvent.votes--
+
+                    val votes = (targetFragment as EventFragment).votesFragment.votes as MutableList<Vote>
+                    for (index in 0 until votes.size) {
+                        if (votes[index].voteUid == mItemId) {
+                            votes.removeAt(index)
+                            break
+                        }
+                    }
+
+                    (targetFragment as EventFragment).votesFragment.votesAdapter.replaceData(votes)
+                    (targetFragment as EventFragment).switchEmptyView(votes as MutableList<Any>, (targetFragment as EventFragment).eventVote_recycler_votes, (targetFragment as EventFragment).eventVote_view_emptyScreen)
+                }
+                else -> Toast.makeText(context, deleteVoteFail, Toast.LENGTH_SHORT).show()
+            }
+            dismiss()
+            rootView.deleteDialog_view_load.hide()
+        }
     }
 }

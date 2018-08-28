@@ -23,6 +23,8 @@
     <string name="comments_error">Couldn\'t retrieve comments! Try again later.</string>
     <string name="comment_add_error">Adding comment failed! Please, try again later.</string>
     <string name="vote_error">Adding vote failed! Please, try again later.</string>
+    <string name="comment_edit_error">Editing comment failed! Please, try again later.</string>
+    <string name="vote_edit_error">Editing vote failed! Please, try again later.</string>
     <string name="empty_votes">There are no votes to be displayed.</string>
     <string name="empty_comments">There are no comments to be displayed.</string>
     <string name="empty_events">There are no events to be displayed.</string>
@@ -93,6 +95,10 @@
     <string name="subject">Subject</string>
     <string name="comment_successful">Comment added successfully!</string>
     <string name="vote_successful">Vote added successfully!</string>
+    <string name="comment_edit_successful">Comment edited successfully!</string>
+    <string name="vote_edit_successful">Vote edited successfully!</string>
+    <string name="edit_comment">Edit comment</string>
+    <string name="edit_vote">Edit vote</string>
 
     <!--Add Event-->
     <string name="add_background">Add background</string>

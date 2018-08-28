@@ -8,12 +8,11 @@ import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.User
 import com.aleksanderkapera.liveback.model.Vote
 import com.aleksanderkapera.liveback.ui.activity.MainActivity
+import com.aleksanderkapera.liveback.ui.base.BaseFragment
+import com.aleksanderkapera.liveback.ui.base.DeleteDialogFragment
+import com.aleksanderkapera.liveback.ui.fragment.DeleteDialogType
 import com.aleksanderkapera.liveback.ui.fragment.ProfileFragment
-import com.aleksanderkapera.liveback.ui.widget.LoadView
-import com.aleksanderkapera.liveback.util.LoggedUser
-import com.aleksanderkapera.liveback.util.asColor
-import com.aleksanderkapera.liveback.util.asDrawable
-import com.aleksanderkapera.liveback.util.asString
+import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.signature.StringSignature
 import com.firebase.ui.storage.images.FirebaseImageLoader
@@ -22,13 +21,14 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import kotlinx.android.synthetic.main.fragment_event.*
 import kotlinx.android.synthetic.main.item_vote.view.*
 import kotlin.math.absoluteValue
 
 /**
  * Created by kapera on 28-Jul-18.
  */
-class EventVotesAdapter(val context: Context, val eventUid: String, val loader: LoadView) : BaseRecyclerAdapter<EventVotesAdapter.ViewHolder, Vote>(context) {
+class EventVotesAdapter(val context: Context, val eventUid: String, val fragment: BaseFragment) : BaseRecyclerAdapter<EventVotesAdapter.ViewHolder, Vote>(context) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(mInflater.inflate(R.layout.item_vote, parent, false))
@@ -80,12 +80,24 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val loader: 
                 }
             }
 
-            if (item.upVotes.contains(LoggedUser.uid)) {
-                mUpVoted = true
-                itemView.eventVote_button_upVote.setColorFilter(mButtonColorRed)
-            } else if (item.downVotes.contains(LoggedUser.uid)) {
-                mDownVoted = true
-                itemView.eventVote_button_downVote.setColorFilter(mButtonColorRed)
+            itemView.eventVote_button_upVote.setColorFilter(mButtonColorDefault)
+            itemView.eventVote_button_downVote.setColorFilter(mButtonColorDefault)
+
+            when {
+                item.upVotes.contains(LoggedUser.uid) -> {
+                    mUpVoted = true
+                    itemView.eventVote_button_upVote.setColorFilter(mButtonColorRed)
+                }
+                item.downVotes.contains(LoggedUser.uid) -> {
+                    mDownVoted = true
+                    itemView.eventVote_button_downVote.setColorFilter(mButtonColorRed)
+                }
+            }
+
+            itemView.setOnClickListener {
+                val dialog = DeleteDialogFragment.newInstance(DeleteDialogType.VOTE, item.voteUid)
+                dialog.setTargetFragment(fragment, REQUEST_TARGET_DELETE_FRAGMENT)
+                dialog.show((context as MainActivity).supportFragmentManager, TAG_VOTE_DELETE)
             }
 
             itemView.eventVote_button_upVote.setOnClickListener { upVote() }
@@ -93,6 +105,7 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val loader: 
         }
 
         override fun onClick(p0: View?) {
+            itemView.setOnClickListener(this)
             itemView.eventVote_image_profile.setOnClickListener(this)
         }
 
@@ -111,7 +124,7 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val loader: 
          * Add or remove user's uid to the up votes list, but first remove it from down votes list
          */
         private fun upVote() {
-            loader.show()
+            fragment.event_view_load.show()
             mVoteRef.update("downVotes", FieldValue.arrayRemove(LoggedUser.uid)).addOnCompleteListener {
                 if (it.isSuccessful) {
                     item.downVotes.remove(LoggedUser.uid)
@@ -119,7 +132,7 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val loader: 
 
                     if (!mUpVoted) {
                         mVoteRef.update("upVotes", FieldValue.arrayUnion(LoggedUser.uid)).addOnCompleteListener {
-                            loader.hide()
+                            fragment.event_view_load.hide()
 
                             when {
                                 it.isSuccessful -> {
@@ -137,7 +150,7 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val loader: 
                     } else {
                         item.upVotes.remove(LoggedUser.uid)
                         mVoteRef.update("upVotes", FieldValue.arrayRemove(LoggedUser.uid)).addOnCompleteListener {
-                            loader.hide()
+                            fragment.event_view_load.hide()
                             when {
                                 it.isSuccessful -> {
                                     mUpVoted = false
@@ -152,7 +165,7 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val loader: 
                         }
                     }
                 } else {
-                    loader.hide()
+                    fragment.event_view_load.hide()
                     Toast.makeText(context, mUpVoteString, Toast.LENGTH_SHORT).show()
                 }
             }
@@ -162,7 +175,7 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val loader: 
          * Add or remove user's uid to the down votes list, but first remove it from add votes list
          */
         private fun downVote() {
-            loader.show()
+            fragment.event_view_load.show()
             mVoteRef.update("upVotes", FieldValue.arrayRemove(LoggedUser.uid)).addOnCompleteListener {
                 if (it.isSuccessful) {
                     item.upVotes.remove(LoggedUser.uid)
@@ -170,7 +183,7 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val loader: 
 
                     if (!mDownVoted) {
                         mVoteRef.update("downVotes", FieldValue.arrayUnion(LoggedUser.uid)).addOnCompleteListener {
-                            loader.hide()
+                            fragment.event_view_load.hide()
                             when {
                                 it.isSuccessful -> {
                                     mDownVoted = true
@@ -186,7 +199,7 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val loader: 
                         }
                     } else {
                         mVoteRef.update("downVotes", FieldValue.arrayRemove(LoggedUser.uid)).addOnCompleteListener {
-                            loader.hide()
+                            fragment.event_view_load.hide()
                             when {
                                 it.isSuccessful -> {
                                     mDownVoted = false
@@ -201,7 +214,7 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val loader: 
                         }
                     }
                 } else {
-                    loader.hide()
+                    fragment.event_view_load.hide()
                     Toast.makeText(context, mDownVoteString, Toast.LENGTH_SHORT).show()
                 }
             }

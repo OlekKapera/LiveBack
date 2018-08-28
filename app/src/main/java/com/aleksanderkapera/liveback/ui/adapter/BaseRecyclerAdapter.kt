@@ -13,17 +13,12 @@ abstract class BaseRecyclerAdapter<VH: BaseRecyclerAdapter.ViewHolder,T>(context
     protected  var mInflater: LayoutInflater = LayoutInflater.from(context)
     protected  var mContext: Context = context
     protected  var mRes: Resources = context.resources
-    protected  var mOnItemClickListener: OnItemClickListener<T>? = null
 
     protected fun isLastItem(position: Int): Boolean { return position  == mData.size - 1}
 
     override fun getItemCount(): Int { return mData.size}
 
     override fun onBindViewHolder(holder: VH, position: Int) { holder.bind(position)}
-
-    fun setOnitemClickListener(listener: OnItemClickListener<T>){
-        mOnItemClickListener = listener
-    }
 
     fun addData(data: List<T>?) {
         if(data == null) return

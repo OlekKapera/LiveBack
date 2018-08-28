@@ -109,7 +109,7 @@ class AddEventActivity : BaseActivity() {
         addEvent_image_background.setOnClickListener(onAddBackgroundClick)
         addEvent_button_addBackground.setOnClickListener(onAddBackgroundClick)
         addEvent_button_accept.setOnClickListener(onAcceptClick)
-        addEvent_button_delete.setOnClickListener { DeleteDialogFragment.newInstance(DeleteDialogType.EVENT, mEvent, null).show(supportFragmentManager, TAG_EVENT_DELETE) }
+        addEvent_button_delete.setOnClickListener { DeleteDialogFragment.newInstance(DeleteDialogType.EVENT, null).show(supportFragmentManager, TAG_EVENT_DELETE) }
         addEvent_view_date.setOnClickListener(onDateClick)
         addEvent_view_date.input_input_text.setOnClickListener(onDateClick)
     }
