@@ -36,6 +36,9 @@
     <string name="incorrect_password">Enter correct password!</string>
     <string name="profile_update_error">Couldn\'t update profile! Please, try again later.</string>
     <string name="delete_account_error">Couldn\'t delete account! Please, try again later.</string>
+    <string name="delete_event_error">Couldn\'t delete event! Please, try again later.</string>
+    <string name="delete_comment_error">Couldn\'t delete comment! Please, try again later.</string>
+    <string name="delete_vote_error">Couldn\'t delete vote! Please, try again later.</string>
 
     <!--Main Activity-->
     <string name="search">Search</string>
@@ -127,6 +130,20 @@
     <string name="delete_account_info">If you want to delete your account, tap here.</string>
     <string name="delete_account_message">This will permanently delete your account and all data associated with it. Are you sure?</string>
     <string name="delete_account_successful">Your account was deleted successfully.</string>
+
+    <!--Delete-->
+    <string name="delete_event_question">Delete event?</string>
+    <string name="delete_event">Delete event</string>
+    <string name="delete_event_message">This will permanently delete this event and all data associated with it. Are you sure?</string>
+    <string name="delete_comment_question">Delete comment?</string>
+    <string name="delete_comment">Delete comment</string>
+    <string name="delete_comment_message">This will permanently delete this comment. Are you sure?</string>
+    <string name="delete_vote_question">Delete vote?</string>
+    <string name="delete_vote">Delete vote</string>
+    <string name="delete_vote_message">This will permanently delete this vote. Are you sure?</string>
+    <string name="delete_event_successful">Event deleted successfully</string>
+    <string name="delete_comment_successful">Comment deleted successfully</string>
+    <string name="delete_vote_successful">Vote deleted successfully</string>
 
     <!--Categories-->
     <string name="concert">Concert</string>

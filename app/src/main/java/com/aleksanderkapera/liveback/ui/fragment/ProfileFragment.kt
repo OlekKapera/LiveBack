@@ -97,7 +97,6 @@ class ProfileFragment : BaseFragment() {
 
         setToolbarAnimation()
         setupTabs()
-        getProfile()
 
         profile_button_settings.setOnClickListener { SettingsActivity.startActivity(activity as Activity, SettingsCaller.PROFILE_FRAGMENT) }
     }
@@ -279,6 +278,7 @@ class ProfileFragment : BaseFragment() {
      * Retrieve user's events
      */
     private fun getEvents() {
+        mEventsRef.clear()
         mFireStore.collection("events").whereEqualTo("userUid", mUserid).addSnapshotListener { querySnapshot, firebaseFirestoreException ->
             querySnapshot?.documents?.forEach {
                 mEventsRef.add(it.reference)
@@ -309,6 +309,7 @@ class ProfileFragment : BaseFragment() {
      * Retrieves comments on user's events
      */
     private fun getComments() {
+        mComments.clear()
         mEventsRef.forEach { docRef ->
             docRef.collection("comments").get().addOnCompleteListener {
                 when {

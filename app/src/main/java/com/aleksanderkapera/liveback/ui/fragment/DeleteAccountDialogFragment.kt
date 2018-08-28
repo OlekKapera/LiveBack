@@ -66,8 +66,8 @@ class DeleteAccountDialogFragment : DialogFragment() {
         mStorageRef = FirebaseStorage.getInstance()
         mBatch = mFireStoreRef.batch()
 
-        rootView.deleteDialog_button_positive.setOnClickListener { positiveButtonClick() }
-        rootView.deleteDialog_button_negative.setOnClickListener { dismiss() }
+        rootView.deleteAccount_button_positive.setOnClickListener { positiveButtonClick() }
+        rootView.deleteAccount_button_negative.setOnClickListener { dismiss() }
 
         return rootView
     }
@@ -90,17 +90,17 @@ class DeleteAccountDialogFragment : DialogFragment() {
      * Reauthenticates user so he can be removed from server
      */
     private fun reauthenticateAuth() {
-        if (deleteDialog_input_password.text.isEmpty())
-            deleteDialog_layout_password.error = requiredField
+        if (deleteAccount_input_password.text.isEmpty())
+            deleteAccount_layout_password.error = requiredField
         else {
-            rootView.deleteDialog_view_load.show()
-            val credentials = EmailAuthProvider.getCredential(LoggedUser.email, deleteDialog_input_password.text.toString())
+            rootView.deleteAccount_view_load.show()
+            val credentials = EmailAuthProvider.getCredential(LoggedUser.email, deleteAccount_input_password.text.toString())
             mAuth.currentUser?.reauthenticate(credentials)?.addOnCompleteListener {
                 when {
                     it.isSuccessful -> executeDelete()
                     else -> {
-                        deleteDialog_layout_password.error = incorrectPassword
-                        rootView.deleteDialog_view_load.hide()
+                        deleteAccount_layout_password.error = incorrectPassword
+                        rootView.deleteAccount_view_load.hide()
                     }
                 }
             }
@@ -121,7 +121,7 @@ class DeleteAccountDialogFragment : DialogFragment() {
                 }
                 else -> Toast.makeText(context, deleteError, Toast.LENGTH_SHORT).show()
             }
-            rootView.deleteDialog_view_load.hide()
+            rootView.deleteAccount_view_load.hide()
         }
     }
 
@@ -226,7 +226,7 @@ class DeleteAccountDialogFragment : DialogFragment() {
                 }
                 else -> {
                     Toast.makeText(context, deleteError, Toast.LENGTH_SHORT).show()
-                    rootView.deleteDialog_view_load.hide()
+                    rootView.deleteAccount_view_load.hide()
                 }
             }
         }
@@ -242,7 +242,7 @@ class DeleteAccountDialogFragment : DialogFragment() {
                     it.isSuccessful -> deleteAuth()
                     else -> {
                         Toast.makeText(context, deleteError, Toast.LENGTH_SHORT).show()
-                        rootView.deleteDialog_view_load.hide()
+                        rootView.deleteAccount_view_load.hide()
                     }
                 }
             }

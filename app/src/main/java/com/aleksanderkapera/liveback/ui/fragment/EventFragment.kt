@@ -161,21 +161,20 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                 Glide.with(context)
                         .using(FirebaseImageLoader())
                         .load(FirebaseStorage.getInstance().getReference(event.backgroundPicturePath))
+                        .signature(StringSignature(event.backgroundPictureTime.toString()))
                         .into(event_image_background)
             } else
                 setBackgroundCategory(event.category, event_image_background)
 
             mUser?.let { user ->
-                user.profilePicPath?.let {
-                    if (it.isNotEmpty()) {
-                        Glide.with(context)
-                                .using(FirebaseImageLoader())
-                                .load(FirebaseStorage.getInstance().getReference(it))
-                                .signature(StringSignature(user.profilePicTime.toString()))
-                                .into(event_image_profile)
-                    } else
-                        event_image_profile.setImageDrawable(R.drawable.ic_user_round.asDrawable())
-                }
+                if (user.profilePicPath.isNotEmpty()) {
+                    Glide.with(context)
+                            .using(FirebaseImageLoader())
+                            .load(FirebaseStorage.getInstance().getReference(user.profilePicPath))
+                            .signature(StringSignature(user.profilePicTime.toString()))
+                            .into(event_image_profile)
+                } else
+                    event_image_profile.setImageDrawable(R.drawable.ic_user_round.asDrawable())
 
                 event_image_edit.visibility = when {
                     event.userUid == LoggedUser.uid -> View.VISIBLE

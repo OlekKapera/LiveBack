@@ -2,7 +2,8 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -13,63 +14,48 @@
         android:paddingTop="@dimen/spacing24">
 
         <TextView
-            android:id="@+id/deleteAccount_text_title"
+            android:id="@+id/deleteDialog_text_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@string/font_family_regular"
-            android:text="@string/delete_account_question"
+            tools:text="@string/delete_event_question"
             android:textSize="@dimen/text20"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/deleteAccount_text_message"
+            android:id="@+id/deleteDialog_text_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing24"
-            android:text="@string/delete_account_message"
-            app:layout_constraintTop_toBottomOf="@id/deleteAccount_text_title" />
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/deleteAccount_layout_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing24"
-            app:layout_constraintTop_toBottomOf="@id/deleteAccount_text_message">
-
-            <EditText
-                android:id="@+id/deleteAccount_input_password"
-                android:layout_width="match_parent"
-                android:inputType="textPassword"
-                android:layout_height="match_parent"
-                android:hint="@string/password" />
-        </android.support.design.widget.TextInputLayout>
+            tools:text="@string/delete_event_message"
+            app:layout_constraintTop_toBottomOf="@id/deleteDialog_text_title" />
 
         <Button
-            android:id="@+id/deleteAccount_button_positive"
+            android:id="@+id/deleteDialog_button_positive"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing24"
             android:background="@color/transparent"
-            android:text="@string/delete_account"
+            tools:text="@string/delete_event"
             android:textColor="@color/red"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/deleteAccount_layout_password" />
+            app:layout_constraintTop_toBottomOf="@id/deleteDialog_text_message" />
 
         <Button
-            android:id="@+id/deleteAccount_button_negative"
+            android:id="@+id/deleteDialog_button_negative"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/spacing4"
             android:background="@color/transparent"
             android:text="@string/cancel"
-            app:layout_constraintEnd_toStartOf="@id/deleteAccount_button_positive"
-            app:layout_constraintTop_toTopOf="@id/deleteAccount_button_positive" />
+            app:layout_constraintEnd_toStartOf="@id/deleteDialog_button_positive"
+            app:layout_constraintTop_toTopOf="@id/deleteDialog_button_positive" />
     </android.support.constraint.ConstraintLayout>
 
     <com.aleksanderkapera.liveback.ui.widget.LoadView
-        android:id="@+id/deleteAccount_view_load"
+        android:id="@+id/deleteDialog_view_load"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:elevation="20dp"

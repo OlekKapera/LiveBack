@@ -15,7 +15,9 @@ import android.widget.LinearLayout
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.Event
 import com.aleksanderkapera.liveback.ui.base.BaseActivity
+import com.aleksanderkapera.liveback.ui.base.DeleteDialogFragment
 import com.aleksanderkapera.liveback.ui.fragment.DatePickerDialogFragment
+import com.aleksanderkapera.liveback.ui.fragment.DeleteDialogType
 import com.aleksanderkapera.liveback.ui.fragment.ImagePickerDialogFragment
 import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.Glide
@@ -107,6 +109,7 @@ class AddEventActivity : BaseActivity() {
         addEvent_image_background.setOnClickListener(onAddBackgroundClick)
         addEvent_button_addBackground.setOnClickListener(onAddBackgroundClick)
         addEvent_button_accept.setOnClickListener(onAcceptClick)
+        addEvent_button_delete.setOnClickListener { DeleteDialogFragment.newInstance(DeleteDialogType.EVENT, mEvent, null).show(supportFragmentManager, TAG_EVENT_DELETE) }
         addEvent_view_date.setOnClickListener(onDateClick)
         addEvent_view_date.input_input_text.setOnClickListener(onDateClick)
     }
@@ -123,12 +126,10 @@ class AddEventActivity : BaseActivity() {
 
         if (requestCode == ImagePickerDialogFragment.REQUEST_CAPTURE_IMAGE) {
             // Handle image returned from camera app. Load it into image view.
-            mEvent?.let {
-                Glide.with(this)
-                        .load(imageFilePath)
-                        .signature(StringSignature(it.backgroundPictureTime.toString()))
-                        .into(addEvent_image_background)
-            }
+            Glide.with(this)
+                    .load(imageFilePath)
+                    .signature(StringSignature(mEvent.backgroundPictureTime.toString()))
+                    .into(addEvent_image_background)
             mBackgroundUri = Uri.parse(imageFilePath)
 
         } else if (requestCode == ImagePickerDialogFragment.REQUEST_CHOOSE_IMAGE && data != null) {
@@ -138,6 +139,7 @@ class AddEventActivity : BaseActivity() {
             try {
                 Glide.with(this)
                         .load(uri)
+                        .signature(StringSignature(mEvent.backgroundPictureTime.toString()))
                         .into(addEvent_image_background)
                 mBackgroundUri = uri
             } catch (e: IOException) {
@@ -170,6 +172,7 @@ class AddEventActivity : BaseActivity() {
                 Glide.with(this)
                         .using(FirebaseImageLoader())
                         .load(mStorageRef.child(mEvent.backgroundPicturePath))
+                        .signature(StringSignature(mEvent.backgroundPictureTime.toString()))
                         .into(addEvent_image_background)
 
                 addEvent_button_addBackground.visibility = View.GONE
@@ -273,24 +276,24 @@ class AddEventActivity : BaseActivity() {
      * Upload only event pojo without background photo
      */
     private fun executeEventUpload() {
-            val docRef: DocumentReference?
+        val docRef: DocumentReference?
 
-            if (mEvent.eventUid.isEmpty()) {
-                docRef = mFireStore.collection("events").document()
-                mEvent.eventUid = docRef.id
-            } else
-                docRef = mFireStore.document("events/${mEvent.eventUid}")
+        if (mEvent.eventUid.isEmpty()) {
+            docRef = mFireStore.collection("events").document()
+            mEvent.eventUid = docRef.id
+        } else
+            docRef = mFireStore.document("events/${mEvent.eventUid}")
 
-            docRef.set(mEvent).addOnCompleteListener {
-                when {
-                    it.isSuccessful -> {
-                        showToast(R.string.successful_add)
-                        MainActivity.startActivity(this, LoggedUser.uid.isEmpty())
-                    }
-                    else -> showToast(R.string.addEvent_error)
+        docRef.set(mEvent).addOnCompleteListener {
+            when {
+                it.isSuccessful -> {
+                    showToast(R.string.successful_add)
+                    MainActivity.startActivity(this, LoggedUser.uid.isEmpty())
                 }
-                addEvent_view_load.hide()
+                else -> showToast(R.string.addEvent_error)
             }
+            addEvent_view_load.hide()
+        }
     }
 
     /**
