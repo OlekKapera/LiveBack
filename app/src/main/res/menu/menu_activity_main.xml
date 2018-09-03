@@ -6,7 +6,7 @@
         android:id="@+id/searchButton"
         android:title="@string/search_button"
         app:showAsAction="always"
-        android:icon="@drawable/ic_magnifying_glass" />
+        android:icon="@drawable/ic_search" />
 
     <item android:id="@+id/filterButton"
         android:title="@string/filter_button"

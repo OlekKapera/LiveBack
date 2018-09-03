@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
-import android.view.Menu
+import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import com.aleksanderkapera.liveback.R
@@ -18,8 +18,10 @@ import com.aleksanderkapera.liveback.ui.fragment.MainFragment
 import com.aleksanderkapera.liveback.ui.widget.NavigationViewHelper
 import com.aleksanderkapera.liveback.util.INTENT_MAIN_LOGGING
 import com.aleksanderkapera.liveback.util.LoggedUser
+import com.aleksanderkapera.liveback.util.asString
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
@@ -28,6 +30,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 
 class MainActivity : FragmentActivity() {
+
+    private val mGenericErrorString = R.string.generic_error.asString()
 
     companion object {
         fun startActivity(activity: Activity, anonymousUser: Boolean) {
@@ -44,9 +48,11 @@ class MainActivity : FragmentActivity() {
     private lateinit var mFireStoreRef: FirebaseFirestore
     private lateinit var mEventsCol: CollectionReference
     private lateinit var mEvents: List<Event>
+    private var mLastDocument: DocumentSnapshot? = null
     private var mUser: User? = null
     private var mStorageRef: StorageReference? = null
     private var isAnonymousUser = false
+    private val mEventsPerPage = 7
 
     override fun getLayoutRes(): Int = R.layout.activity_main
 
@@ -54,9 +60,6 @@ class MainActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        //show loader
-        main_view_load.show()
 
         mAuth = FirebaseAuth.getInstance()
         mFireStoreRef = FirebaseFirestore.getInstance()
@@ -66,7 +69,7 @@ class MainActivity : FragmentActivity() {
         //when no user is logged in open login fragment
         if (mAuth.currentUser != null || isAnonymousUser) {
             mEventsCol = mFireStoreRef.collection("events")
-            getEvents()
+            getEvents("")
             mAuth.currentUser?.let {
                 getUser(it.uid)
             }
@@ -76,11 +79,6 @@ class MainActivity : FragmentActivity() {
 
         } else
             SigningActivity.startActivity(this)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-//        searchBar.setMenuItem(menu?.findItem(R.id.searchButton))
-        return true
     }
 
     override fun onBackPressed() {
@@ -103,18 +101,46 @@ class MainActivity : FragmentActivity() {
     /**
      * Retrieve events from database
      */
-    private fun getEvents() {
-        mEventsCol.orderBy("date", Query.Direction.ASCENDING).get().addOnCompleteListener {
-            when {
-                it.isSuccessful -> {
-                    mEvents = it.result.toObjects(Event::class.java)
-                    EventBus.getDefault().post(EventsReceivedEvent(mEvents))
-                }
-                else -> Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
-            }
+    fun getEvents(query: String) {
+//        main_view_load.show()
+        mLastDocument?.let {
+            mEventsCol
+                    .orderBy("title", Query.Direction.ASCENDING)
+                    .startAt(query)
+                    .endAt("$query\uf8ff")
+                    .limit(mEventsPerPage.toLong())
+                    .get().addOnCompleteListener {
+                        when {
+                            it.isSuccessful -> {
+                                mEvents = it.result.toObjects(Event::class.java)
+                                if (it.result.documents.isNotEmpty())
+                                    mLastDocument = it.result.documents.last()
 
-            //hide loader
-            main_view_load.hide()
+                                EventBus.getDefault().post(EventsReceivedEvent(mEvents))
+                            }
+                            else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
+                        }
+
+                        //hide loader
+                        main_view_load.hide()
+                    }
+        } ?: run {
+            mEventsCol.whereGreaterThanOrEqualTo("title", query)
+                    .orderBy("title", Query.Direction.ASCENDING)
+                    .limit(mEventsPerPage.toLong())
+                    .get().addOnCompleteListener {
+                        when {
+                            it.isSuccessful -> {
+                                mEvents = it.result.toObjects(Event::class.java)
+                                mLastDocument = it.result.documents.last()
+                                EventBus.getDefault().post(EventsReceivedEvent(mEvents))
+                            }
+                            else -> Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
+                        }
+
+                        //hide loader
+                        main_view_load.hide()
+                    }
         }
     }
 

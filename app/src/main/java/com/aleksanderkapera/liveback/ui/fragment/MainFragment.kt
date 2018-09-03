@@ -3,19 +3,27 @@ package com.aleksanderkapera.liveback.ui.fragment
 import android.os.Bundle
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.View
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.bus.EventsReceivedEvent
 import com.aleksanderkapera.liveback.model.Event
+import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.adapter.EventsRecyclerAdapter
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.ui.widget.BottomOffsetDecoration
+import com.aleksanderkapera.liveback.util.EndlessScrollListener
+import com.aleksanderkapera.liveback.util.RxSearchObservable
 import com.aleksanderkapera.liveback.util.getNavigationBarHeight
 import com.aleksanderkapera.liveback.util.setToolbarMargin
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by kapera on 29-May-18.
@@ -23,6 +31,8 @@ import org.greenrobot.eventbus.Subscribe
 class MainFragment : BaseFragment() {
 
     private lateinit var mEvents: List<Event>
+    private lateinit var mEndlessScrollListener: EndlessScrollListener
+    private lateinit var mAdapter: EventsRecyclerAdapter
 
     companion object {
         fun newInstance(): BaseFragment {
@@ -60,24 +70,62 @@ class MainFragment : BaseFragment() {
         }
 
         setToolbarMargin(main_container_toolbar)
+
+        main_toolbar_search.setOnQueryTextFocusChangeListener{_,hasFocus->
+            if(!hasFocus && main_toolbar_search.query.isEmpty()) {
+                main_toolbar_search.onActionViewCollapsed()
+                main_toolbar_title.visibility = View.VISIBLE
+            }
+        }
+
+        main_toolbar_search.setOnSearchClickListener {
+            main_toolbar_title.visibility = View.GONE
+        }
+
+        initAdapter()
+        setSearchObservable()
     }
 
     private fun initAdapter() {
         context?.let {
-            val adapter = EventsRecyclerAdapter(it)
-            adapter.addData(mEvents)
+            mAdapter = EventsRecyclerAdapter(it)
             val layoutManager = LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
             main_recycler_events.layoutManager = layoutManager
-            main_recycler_events.adapter = adapter
+            main_recycler_events.adapter = mAdapter
+
+            mEndlessScrollListener = object : EndlessScrollListener(layoutManager) {
+                override fun onLoadMore(page: Int): Boolean {
+                    (activity as MainActivity).getEvents(main_toolbar_search.query.toString())
+                    return true
+                }
+            }
 
             val bottomOffset = BottomOffsetDecoration(getNavigationBarHeight())
             main_recycler_events.addItemDecoration(bottomOffset)
         }
     }
 
+    private fun setSearchObservable() {
+        RxSearchObservable.fromView(main_toolbar_search)
+                .debounce(300, TimeUnit.MILLISECONDS)
+                .filter { searchText ->
+                    main_recycler_events.smoothScrollToPosition(0)
+                    mEndlessScrollListener.resetPaging()
+                    (activity as MainActivity).getEvents(searchText)
+                    true
+                }
+                .distinctUntilChanged()
+                .switchMap { return@switchMap Observable.fromArray(mEvents) }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    mAdapter.replaceData(mEvents)
+                }
+    }
+
     @Subscribe
     fun onEventsReceivedEvent(event: EventsReceivedEvent) {
         mEvents = event.events
-        initAdapter()
+        mAdapter.replaceData(mEvents)
     }
 }
