@@ -3,7 +3,6 @@ package com.aleksanderkapera.liveback.ui.fragment
 import android.os.Bundle
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.View
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.bus.EventsReceivedEvent
@@ -71,8 +70,8 @@ class MainFragment : BaseFragment() {
 
         setToolbarMargin(main_container_toolbar)
 
-        main_toolbar_search.setOnQueryTextFocusChangeListener{_,hasFocus->
-            if(!hasFocus && main_toolbar_search.query.isEmpty()) {
+        main_toolbar_search.setOnQueryTextFocusChangeListener { _, hasFocus ->
+            if (!hasFocus && main_toolbar_search.query.isEmpty()) {
                 main_toolbar_search.onActionViewCollapsed()
                 main_toolbar_title.visibility = View.VISIBLE
             }
@@ -94,11 +93,13 @@ class MainFragment : BaseFragment() {
             main_recycler_events.adapter = mAdapter
 
             mEndlessScrollListener = object : EndlessScrollListener(layoutManager) {
-                override fun onLoadMore(page: Int): Boolean {
-                    (activity as MainActivity).getEvents(main_toolbar_search.query.toString())
-                    return true
+                override fun onLoadMore() {
+                    (activity as MainActivity).getEvents()
                 }
             }
+            main_recycler_events.addOnScrollListener(mEndlessScrollListener)
+
+            (activity as MainActivity).getEvents()
 
             val bottomOffset = BottomOffsetDecoration(getNavigationBarHeight())
             main_recycler_events.addItemDecoration(bottomOffset)
@@ -107,11 +108,11 @@ class MainFragment : BaseFragment() {
 
     private fun setSearchObservable() {
         RxSearchObservable.fromView(main_toolbar_search)
-                .debounce(300, TimeUnit.MILLISECONDS)
+                .debounce(300, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                 .filter { searchText ->
                     main_recycler_events.smoothScrollToPosition(0)
                     mEndlessScrollListener.resetPaging()
-                    (activity as MainActivity).getEvents(searchText)
+                    (activity as MainActivity).search(searchText)
                     true
                 }
                 .distinctUntilChanged()

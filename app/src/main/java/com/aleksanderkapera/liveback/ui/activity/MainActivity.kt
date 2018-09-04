@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
-import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import com.aleksanderkapera.liveback.R
@@ -29,6 +28,7 @@ import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 
+
 class MainActivity : FragmentActivity() {
 
     private val mGenericErrorString = R.string.generic_error.asString()
@@ -47,12 +47,13 @@ class MainActivity : FragmentActivity() {
     lateinit var mAuth: FirebaseAuth
     private lateinit var mFireStoreRef: FirebaseFirestore
     private lateinit var mEventsCol: CollectionReference
-    private lateinit var mEvents: List<Event>
+    private lateinit var mEvents: MutableList<Event>
+
     private var mLastDocument: DocumentSnapshot? = null
     private var mUser: User? = null
     private var mStorageRef: StorageReference? = null
     private var isAnonymousUser = false
-    private val mEventsPerPage = 7
+    private val mEventsPerPage = 5
 
     override fun getLayoutRes(): Int = R.layout.activity_main
 
@@ -69,7 +70,6 @@ class MainActivity : FragmentActivity() {
         //when no user is logged in open login fragment
         if (mAuth.currentUser != null || isAnonymousUser) {
             mEventsCol = mFireStoreRef.collection("events")
-            getEvents("")
             mAuth.currentUser?.let {
                 getUser(it.uid)
             }
@@ -99,20 +99,49 @@ class MainActivity : FragmentActivity() {
     }
 
     /**
-     * Retrieve events from database
+     * Perform search action for events.
      */
-    fun getEvents(query: String) {
-//        main_view_load.show()
+    fun search(query: String) {
+        main_view_load.show()
+
+        mEventsCol
+                .orderBy("title", Query.Direction.ASCENDING)
+                .startAt(query)
+                .endAt("$query\uf8ff")
+                .limit(mEventsPerPage.toLong())
+                .get().addOnCompleteListener {
+                    when {
+                        it.isSuccessful -> {
+                            mEvents = it.result.toObjects(Event::class.java)
+                            if (it.result.documents.isNotEmpty())
+                                mLastDocument = it.result.documents.last()
+
+                            EventBus.getDefault().post(EventsReceivedEvent(mEvents))
+                        }
+                        else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
+                    }
+
+                    //hide loader
+                    main_view_load.hide()
+                }
+    }
+
+    /**
+     * Retrieve events from database. When mLastDocument is not null it means that initial call has been made
+     * and it's calling for adding more events.
+     */
+    fun getEvents() {
+        main_view_load.show()
+
         mLastDocument?.let {
             mEventsCol
-                    .orderBy("title", Query.Direction.ASCENDING)
-                    .startAt(query)
-                    .endAt("$query\uf8ff")
+                    .orderBy("date", Query.Direction.ASCENDING)
                     .limit(mEventsPerPage.toLong())
+                    .startAfter(it)
                     .get().addOnCompleteListener {
                         when {
                             it.isSuccessful -> {
-                                mEvents = it.result.toObjects(Event::class.java)
+                                mEvents.addAll(it.result.toObjects(Event::class.java))
                                 if (it.result.documents.isNotEmpty())
                                     mLastDocument = it.result.documents.last()
 
@@ -125,8 +154,8 @@ class MainActivity : FragmentActivity() {
                         main_view_load.hide()
                     }
         } ?: run {
-            mEventsCol.whereGreaterThanOrEqualTo("title", query)
-                    .orderBy("title", Query.Direction.ASCENDING)
+            mEventsCol
+                    .orderBy("date", Query.Direction.ASCENDING)
                     .limit(mEventsPerPage.toLong())
                     .get().addOnCompleteListener {
                         when {
@@ -135,7 +164,7 @@ class MainActivity : FragmentActivity() {
                                 mLastDocument = it.result.documents.last()
                                 EventBus.getDefault().post(EventsReceivedEvent(mEvents))
                             }
-                            else -> Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
+                            else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
                         }
 
                         //hide loader
