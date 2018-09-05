@@ -81,6 +81,8 @@ class MainFragment : BaseFragment() {
             main_toolbar_title.visibility = View.GONE
         }
 
+        main_layout_swipe.setOnRefreshListener { (activity as MainActivity).getEvents() }
+
         initAdapter()
         setSearchObservable()
     }
@@ -94,7 +96,10 @@ class MainFragment : BaseFragment() {
 
             mEndlessScrollListener = object : EndlessScrollListener(layoutManager) {
                 override fun onLoadMore() {
-                    (activity as MainActivity).getEvents()
+                    if (main_toolbar_search.query.isEmpty())
+                        (activity as MainActivity).getEvents()
+                    else
+                        (activity as MainActivity).search(main_toolbar_search.query.toString())
                 }
             }
             main_recycler_events.addOnScrollListener(mEndlessScrollListener)
@@ -112,6 +117,7 @@ class MainFragment : BaseFragment() {
                 .filter { searchText ->
                     main_recycler_events.smoothScrollToPosition(0)
                     mEndlessScrollListener.resetPaging()
+                    (activity as MainActivity).lastDocument = null
                     (activity as MainActivity).search(searchText)
                     true
                 }
@@ -128,5 +134,6 @@ class MainFragment : BaseFragment() {
     fun onEventsReceivedEvent(event: EventsReceivedEvent) {
         mEvents = event.events
         mAdapter.replaceData(mEvents)
+        main_layout_swipe.isRefreshing = false
     }
 }

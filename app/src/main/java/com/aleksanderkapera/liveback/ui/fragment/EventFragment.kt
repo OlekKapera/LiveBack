@@ -125,6 +125,8 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
         fabParams.setMargins(0, 0, dpToPx(R.dimen.spacing8.asDimen().toInt()), getNavigationBarHeight())
         event_fab.layoutParams = fabParams
 
+        event_layout_swipe.setOnRefreshListener { getComments() }
+
         if (LoggedUser.uid.isEmpty())
             event_fab.visibility = View.GONE
         else
@@ -210,6 +212,9 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                     fadeOut(view, verticalOffset)
                 }
             }
+
+            // enable swipe layout when layout scrolled position is top
+            event_layout_swipe.isEnabled = Math.abs(verticalOffset) <= 5
         }
 
         event_layout_appBar.addOnOffsetChangedListener(listener)
@@ -290,6 +295,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                 else -> {
                     event_view_load.hide()
                     showToast(mErrorString)
+                    event_layout_swipe.isRefreshing = false
                 }
             }
         }
@@ -306,6 +312,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                     setupTabs()
                 }
             }
+            event_layout_swipe.isRefreshing = false
             event_view_load.hide()
         }
     }
@@ -366,7 +373,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                     if (newComment) {
                         showToast(mCommentSuccString)
                         mComments?.let {
-                            it.add(0,comment)
+                            it.add(0, comment)
                             commentFragment.commentsAdapter.replaceData(it)
                         }
                         event?.let {
@@ -414,7 +421,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                     if (newVote) {
                         showToast(mVoteSuccString)
                         mVotes?.let {
-                            it.add(0,vote)
+                            it.add(0, vote)
                             votesFragment.votesAdapter.replaceData(it)
                         }
                         event?.let {

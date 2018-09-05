@@ -49,7 +49,7 @@ class MainActivity : FragmentActivity() {
     private lateinit var mEventsCol: CollectionReference
     private lateinit var mEvents: MutableList<Event>
 
-    private var mLastDocument: DocumentSnapshot? = null
+    var lastDocument: DocumentSnapshot? = null
     private var mUser: User? = null
     private var mStorageRef: StorageReference? = null
     private var isAnonymousUser = false
@@ -104,36 +104,60 @@ class MainActivity : FragmentActivity() {
     fun search(query: String) {
         main_view_load.show()
 
-        mEventsCol
-                .orderBy("title", Query.Direction.ASCENDING)
-                .startAt(query)
-                .endAt("$query\uf8ff")
-                .limit(mEventsPerPage.toLong())
-                .get().addOnCompleteListener {
-                    when {
-                        it.isSuccessful -> {
-                            mEvents = it.result.toObjects(Event::class.java)
-                            if (it.result.documents.isNotEmpty())
-                                mLastDocument = it.result.documents.last()
+        lastDocument?.let {
+            mEventsCol
+                    .orderBy("title", Query.Direction.ASCENDING)
+                    .startAt(query)
+                    .endAt("$query\uf8ff")
+                    .limit(mEventsPerPage.toLong())
+                    .startAfter(it)
+                    .get().addOnCompleteListener {
+                        when {
+                            it.isSuccessful -> {
+                                mEvents.addAll(it.result.toObjects(Event::class.java))
+                                if (it.result.documents.isNotEmpty())
+                                    lastDocument = it.result.documents.last()
 
-                            EventBus.getDefault().post(EventsReceivedEvent(mEvents))
+                                EventBus.getDefault().post(EventsReceivedEvent(mEvents))
+                            }
+                            else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
                         }
-                        else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
-                    }
 
-                    //hide loader
-                    main_view_load.hide()
-                }
+                        //hide loader
+                        main_view_load.hide()
+                    }
+        } ?: run {
+            mEventsCol
+                    .orderBy("title", Query.Direction.ASCENDING)
+                    .startAt(query)
+                    .endAt("$query\uf8ff")
+                    .limit(mEventsPerPage.toLong())
+                    .get().addOnCompleteListener {
+                        when {
+                            it.isSuccessful -> {
+                                mEvents = it.result.toObjects(Event::class.java)
+                                if (it.result.documents.isNotEmpty())
+                                    lastDocument = it.result.documents.last()
+
+                                EventBus.getDefault().post(EventsReceivedEvent(mEvents))
+                            }
+                            else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
+                        }
+
+                        //hide loader
+                        main_view_load.hide()
+                    }
+        }
     }
 
     /**
-     * Retrieve events from database. When mLastDocument is not null it means that initial call has been made
+     * Retrieve events from database. When lastDocument is not null it means that initial call has been made
      * and it's calling for adding more events.
      */
     fun getEvents() {
         main_view_load.show()
 
-        mLastDocument?.let {
+        lastDocument?.let {
             mEventsCol
                     .orderBy("date", Query.Direction.ASCENDING)
                     .limit(mEventsPerPage.toLong())
@@ -143,7 +167,7 @@ class MainActivity : FragmentActivity() {
                             it.isSuccessful -> {
                                 mEvents.addAll(it.result.toObjects(Event::class.java))
                                 if (it.result.documents.isNotEmpty())
-                                    mLastDocument = it.result.documents.last()
+                                    lastDocument = it.result.documents.last()
 
                                 EventBus.getDefault().post(EventsReceivedEvent(mEvents))
                             }
@@ -161,7 +185,7 @@ class MainActivity : FragmentActivity() {
                         when {
                             it.isSuccessful -> {
                                 mEvents = it.result.toObjects(Event::class.java)
-                                mLastDocument = it.result.documents.last()
+                                lastDocument = it.result.documents.last()
                                 EventBus.getDefault().post(EventsReceivedEvent(mEvents))
                             }
                             else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()

@@ -7,17 +7,23 @@
 
     <include
         android:id="@+id/main_container_toolbar"
+        layout="@layout/app_bar_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        layout="@layout/app_bar_main" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/main_recycler_events"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/main_layout_swipe"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginEnd="@dimen/spacing8"
-        android:layout_marginStart="@dimen/spacing8"
-        android:overScrollMode="never"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/main_recycler_events"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/spacing8"
+            android:layout_marginStart="@dimen/spacing8"
+            android:overScrollMode="never" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 </android.support.design.widget.CoordinatorLayout>
