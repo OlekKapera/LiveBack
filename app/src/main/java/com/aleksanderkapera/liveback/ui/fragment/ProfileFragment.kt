@@ -95,6 +95,8 @@ class ProfileFragment : BaseFragment() {
         toolbarParams.setMargins(0, getStatusBarHeight(), 0, 0)
         profile_layout_toolbar.layoutParams = toolbarParams
 
+        profile_layout_swipe.setOnRefreshListener { getProfile() }
+
         setToolbarAnimation()
         setupTabs()
 
@@ -158,6 +160,9 @@ class ProfileFragment : BaseFragment() {
                     fadeOut(view, verticalOffset)
                 }
             }
+
+            // enable swipe layout when layout scrolled position is top
+            profile_layout_swipe.isEnabled = Math.abs(verticalOffset) <= 5
         }
 
         profile_layout_appBar.addOnOffsetChangedListener(listener)
@@ -269,6 +274,7 @@ class ProfileFragment : BaseFragment() {
                 else -> {
                     showToast(mProfileErrorString)
                     profile_view_load.hide()
+                    profile_layout_swipe.isRefreshing = false
                 }
             }
         }
@@ -292,12 +298,15 @@ class ProfileFragment : BaseFragment() {
                     mEventsFragment.mEventsAdapter.replaceData(mEvents)
                     if (mEvents.isNotEmpty())
                         getComments()
-                    else
+                    else {
                         profile_view_load.hide()
+                        profile_layout_swipe.isRefreshing = false
+                    }
                 }
                 else -> {
                     showToast(mEventsErrorString)
                     profile_view_load.hide()
+                    profile_layout_swipe.isRefreshing = false
                 }
             }
 
@@ -331,6 +340,7 @@ class ProfileFragment : BaseFragment() {
                         }
                     }
                 }
+                profile_layout_swipe.isRefreshing = false
             }
         }
     }

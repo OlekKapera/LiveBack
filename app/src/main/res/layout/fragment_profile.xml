@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/profile_layout_swipe"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/bgColor">
+    android:layout_height="match_parent">
 
-    <include layout="@layout/app_bar_profile"/>
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/profile_layout_viewPager"
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:background="@color/bgColor">
 
-    <com.aleksanderkapera.liveback.ui.widget.LoadView
-        android:id="@+id/profile_view_load"
-        android:visibility="gone"
-        android:elevation="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-</android.support.design.widget.CoordinatorLayout>
+        <include layout="@layout/app_bar_profile" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/profile_layout_viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        <com.aleksanderkapera.liveback.ui.widget.LoadView
+            android:id="@+id/profile_view_load"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:elevation="20dp"
+            android:visibility="gone" />
+    </android.support.design.widget.CoordinatorLayout>
+</android.support.v4.widget.SwipeRefreshLayout>
