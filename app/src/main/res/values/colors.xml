@@ -11,6 +11,7 @@
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="transparent">#00ffffff</color>
+    <color name="iconGrey">#696969</color>
 
     <color name="navbar">#d7000000</color>
     <color name="categoryBlue">#0876C4</color>

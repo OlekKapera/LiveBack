@@ -151,6 +151,15 @@
     <string name="delete_comment_successful">Comment deleted successfully</string>
     <string name="delete_vote_successful">Vote deleted successfully</string>
 
+    <!--Filter-->
+    <string name="filter">Filter</string>
+    <string name="apply">Apply</string>
+    <string name="reset_filter">Reset filter</string>
+    <string name="sort_by">Sort by</string>
+    <string name="number_of_likes">Number of likes</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+
     <!--Categories-->
     <string name="concert">Concert</string>
     <string name="free_time">Free Time</string>

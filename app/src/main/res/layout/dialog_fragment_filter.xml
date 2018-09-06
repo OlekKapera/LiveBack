@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/spacing8"
+    android:paddingEnd="@dimen/spacing24"
+    android:paddingStart="@dimen/spacing24"
+    android:paddingTop="@dimen/spacing24">
+
+    <TextView
+        android:id="@+id/filterDialog_text_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@string/font_family_regular"
+        android:text="@string/filter"
+        android:textSize="@dimen/text20"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/filterDialog_text_sort"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing8"
+        android:layout_marginTop="@dimen/spacing16"
+        android:text="@string/sort_by"
+        android:textSize="@dimen/text16"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/filterDialog_text_title" />
+
+    <TextView
+        android:id="@+id/filterDialog_popup_sort"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableEnd="@drawable/ic_arrow_grey"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        android:gravity="center_vertical"
+        android:padding="@dimen/spacing4"
+        android:text="@string/date"
+        android:textSize="@dimen/text16"
+        android:layout_marginEnd="@dimen/spacing8"
+        app:layout_constraintBottom_toBottomOf="@id/filterDialog_text_sort"
+        app:layout_constraintEnd_toStartOf="@id/filterDialog_button_sortDirection"
+        app:layout_constraintTop_toTopOf="@id/filterDialog_text_sort" />
+
+    <ImageView
+        android:id="@+id/filterDialog_button_sortDirection"
+        android:layout_width="@dimen/icon18"
+        android:layout_height="@dimen/icon18"
+        app:layout_constraintBottom_toBottomOf="@id/filterDialog_popup_sort"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/filterDialog_popup_sort"
+        app:srcCompat="@drawable/ic_arrow_up" />
+
+    <Button
+        android:id="@+id/filterDialog_button_positive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing24"
+        android:background="@color/transparent"
+        android:minWidth="0dp"
+        android:paddingEnd="@dimen/spacing8"
+        android:paddingStart="@dimen/spacing8"
+        android:text="@string/apply"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/filterDialog_popup_sort" />
+
+    <Button
+        android:id="@+id/filterDialog_button_negative"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/spacing8"
+        android:background="@color/transparent"
+        android:minWidth="0dp"
+        android:paddingEnd="@dimen/spacing8"
+        android:paddingStart="@dimen/spacing8"
+        android:text="@string/cancel"
+        app:layout_constraintEnd_toStartOf="@id/filterDialog_button_positive"
+        app:layout_constraintTop_toTopOf="@id/filterDialog_button_positive" />
+
+    <Button
+        android:id="@+id/filterDialog_button_reset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:text="@string/reset_filter"
+        android:textColor="@color/red"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/filterDialog_button_positive" />
+</android.support.constraint.ConstraintLayout>

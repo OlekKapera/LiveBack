@@ -11,10 +11,7 @@ import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.adapter.EventsRecyclerAdapter
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.ui.widget.BottomOffsetDecoration
-import com.aleksanderkapera.liveback.util.EndlessScrollListener
-import com.aleksanderkapera.liveback.util.RxSearchObservable
-import com.aleksanderkapera.liveback.util.getNavigationBarHeight
-import com.aleksanderkapera.liveback.util.setToolbarMargin
+import com.aleksanderkapera.liveback.util.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -60,7 +57,7 @@ class MainFragment : BaseFragment() {
 
     override fun setupViews(rootView: View) {
         // set toolbar
-        appCompatActivity.setSupportActionBar(event_layout_toolbar)
+        appCompatActivity.setSupportActionBar(main_layout_toolbar)
         val actionbar: ActionBar? = appCompatActivity.supportActionBar
         actionbar?.apply {
             setDisplayHomeAsUpEnabled(true)
@@ -82,6 +79,7 @@ class MainFragment : BaseFragment() {
         }
 
         main_layout_swipe.setOnRefreshListener { (activity as MainActivity).getEvents() }
+        main_toolbar_filter.setOnClickListener { FilterDialogFragment.newInstance().show(fragmentManager, TAG_MAIN_FILTER) }
 
         initAdapter()
         setSearchObservable()

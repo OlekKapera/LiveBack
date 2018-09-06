@@ -20,7 +20,6 @@ const val BUNDLE_DELETE_DIALOG_ITEM_ID = "Bundle Delete Dialog Item Id"
 const val TAG_REGISTER_DIALOG = "Register Dialog Tag"
 const val TAG_ADD_FEEDBACK = "Add Feedback Tag"
 const val TAG_ADD_FEEDBACK_COMMENT_FILLED = "Add Feedback Filled Comment Tag"
-const val TAG_ADD_FEEDBACK_VOTE_FILLED = "Add Feedback Filled Vote Tag"
 const val TAG_SETTINGS_CHANGE_PASSWORD = "Settings Change Password Tag"
 const val TAG_SETTINGS_REMINDER = "Settings Reminder Tag"
 const val TAG_SETTINGS_IMAGE = "Settings Image Tag"
@@ -28,6 +27,7 @@ const val TAG_SETTINGS_DELETE = "Settings Delete Tag"
 const val TAG_EVENT_DELETE = "Event Delete Tag"
 const val TAG_COMMENT_DELETE = "Event Comment Tag"
 const val TAG_VOTE_DELETE = "Event Vote Tag"
+const val TAG_MAIN_FILTER = "Main Filter Tag"
 
 const val REQUEST_TARGET_EVENT_FRAGMENT = 25
 const val REQUEST_TARGET_DELETE_FRAGMENT = 26

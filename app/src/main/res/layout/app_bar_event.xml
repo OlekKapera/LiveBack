@@ -72,7 +72,7 @@
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <ImageView
-                android:id="@+id/menuFilter"
+                android:id="@+id/event_image_share"
                 style="@style/AppTheme.Toolbar.Button"
                 android:layout_gravity="end"
                 app:srcCompat="@drawable/ic_share" />
