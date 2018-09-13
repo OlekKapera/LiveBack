@@ -16,6 +16,7 @@ const val BUNDLE_PROFILE_USER = "Bundle Profile User"
 const val BUNDLE_PROFILE_EVENTS = "Bundle Profile Events"
 const val BUNDLE_DELETE_DIALOG = "Bundle Delete Dialog"
 const val BUNDLE_DELETE_DIALOG_ITEM_ID = "Bundle Delete Dialog Item Id"
+const val BUNDLE_TIME_DIALOG = "Bundle Time Dialog"
 
 const val TAG_REGISTER_DIALOG = "Register Dialog Tag"
 const val TAG_ADD_FEEDBACK = "Add Feedback Tag"
@@ -28,9 +29,12 @@ const val TAG_EVENT_DELETE = "Event Delete Tag"
 const val TAG_COMMENT_DELETE = "Event Comment Tag"
 const val TAG_VOTE_DELETE = "Event Vote Tag"
 const val TAG_MAIN_FILTER = "Main Filter Tag"
+const val TAG_FILTER_TIME = "Filter Time Tag"
+const val TAG_DATE_PICKER = "Date Picker Tag"
 
 const val REQUEST_TARGET_EVENT_FRAGMENT = 25
 const val REQUEST_TARGET_DELETE_FRAGMENT = 26
+const val REQUEST_TARGET_FILTER_FRAGMENT = 27
 
 const val INTENT_MAIN_LOGGING = "Intent Main Logging"
 const val INTENT_SETTINGS_ELEMENTS = "Intent Settings Activity"

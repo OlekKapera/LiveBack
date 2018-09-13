@@ -13,12 +13,14 @@ import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import com.aleksanderkapera.liveback.R
+import com.aleksanderkapera.liveback.model.DateTime
 import com.aleksanderkapera.liveback.model.Event
 import com.aleksanderkapera.liveback.ui.base.BaseActivity
 import com.aleksanderkapera.liveback.ui.base.DeleteDialogFragment
 import com.aleksanderkapera.liveback.ui.fragment.DatePickerDialogFragment
 import com.aleksanderkapera.liveback.ui.fragment.DeleteDialogType
 import com.aleksanderkapera.liveback.ui.fragment.ImagePickerDialogFragment
+import com.aleksanderkapera.liveback.ui.fragment.TimePickerDialogFragment
 import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.signature.StringSignature
@@ -37,7 +39,7 @@ import java.util.*
 /**
  * Created by kapera on 30-Jul-18.
  */
-class AddEventActivity : BaseActivity() {
+class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChoseListener {
 
     private val addEvent = R.string.add_event.asString()
     private val editEvent = R.string.edit_event.asString()
@@ -51,12 +53,6 @@ class AddEventActivity : BaseActivity() {
     private var mSelectedChip: String = ""
     private var mBackgroundUri: Uri? = null
     private lateinit var mEvent: Event
-
-    var year = 0
-    var month = 0
-    var day = 0
-    var hour = "0"
-    var minute = "0"
 
     private val DATE_PICKER = "DATE PICKER"
     private val DIALOG_TAG_OPEN = "ADD EVENT DIALOG OPEN"
@@ -158,6 +154,13 @@ class AddEventActivity : BaseActivity() {
     }
 
     /**
+     * Set date text in view when dialog was closed
+     */
+    override fun timePicked(dateTime: DateTime) {
+        addEvent_view_date.input_input_text.setText("${dateTime.day}.${dateTime.month}.${dateTime.year} ${dateTime.hour}:${dateTime.minute}")
+    }
+
+    /**
      * Fill views with data when editing event
      */
     private fun setupViews() {
@@ -190,13 +193,6 @@ class AddEventActivity : BaseActivity() {
             addEvent_button_delete.visibility = View.GONE
             addEvent_text_title.text = addEvent
         }
-    }
-
-    /**
-     * Set date text in view when dialog was closed
-     */
-    fun updateDate() {
-        addEvent_view_date.input_input_text.setText("$day.$month.$year $hour:$minute")
     }
 
     /**
@@ -365,7 +361,7 @@ class AddEventActivity : BaseActivity() {
      * Open dialog where user can pick date and time of event
      */
     private val onDateClick = View.OnClickListener {
-        DatePickerDialogFragment().show(supportFragmentManager, DATE_PICKER)
+        DatePickerDialogFragment.newInstance(null).show(supportFragmentManager, DATE_PICKER)
     }
 
     inner class ImageResize : AsyncTask<Uri, Int, ByteArray>() {

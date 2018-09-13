@@ -73,6 +73,11 @@
         <item name="color">@color/colorPrimary</item>
     </style>
 
+    <style name="WrapContent">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+    </style>
+
     <style name="CardIconText">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">0dp</item>
@@ -125,14 +130,9 @@
         <item name="android:background">?android:attr/selectableItemBackground</item>
     </style>
 
-    <style name="CustomImageDialogIcon">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="CustomImageDialogIcon" parent="WrapContent"/>
 
-    <style name="CustomImageDialogText">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+    <style name="CustomImageDialogText" parent="WrapContent">
         <item name="android:layout_marginStart">@dimen/spacing20</item>
         <item name="android:textSize">@dimen/text18</item>
         <item name="android:layout_gravity">center_vertical</item>
@@ -178,10 +178,7 @@
         <item name="android:layout_marginTop">@dimen/spacing16</item>
     </style>
 
-    <style name="SettingsNotificationSwitch">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="SettingsNotificationSwitch" parent="WrapContent"/>
 
     <style name="SettingsPasswordDialog">
         <item name="android:layout_width">0dp</item>
@@ -205,5 +202,28 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">0.5dp</item>
         <item name="android:background">@color/bgColor</item>
+    </style>
+
+    <style name="FilterSubTitle" parent="WrapContent">
+        <item name="android:layout_marginStart">@dimen/spacing8</item>
+        <item name="android:layout_marginTop">@dimen/spacing24</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/text16</item>
+    </style>
+
+    <style name="FilterTimeLayout" parent="WrapContent">
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+        <item name="android:background">@color/bgColor</item>
+    </style>
+
+    <style name="FilterTimeDesc" parent="WrapContent">
+        <item name="android:textSize">@dimen/text12</item>
+    </style>
+
+    <style name="FilterTimeSelect" parent="WrapContent">
+        <item name="android:layout_marginTop">@dimen/spacing8</item>
+        <item name="android:textStyle">bold</item>
     </style>
 </resources>

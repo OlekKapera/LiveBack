@@ -1,11 +1,13 @@
 package com.aleksanderkapera.liveback.model
 
-import java.io.Serializable
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
 /**
  * Created by kapera on 23-May-18.
  */
 
+@Parcelize
 data class Event(var eventUid: String = "",
                  var userUid: String = "",
                  var title: String = "",
@@ -17,4 +19,4 @@ data class Event(var eventUid: String = "",
                  var backgroundPictureTime: Long = 0,
                  var likes: MutableList<String> = mutableListOf(),
                  var comments: Int = 0,
-                 var votes: Int = 0) : Serializable
+                 var votes: Int = 0) : Parcelable

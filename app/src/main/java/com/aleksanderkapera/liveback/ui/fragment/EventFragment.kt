@@ -81,7 +81,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
         fun newInstance(event: Event, user: User): BaseFragment {
             val fragment = EventFragment()
             val bundle = Bundle()
-            bundle.putSerializable(BUNDLE_EVENT, event)
+            bundle.putParcelable(BUNDLE_EVENT, event)
             bundle.putParcelable(BUNDLE_EVENT_USER, user)
             fragment.arguments = bundle
 

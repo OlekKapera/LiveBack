@@ -26,7 +26,7 @@ class EventAboutFragment : BaseFragment() {
             val fragment = EventAboutFragment()
             val bundle = Bundle()
 
-            bundle.putSerializable(BUNDLE_EVENT_ABOUT, event)
+            bundle.putParcelable(BUNDLE_EVENT_ABOUT, event)
             fragment.arguments = bundle
 
             return fragment

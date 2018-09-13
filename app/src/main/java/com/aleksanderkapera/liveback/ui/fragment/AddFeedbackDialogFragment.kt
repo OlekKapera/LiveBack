@@ -44,8 +44,8 @@ class AddFeedbackDialogFragment : DialogFragment() {
             val bundle = Bundle()
 
             bundle.putSerializable(BUNDLE_EVENT_DIALOG_TYPE, dialogType)
-            bundle.putSerializable(BUNDLE_EVENT_DIALOG_COMMENT, comment)
-            bundle.putSerializable(BUNDLE_EVENT_DIALOG_VOTE, vote)
+            bundle.putParcelable(BUNDLE_EVENT_DIALOG_COMMENT, comment)
+            bundle.putParcelable(BUNDLE_EVENT_DIALOG_VOTE, vote)
             fragment.arguments = bundle
 
             return fragment
