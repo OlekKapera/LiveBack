@@ -91,7 +91,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:minWidth="@dimen/spacing32"
-        android:text="1000"
+        android:text=">1000"
         app:layout_constraintBottom_toBottomOf="@id/filterDialog_slider_likes"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/filterDialog_slider_likes" />

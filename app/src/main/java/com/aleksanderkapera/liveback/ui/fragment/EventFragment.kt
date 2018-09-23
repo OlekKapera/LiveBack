@@ -96,7 +96,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
 
         //retrieve event from main fragment
         arguments?.let {
-            event = it.getSerializable(BUNDLE_EVENT) as Event
+            event = it.getParcelable(BUNDLE_EVENT)
             mUser = it.getParcelable(BUNDLE_EVENT_USER)
         }
 

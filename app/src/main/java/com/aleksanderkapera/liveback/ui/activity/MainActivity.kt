@@ -10,11 +10,14 @@ import android.widget.Toast
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.bus.EventsReceivedEvent
 import com.aleksanderkapera.liveback.model.Event
+import com.aleksanderkapera.liveback.model.Filter
 import com.aleksanderkapera.liveback.model.User
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.ui.base.FragmentActivity
 import com.aleksanderkapera.liveback.ui.fragment.MainFragment
+import com.aleksanderkapera.liveback.ui.fragment.SortType
 import com.aleksanderkapera.liveback.ui.widget.NavigationViewHelper
+import com.aleksanderkapera.liveback.util.INTENT_MAIN_FILTER
 import com.aleksanderkapera.liveback.util.INTENT_MAIN_LOGGING
 import com.aleksanderkapera.liveback.util.LoggedUser
 import com.aleksanderkapera.liveback.util.asString
@@ -39,6 +42,13 @@ class MainActivity : FragmentActivity() {
             intent.putExtra(INTENT_MAIN_LOGGING, anonymousUser)
             activity.startActivity(intent)
         }
+
+        fun startActivity(activity: Activity, anonymousUser: Boolean, filter: Filter) {
+            val intent = Intent(activity, MainActivity::class.java)
+            intent.putExtra(INTENT_MAIN_LOGGING, anonymousUser)
+            intent.putExtra(INTENT_MAIN_FILTER, filter)
+            activity.startActivity(intent)
+        }
     }
 
     private lateinit var mNavigationDrawer: NavigationViewHelper
@@ -54,6 +64,7 @@ class MainActivity : FragmentActivity() {
     private var mStorageRef: StorageReference? = null
     private var isAnonymousUser = false
     private val mEventsPerPage = 5
+    private lateinit var mFilter: Filter
 
     override fun getLayoutRes(): Int = R.layout.activity_main
 
@@ -66,6 +77,7 @@ class MainActivity : FragmentActivity() {
         mFireStoreRef = FirebaseFirestore.getInstance()
 
         isAnonymousUser = intent.getBooleanExtra(INTENT_MAIN_LOGGING, false)
+        mFilter = intent.getParcelableExtra(INTENT_MAIN_FILTER) ?: Filter()
 
         //when no user is logged in open login fragment
         if (mAuth.currentUser != null || isAnonymousUser) {
@@ -157,9 +169,22 @@ class MainActivity : FragmentActivity() {
     fun getEvents() {
         main_view_load.show()
 
+        val orderString = when (mFilter.sortBy) {
+            SortType.TITLE -> "title"
+            SortType.LIKES -> "likes"
+            else -> "date"
+        }
+
+        val orderDirection = when (mFilter.directionAsc) {
+            true -> Query.Direction.ASCENDING
+            else -> Query.Direction.DESCENDING
+        }
+
         lastDocument?.let {
             mEventsCol
-                    .orderBy("date", Query.Direction.ASCENDING)
+                    .whereGreaterThanOrEqualTo("likes", mFilter.likesFrom)
+                    .whereLessThanOrEqualTo("likes", mFilter.likesTo)
+                    .orderBy(orderString, orderDirection)
                     .limit(mEventsPerPage.toLong())
                     .startAfter(it)
                     .get().addOnCompleteListener {
@@ -179,7 +204,7 @@ class MainActivity : FragmentActivity() {
                     }
         } ?: run {
             mEventsCol
-                    .orderBy("date", Query.Direction.ASCENDING)
+                    .orderBy(orderString, orderDirection)
                     .limit(mEventsPerPage.toLong())
                     .get().addOnCompleteListener {
                         when {

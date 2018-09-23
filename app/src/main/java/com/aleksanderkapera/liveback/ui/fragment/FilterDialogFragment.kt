@@ -1,5 +1,6 @@
 package com.aleksanderkapera.liveback.ui.fragment
 
+import android.app.Activity
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
@@ -9,10 +10,9 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.DateTime
-import com.aleksanderkapera.liveback.util.REQUEST_TARGET_FILTER_FRAGMENT
-import com.aleksanderkapera.liveback.util.TAG_FILTER_TIME
-import com.aleksanderkapera.liveback.util.asDrawable
-import com.aleksanderkapera.liveback.util.asString
+import com.aleksanderkapera.liveback.model.Filter
+import com.aleksanderkapera.liveback.ui.activity.MainActivity
+import com.aleksanderkapera.liveback.util.*
 import com.jaygoo.widget.OnRangeChangedListener
 import com.jaygoo.widget.RangeSeekBar
 import kotlinx.android.synthetic.main.dialog_fragment_filter.*
@@ -34,8 +34,7 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
     private var mTimeFromClicked = false
     private var mDateTime = DateTime()
 
-    private var mDirectionAsc = true
-
+    private val mFilter = Filter()
 
     companion object {
         fun newInstance(): FilterDialogFragment = FilterDialogFragment()
@@ -62,6 +61,9 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
 
         setupSeekBar()
 
+        rootView.filterDialog_button_positive.setOnClickListener { positiveButtonClick() }
+        rootView.filterDialog_button_negative.setOnClickListener { dismiss() }
+
         return rootView
     }
 
@@ -71,10 +73,13 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
     override fun timePicked(dateTime: DateTime) {
         mDateTime = dateTime
 
-        if (mTimeFromClicked)
+        if (mTimeFromClicked) {
             filterDialog_button_timeFrom.text = "${dateTime.day}.${dateTime.month}.${dateTime.year} ${dateTime.hour}:${dateTime.minute}"
-        else
+            mFilter.timeFrom = dateTime.getLong()
+        } else {
             filterDialog_button_timeTo.text = "${dateTime.day}.${dateTime.month}.${dateTime.year} ${dateTime.hour}:${dateTime.minute}"
+            mFilter.timeTo = dateTime.getLong()
+        }
 
     }
 
@@ -95,9 +100,18 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
      */
     private fun switchSort(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.filter_sort_title -> filterDialog_popup_sort.text = titleString
-            R.id.filter_sort_likes -> filterDialog_popup_sort.text = likesString
-            else -> filterDialog_popup_sort.text = dateString
+            R.id.filter_sort_title -> {
+                filterDialog_popup_sort.text = titleString
+                mFilter.sortBy = SortType.TITLE
+            }
+            R.id.filter_sort_likes -> {
+                filterDialog_popup_sort.text = likesString
+                mFilter.sortBy = SortType.LIKES
+            }
+            else -> {
+                filterDialog_popup_sort.text = dateString
+                mFilter.sortBy = SortType.DATE
+            }
         }
 
         return true
@@ -107,7 +121,7 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
      * Switch sorting direction
      */
     private fun switchSortDirection() {
-        mDirectionAsc = if (mDirectionAsc) {
+        mFilter.directionAsc = if (mFilter.directionAsc) {
             filterDialog_button_sortDirection.setImageDrawable(descendingDrawable)
             false
         } else {
@@ -129,6 +143,9 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
             override fun onRangeChanged(view: RangeSeekBar?, leftValue: Float, rightValue: Float, isFromUser: Boolean) {
                 rootView.filterDialog_text_likesMin.text = leftValue.toInt().toString()
                 rootView.filterDialog_text_likesMax.text = rightValue.toInt().toString()
+
+                mFilter.likesFrom = leftValue.toInt()
+                mFilter.likesTo = rightValue.toInt()
             }
 
             override fun onStopTrackingTouch(view: RangeSeekBar?, isLeft: Boolean) {
@@ -139,12 +156,20 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
     private fun showTimeFragment(timeFromClicked: Boolean) {
         mTimeFromClicked = timeFromClicked
 
-        var dialog = if (mTimeFromClicked)
+        val dialog = if (mTimeFromClicked)
             DatePickerDialogFragment.newInstance(null)
         else
             DatePickerDialogFragment.newInstance(mDateTime)
 
         dialog.setTargetFragment(this, REQUEST_TARGET_FILTER_FRAGMENT)
         dialog.show(fragmentManager, TAG_FILTER_TIME)
+    }
+
+    /**
+     * Store every filter value inserted by user and pass them to [MainFragment] where they will be handled
+     */
+    private fun positiveButtonClick() {
+        MainActivity.startActivity(activity as Activity, LoggedUser.uid.isEmpty(), mFilter)
+        dismiss()
     }
 }

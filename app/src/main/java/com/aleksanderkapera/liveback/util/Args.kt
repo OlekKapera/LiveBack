@@ -37,5 +37,6 @@ const val REQUEST_TARGET_DELETE_FRAGMENT = 26
 const val REQUEST_TARGET_FILTER_FRAGMENT = 27
 
 const val INTENT_MAIN_LOGGING = "Intent Main Logging"
+const val INTENT_MAIN_FILTER = "Intent Main Filter"
 const val INTENT_SETTINGS_ELEMENTS = "Intent Settings Activity"
 const val INTENT_ADD_EVENT_EVENT = "Intent Add Event Activity Event"

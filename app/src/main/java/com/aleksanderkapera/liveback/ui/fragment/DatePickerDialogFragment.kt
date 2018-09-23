@@ -53,7 +53,6 @@ class DatePickerDialogFragment : DialogFragment(), DatePickerDialog.OnDateSetLis
             day = date.day
         }
         else{
-            calendar.timeInMillis = mFromLong
             year = calendar.get(Calendar.YEAR)
             month = calendar.get(Calendar.MONTH)
             day = calendar.get(Calendar.DAY_OF_MONTH)
@@ -70,7 +69,7 @@ class DatePickerDialogFragment : DialogFragment(), DatePickerDialog.OnDateSetLis
 
     override fun onDateSet(view: DatePicker, year: Int, month: Int, day: Int) {
         mDateTime.year = year
-        mDateTime.month = month
+        mDateTime.month = month+1
         mDateTime.day = day
 
         val dialog = TimePickerDialogFragment.newInstance(mDateTime)
