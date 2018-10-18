@@ -289,7 +289,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
         mEventDoc.collection("comments").orderBy("postedTime", Query.Direction.DESCENDING).get().addOnCompleteListener {
             when {
                 it.isSuccessful -> {
-                    mComments = it.result.toObjects(Comment::class.java)
+                    mComments = it.result?.toObjects(Comment::class.java)
                     getVotes()
                 }
                 else -> {
@@ -308,7 +308,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
         mEventDoc.collection("votes").get().addOnCompleteListener {
             when {
                 it.isSuccessful -> {
-                    mVotes = it.result.toObjects(Vote::class.java)
+                    mVotes = it.result?.toObjects(Vote::class.java)
                     setupTabs()
                 }
             }

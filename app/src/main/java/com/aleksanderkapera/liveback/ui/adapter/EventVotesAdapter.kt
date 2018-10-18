@@ -63,7 +63,7 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val fragment
             mUsersRef.document(item.voteAuthorUid).get().addOnCompleteListener {
                 when {
                     it.isSuccessful -> {
-                        it.result.toObject(User::class.java)?.let { user ->
+                        it.result?.toObject(User::class.java)?.let { user ->
                             user.profilePicPath?.let {
                                 if (it.isNotEmpty()) {
                                     mStorageRef = FirebaseStorage.getInstance().getReference(it)

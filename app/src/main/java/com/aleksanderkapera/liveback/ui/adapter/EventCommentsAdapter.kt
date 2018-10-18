@@ -46,7 +46,7 @@ class EventCommentsAdapter(val context: Context, val fragment: BaseFragment) : B
             mUsersRef.document(item.commentAuthorUid).get().addOnCompleteListener {
                 when {
                     it.isSuccessful -> {
-                        it.result.toObject(User::class.java)?.let { user ->
+                        it.result?.toObject(User::class.java)?.let { user ->
                             itemView.eventComment_text_title.text = user.username
                             if (user.profilePicPath.isNotEmpty()) {
                                 mStorageRef = FirebaseStorage.getInstance().getReference(user.profilePicPath)

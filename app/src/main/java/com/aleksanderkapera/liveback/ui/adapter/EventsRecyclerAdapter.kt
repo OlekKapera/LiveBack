@@ -45,7 +45,7 @@ class EventsRecyclerAdapter(val context: Context) : BaseRecyclerAdapter<EventsRe
             mUsersRef.document(item.userUid).get().addOnCompleteListener {
                 when {
                     it.isSuccessful -> {
-                        it.result.toObject(User::class.java)?.let { user ->
+                        it.result?.toObject(User::class.java)?.let { user ->
                             itemView.cardMain_text_name.text = user.username
                             mUser = user
 

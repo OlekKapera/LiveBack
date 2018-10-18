@@ -166,12 +166,14 @@ class DeleteDialogFragment : DialogFragment() {
         mEventDocRef.collection("comments").get().addOnCompleteListener { commentTask ->
             when {
                 commentTask.isSuccessful -> {
-                    commentTask.result.documents.forEach {
-                        mBatch.delete(it.reference)
+                    commentTask.result?.let { result ->
+                        result.documents.forEach {
+                            mBatch.delete(it.reference)
 
-                        if (it == commentTask.result.documents.last()) {
-                            mCommentsDone = true
-                            commitBatch()
+                            if (it == result.documents.last()) {
+                                mCommentsDone = true
+                                commitBatch()
+                            }
                         }
                     }
                 }
@@ -181,13 +183,15 @@ class DeleteDialogFragment : DialogFragment() {
         mEventDocRef.collection("votes").get().addOnCompleteListener { votesTask ->
             when {
                 votesTask.isSuccessful -> {
-                    votesTask.result.documents.forEach {
+                    votesTask.result?.let { result ->
+                        result.documents.forEach {
                         mBatch.delete(it.reference)
 
-                        if (it == votesTask.result.documents.last()) {
+                        if (it == result.documents.last()) {
                             mVotesDone = true
                             commitBatch()
                         }
+                    }
                     }
                 }
             }

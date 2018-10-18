@@ -254,7 +254,7 @@ class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChos
         mStorageRef.child(path).putBytes(mUploadBytes).addOnCompleteListener {
             when {
                 it.isSuccessful -> {
-                    it.result.metadata?.let {
+                    it.result?.metadata?.let {
                         mEvent.backgroundPicturePath = it.path
                         mEvent.backgroundPictureTime = it.updatedTimeMillis
                     }

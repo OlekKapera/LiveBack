@@ -217,7 +217,7 @@ class SettingsActivity : BaseActivity() {
         mStorageRef.child("users/${LoggedUser.uid}").putBytes(mUploadBytes).addOnCompleteListener {
             when {
                 it.isSuccessful -> {
-                    it.result.metadata?.let {
+                    it.result?.metadata?.let {
                         it.path?.let {
                             LoggedUser.profilePicPath = it
                         }

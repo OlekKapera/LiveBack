@@ -143,82 +143,88 @@ class DeleteAccountDialogFragment : DialogFragment() {
         mFireStoreRef.collection("events").get().addOnCompleteListener { task ->
             when {
                 task.isSuccessful -> {
-                    val eventsSize = task.result.documents.size
-                    task.result.documents.forEachIndexed { _, event ->
+                    task.result?.let { taskResult ->
+                        val eventsSize = taskResult.documents.size
+                        taskResult.documents.forEachIndexed { _, event ->
 
-                        if (event.get("userUid") == LoggedUser.uid) {
-                            // it's logged user's event, delete event
-                            mBatch.delete(event.reference)
-                            if (event.get("backgroundPicturePath").toString().isNotEmpty())
-                                deleteImage(event.get("backgroundPicturePath").toString())
-                        }
+                            if (event.get("userUid") == LoggedUser.uid) {
+                                // it's logged user's event, delete event
+                                mBatch.delete(event.reference)
+                                if (event.get("backgroundPicturePath").toString().isNotEmpty())
+                                    deleteImage(event.get("backgroundPicturePath").toString())
+                            }
 
-                        // delete like
-                        if ((event.get("likes") as List<String>).contains(LoggedUser.uid) && event.get("userUid") != LoggedUser.uid)
-                            mBatch.update(event.reference, "likes", FieldValue.arrayRemove(LoggedUser.uid))
+                            // delete like
+                            if ((event.get("likes") as List<String>).contains(LoggedUser.uid) && event.get("userUid") != LoggedUser.uid)
+                                mBatch.update(event.reference, "likes", FieldValue.arrayRemove(LoggedUser.uid))
 
-                        event.reference.collection("comments").get().addOnCompleteListener { commentTask ->
-                            when {
-                                commentTask.isSuccessful -> {
-                                    if (mCommentEventIndex == eventsSize - 1 && commentTask.result.size() == 0) {
-                                        mCommentsDone = true
-                                        commitBatch()
-                                    }
+                            event.reference.collection("comments").get().addOnCompleteListener { commentTask ->
+                                when {
+                                    commentTask.isSuccessful -> {
+                                        commentTask.result?.let { commentResult ->
+                                            if (mCommentEventIndex == eventsSize - 1 && commentResult.size() == 0) {
+                                                mCommentsDone = true
+                                                commitBatch()
+                                            }
 
-                                    val commentsSize = commentTask.result.documents.size
-                                    var eventComments = event.get("comments") as Long
+                                            val commentsSize = commentResult.documents.size
+                                            var eventComments = event.get("comments") as Long
 
-                                    commentTask.result.documents.forEachIndexed { commentIndex, comment ->
-                                        if (event.get("userUid") == LoggedUser.uid) {
-                                            // it's logged user's event, delete comment
-                                            mBatch.delete(comment.reference)
-                                        } else if (comment.get("commentAuthorUid") == LoggedUser.uid) {
-                                            // it's comment placed by user, delete it and deduct one from comments counter
-                                            mBatch.delete(comment.reference)
-                                            eventComments--
-                                            mBatch.update(event.reference, "comments", eventComments)
+                                            commentResult.documents.forEachIndexed { commentIndex, comment ->
+                                                if (event.get("userUid") == LoggedUser.uid) {
+                                                    // it's logged user's event, delete comment
+                                                    mBatch.delete(comment.reference)
+                                                } else if (comment.get("commentAuthorUid") == LoggedUser.uid) {
+                                                    // it's comment placed by user, delete it and deduct one from comments counter
+                                                    mBatch.delete(comment.reference)
+                                                    eventComments--
+                                                    mBatch.update(event.reference, "comments", eventComments)
+                                                }
+
+                                                if (mCommentEventIndex == eventsSize - 1 && commentIndex == commentsSize - 1) {
+                                                    mCommentsDone = true
+                                                    commitBatch()
+                                                }
+                                            }
+
+                                            mCommentEventIndex++
                                         }
-
-                                        if (mCommentEventIndex == eventsSize - 1 && commentIndex == commentsSize - 1) {
-                                            mCommentsDone = true
-                                            commitBatch()
-                                        }
                                     }
-
-                                    mCommentEventIndex++
                                 }
                             }
-                        }
 
-                        event.reference.collection("votes").get().addOnCompleteListener { votesTask ->
-                            when {
-                                votesTask.isSuccessful -> {
-                                    if (mVoteEventIndex == eventsSize - 1 && votesTask.result.size() == 0) {
-                                        mVotesDone = true
-                                        commitBatch()
-                                    }
-                                    val votesSize = votesTask.result.documents.size
-                                    var eventVotes = event.get("votes") as Long
-
-                                    votesTask.result.documents.forEachIndexed { voteIndex, vote ->
-                                        when {
-                                            event.get("userUid") == LoggedUser.uid -> mBatch.delete(vote.reference)
-                                            vote.get("voteAuthorUid") == LoggedUser.uid -> {
-                                                mBatch.delete(vote.reference)
-                                                eventVotes--
-                                                mBatch.update(event.reference, "votes", eventVotes)
+                            event.reference.collection("votes").get().addOnCompleteListener { votesTask ->
+                                when {
+                                    votesTask.isSuccessful -> {
+                                        votesTask.result?.let { voteResult ->
+                                            if (mVoteEventIndex == eventsSize - 1 && voteResult.size() == 0) {
+                                                mVotesDone = true
+                                                commitBatch()
                                             }
-                                            (vote.get("downVotes") as List<String>).contains(LoggedUser.uid) -> mBatch.update(vote.reference, "downVotes", FieldValue.arrayRemove(LoggedUser.uid))
-                                            (vote.get("upVotes") as List<String>).contains(LoggedUser.uid) -> mBatch.update(vote.reference, "upVotes", FieldValue.arrayRemove(LoggedUser.uid))
-                                        }
+                                            val votesSize = voteResult.documents.size
+                                            var eventVotes = event.get("votes") as Long
 
-                                        if (mVoteEventIndex == eventsSize - 1 && voteIndex == votesSize - 1) {
-                                            mVotesDone = true
-                                            commitBatch()
+                                            voteResult.documents.forEachIndexed { voteIndex, vote ->
+                                                when {
+                                                    event.get("userUid") == LoggedUser.uid -> mBatch.delete(vote.reference)
+                                                    vote.get("voteAuthorUid") == LoggedUser.uid -> {
+                                                        mBatch.delete(vote.reference)
+                                                        eventVotes--
+                                                        mBatch.update(event.reference, "votes", eventVotes)
+                                                    }
+                                                    (vote.get("downVotes") as List<String>).contains(LoggedUser.uid) -> mBatch.update(vote.reference, "downVotes", FieldValue.arrayRemove(LoggedUser.uid))
+                                                    (vote.get("upVotes") as List<String>).contains(LoggedUser.uid) -> mBatch.update(vote.reference, "upVotes", FieldValue.arrayRemove(LoggedUser.uid))
+                                                }
+
+                                                if (mVoteEventIndex == eventsSize - 1 && voteIndex == votesSize - 1) {
+                                                    mVotesDone = true
+                                                    commitBatch()
+                                                }
+                                            }
+
+                                            mVoteEventIndex++
                                         }
                                     }
-
-                                    mVoteEventIndex++
                                 }
                             }
                         }

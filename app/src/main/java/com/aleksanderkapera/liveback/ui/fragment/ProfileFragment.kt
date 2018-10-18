@@ -267,7 +267,7 @@ class ProfileFragment : BaseFragment() {
         mFireStore.document("users/$mUserid").get().addOnCompleteListener {
             when {
                 it.isSuccessful -> {
-                    mUser = it.result.toObject(User::class.java)
+                    mUser = it.result?.toObject(User::class.java)
                     setupToolbar()
                     getEvents()
                 }
@@ -294,7 +294,7 @@ class ProfileFragment : BaseFragment() {
         mFireStore.collection("events").whereEqualTo("userUid", mUserid).get().addOnCompleteListener {
             when {
                 it.isSuccessful -> {
-                    mEvents = it.result.toObjects(Event::class.java)
+                    mEvents = it.result?.toObjects(Event::class.java) ?: mutableListOf()
                     mEventsFragment.mEventsAdapter.replaceData(mEvents)
                     if (mEvents.isNotEmpty())
                         getComments()
@@ -323,7 +323,7 @@ class ProfileFragment : BaseFragment() {
             docRef.collection("comments").get().addOnCompleteListener {
                 when {
                     it.isSuccessful -> {
-                        it.result.toObjects(Comment::class.java).forEach {
+                        it.result?.toObjects(Comment::class.java)?.forEach {
                             mComments.add(it)
                         }
                         if (docRef == mEventsRef.last()) {

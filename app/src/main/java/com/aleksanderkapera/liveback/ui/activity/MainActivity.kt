@@ -126,11 +126,13 @@ class MainActivity : FragmentActivity() {
                     .get().addOnCompleteListener {
                         when {
                             it.isSuccessful -> {
-                                mEvents.addAll(it.result.toObjects(Event::class.java))
-                                if (it.result.documents.isNotEmpty())
-                                    lastDocument = it.result.documents.last()
+                                it.result?.let {
+                                    mEvents.addAll(it.toObjects(Event::class.java))
+                                    if (it.documents.isNotEmpty())
+                                        lastDocument = it.documents.last()
 
-                                EventBus.getDefault().post(EventsReceivedEvent(mEvents))
+                                    EventBus.getDefault().post(EventsReceivedEvent(mEvents))
+                                }
                             }
                             else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
                         }
@@ -147,11 +149,13 @@ class MainActivity : FragmentActivity() {
                     .get().addOnCompleteListener {
                         when {
                             it.isSuccessful -> {
-                                mEvents = it.result.toObjects(Event::class.java)
-                                if (it.result.documents.isNotEmpty())
-                                    lastDocument = it.result.documents.last()
+                                it.result?.let {
+                                    mEvents = it.toObjects(Event::class.java)
+                                    if (it.documents.isNotEmpty())
+                                        lastDocument = it.documents.last()
 
-                                EventBus.getDefault().post(EventsReceivedEvent(mEvents))
+                                    EventBus.getDefault().post(EventsReceivedEvent(mEvents))
+                                }
                             }
                             else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
                         }
@@ -182,19 +186,21 @@ class MainActivity : FragmentActivity() {
 
         lastDocument?.let {
             mEventsCol
-                    .whereGreaterThanOrEqualTo("likes", mFilter.likesFrom)
-                    .whereLessThanOrEqualTo("likes", mFilter.likesTo)
+//                    .whereGreaterThanOrEqualTo("likes", mFilter.likesFrom)
+//                    .whereLessThanOrEqualTo("likes", mFilter.likesTo)
                     .orderBy(orderString, orderDirection)
                     .limit(mEventsPerPage.toLong())
                     .startAfter(it)
                     .get().addOnCompleteListener {
                         when {
                             it.isSuccessful -> {
-                                mEvents.addAll(it.result.toObjects(Event::class.java))
-                                if (it.result.documents.isNotEmpty())
-                                    lastDocument = it.result.documents.last()
+                                it.result?.let {
+                                    mEvents.addAll(it.toObjects(Event::class.java))
+                                    if (it.documents.isNotEmpty())
+                                        lastDocument = it.documents.last()
 
-                                EventBus.getDefault().post(EventsReceivedEvent(mEvents))
+                                    EventBus.getDefault().post(EventsReceivedEvent(mEvents))
+                                }
                             }
                             else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
                         }
@@ -209,9 +215,11 @@ class MainActivity : FragmentActivity() {
                     .get().addOnCompleteListener {
                         when {
                             it.isSuccessful -> {
-                                mEvents = it.result.toObjects(Event::class.java)
-                                lastDocument = it.result.documents.last()
-                                EventBus.getDefault().post(EventsReceivedEvent(mEvents))
+                                it.result?.let {
+                                    mEvents = it.toObjects(Event::class.java)
+                                    lastDocument = it.documents.last()
+                                    EventBus.getDefault().post(EventsReceivedEvent(mEvents))
+                                }
                             }
                             else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
                         }
@@ -229,7 +237,7 @@ class MainActivity : FragmentActivity() {
         mFireStoreRef.document("users/$uid").get().addOnCompleteListener {
             when {
                 it.isSuccessful -> {
-                    mUser = it.result.toObject(User::class.java)
+                    mUser = it.result?.toObject(User::class.java)
                     mUser?.let { user ->
                         LoggedUser.username = user.username
                         LoggedUser.email = user.email
