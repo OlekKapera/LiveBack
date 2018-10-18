@@ -35,6 +35,7 @@ const val TAG_DATE_PICKER = "Date Picker Tag"
 const val REQUEST_TARGET_EVENT_FRAGMENT = 25
 const val REQUEST_TARGET_DELETE_FRAGMENT = 26
 const val REQUEST_TARGET_FILTER_FRAGMENT = 27
+const val REQUEST_TARGET_MAIN_FRAGMENT = 28
 
 const val INTENT_MAIN_LOGGING = "Intent Main Logging"
 const val INTENT_MAIN_FILTER = "Intent Main Filter"

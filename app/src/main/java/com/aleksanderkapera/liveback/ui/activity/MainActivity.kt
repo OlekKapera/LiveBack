@@ -186,8 +186,6 @@ class MainActivity : FragmentActivity() {
 
         lastDocument?.let {
             mEventsCol
-//                    .whereGreaterThanOrEqualTo("likes", mFilter.likesFrom)
-//                    .whereLessThanOrEqualTo("likes", mFilter.likesTo)
                     .orderBy(orderString, orderDirection)
                     .limit(mEventsPerPage.toLong())
                     .startAfter(it)

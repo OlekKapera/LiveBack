@@ -1,5 +1,7 @@
 package com.aleksanderkapera.liveback.ui.fragment
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.LinearLayoutManager
@@ -7,6 +9,7 @@ import android.view.View
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.bus.EventsReceivedEvent
 import com.aleksanderkapera.liveback.model.Event
+import com.aleksanderkapera.liveback.model.Filter
 import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.adapter.EventsRecyclerAdapter
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
@@ -29,6 +32,7 @@ class MainFragment : BaseFragment() {
     private lateinit var mEvents: List<Event>
     private lateinit var mEndlessScrollListener: EndlessScrollListener
     private lateinit var mAdapter: EventsRecyclerAdapter
+    private var mFilter = Filter()
 
     companion object {
         fun newInstance(): BaseFragment {
@@ -79,10 +83,24 @@ class MainFragment : BaseFragment() {
         }
 
         main_layout_swipe.setOnRefreshListener { (activity as MainActivity).getEvents() }
-        main_toolbar_filter.setOnClickListener { FilterDialogFragment.newInstance().show(fragmentManager, TAG_MAIN_FILTER) }
+        main_toolbar_filter.setOnClickListener {
+            val dialog = FilterDialogFragment.newInstance()
+            dialog.setTargetFragment(this, REQUEST_TARGET_MAIN_FRAGMENT)
+            dialog.show(fragmentManager, TAG_MAIN_FILTER)
+        }
 
         initAdapter()
         setSearchObservable()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(requestCode == REQUEST_TARGET_MAIN_FRAGMENT && resultCode == Activity.RESULT_OK){
+            data?.let {
+                val bundle = it.extras
+                mFilter = bundle.getParcelable(INTENT_MAIN_FILTER)
+                filter()
+            }
+        }
     }
 
     private fun initAdapter() {
@@ -126,6 +144,26 @@ class MainFragment : BaseFragment() {
                 .subscribe {
                     mAdapter.replaceData(mEvents)
                 }
+    }
+
+    /**
+     * Perform client-side filtering when filter positive button has been clicked. Due to firebase
+     * limitations it has to be client-side.
+     */
+    private fun filter() {
+        val filteredEvents = mutableListOf<Event>()
+
+        mEvents.forEach {
+            if (it.date >= mFilter.timeFrom && it.date <= mFilter.timeTo
+                    && it.likes.size >= mFilter.likesFrom && (it.likes.size <= mFilter.likesTo || mFilter.likesTo == 1000)
+                    && it.date >= mFilter.timeFrom && it.date <= mFilter.timeTo) {
+                filteredEvents.add(it)
+            }
+        }
+
+        mEvents = filteredEvents
+        mAdapter.replaceData(mEvents)
+        main_layout_swipe.isRefreshing = false
     }
 
     @Subscribe

@@ -1,6 +1,7 @@
 package com.aleksanderkapera.liveback.ui.fragment
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
@@ -11,7 +12,6 @@ import android.widget.PopupMenu
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.DateTime
 import com.aleksanderkapera.liveback.model.Filter
-import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.util.*
 import com.jaygoo.widget.OnRangeChangedListener
 import com.jaygoo.widget.RangeSeekBar
@@ -169,7 +169,10 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
      * Store every filter value inserted by user and pass them to [MainFragment] where they will be handled
      */
     private fun positiveButtonClick() {
-        MainActivity.startActivity(activity as Activity, LoggedUser.uid.isEmpty(), mFilter)
+        val i = Intent()
+                .putExtra(INTENT_MAIN_FILTER, mFilter)
+
+        targetFragment?.onActivityResult(REQUEST_TARGET_MAIN_FRAGMENT, Activity.RESULT_OK, i)
         dismiss()
     }
 }
