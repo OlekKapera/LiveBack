@@ -17,6 +17,7 @@ const val BUNDLE_PROFILE_EVENTS = "Bundle Profile Events"
 const val BUNDLE_DELETE_DIALOG = "Bundle Delete Dialog"
 const val BUNDLE_DELETE_DIALOG_ITEM_ID = "Bundle Delete Dialog Item Id"
 const val BUNDLE_TIME_DIALOG = "Bundle Time Dialog"
+const val BUNDLE_FILTER_DIALOG = "Bundle Filter Dialog"
 
 const val TAG_REGISTER_DIALOG = "Register Dialog Tag"
 const val TAG_ADD_FEEDBACK = "Add Feedback Tag"

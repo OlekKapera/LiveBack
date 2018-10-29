@@ -32,7 +32,7 @@ class MainFragment : BaseFragment() {
     private lateinit var mEvents: List<Event>
     private lateinit var mEndlessScrollListener: EndlessScrollListener
     private lateinit var mAdapter: EventsRecyclerAdapter
-    private var mFilter = Filter()
+    private var mFilter: Filter? = null
 
     companion object {
         fun newInstance(): BaseFragment {
@@ -84,7 +84,7 @@ class MainFragment : BaseFragment() {
 
         main_layout_swipe.setOnRefreshListener { (activity as MainActivity).getEvents() }
         main_toolbar_filter.setOnClickListener {
-            val dialog = FilterDialogFragment.newInstance()
+            val dialog = FilterDialogFragment.newInstance(mFilter)
             dialog.setTargetFragment(this, REQUEST_TARGET_MAIN_FRAGMENT)
             dialog.show(fragmentManager, TAG_MAIN_FILTER)
         }
@@ -94,7 +94,7 @@ class MainFragment : BaseFragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(requestCode == REQUEST_TARGET_MAIN_FRAGMENT && resultCode == Activity.RESULT_OK){
+        if (requestCode == REQUEST_TARGET_MAIN_FRAGMENT && resultCode == Activity.RESULT_OK) {
             data?.let {
                 val bundle = it.extras
                 mFilter = bundle.getParcelable(INTENT_MAIN_FILTER)
@@ -154,10 +154,12 @@ class MainFragment : BaseFragment() {
         val filteredEvents = mutableListOf<Event>()
 
         mEvents.forEach {
-            if (it.date >= mFilter.timeFrom && it.date <= mFilter.timeTo
-                    && it.likes.size >= mFilter.likesFrom && (it.likes.size <= mFilter.likesTo || mFilter.likesTo == 1000)
-                    && it.date >= mFilter.timeFrom && it.date <= mFilter.timeTo) {
-                filteredEvents.add(it)
+            mFilter?.let { filter ->
+                if (it.date >= filter.timeFrom && it.date <= filter.timeTo
+                        && it.likes.size >= filter.likesFrom && (it.likes.size <= filter.likesTo || filter.likesTo == 1000)
+                        && it.date >= filter.timeFrom && it.date <= filter.timeTo) {
+                    filteredEvents.add(it)
+                }
             }
         }
 
