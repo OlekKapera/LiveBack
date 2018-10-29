@@ -155,23 +155,24 @@ class MainFragment : BaseFragment() {
 
         mEvents.forEach {
             mFilter?.let { filter ->
-                if (it.date >= filter.timeFrom && it.date <= filter.timeTo
-                        && it.likes.size >= filter.likesFrom && (it.likes.size <= filter.likesTo || filter.likesTo == 1000)
-                        && it.date >= filter.timeFrom && it.date <= filter.timeTo) {
+                if (((it.date >= filter.timeFrom && it.date <= filter.timeTo) || filter.timeTo == 0L)
+                        && it.likes.size >= filter.likesFrom && (it.likes.size <= filter.likesTo || filter.likesTo == filterLikesTo)) {
                     filteredEvents.add(it)
                 }
             }
         }
 
-        mEvents = filteredEvents
-        mAdapter.replaceData(mEvents)
+        mAdapter.replaceData(filteredEvents)
         main_layout_swipe.isRefreshing = false
     }
 
     @Subscribe
     fun onEventsReceivedEvent(event: EventsReceivedEvent) {
         mEvents = event.events
-        mAdapter.replaceData(mEvents)
+        if (mFilter != null)
+            filter()
+        else
+            mAdapter.replaceData(mEvents)
         main_layout_swipe.isRefreshing = false
     }
 }

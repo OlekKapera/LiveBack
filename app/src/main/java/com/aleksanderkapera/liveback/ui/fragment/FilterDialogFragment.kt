@@ -34,6 +34,13 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
     private var mTimeFromClicked = false
     private var mDateTime: DateTime? = null
 
+    private var mSortType = SortType.DATE
+    private var mDirectionAsc = true
+    private var mLikesFrom = 0
+    private var mLikesTo = filterLikesTo
+    private var mTimeFrom = 0L
+    private var mTimeTo = 0L
+
     private lateinit var mFilter: Filter
 
     companion object {
@@ -75,6 +82,7 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
 
         rootView.filterDialog_button_positive.setOnClickListener { positiveButtonClick() }
         rootView.filterDialog_button_negative.setOnClickListener { dismiss() }
+        rootView.filterDialog_button_reset.setOnClickListener { resetButtonClick() }
 
         return rootView
     }
@@ -87,10 +95,10 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
 
         if (mTimeFromClicked) {
             filterDialog_button_timeFrom.text = "${dateTime.day}.${dateTime.month}.${dateTime.year} ${dateTime.hour}:${dateTime.minute}"
-            mFilter.timeFrom = dateTime.getLong()
+            mTimeFrom = dateTime.getLong()
         } else {
             filterDialog_button_timeTo.text = "${dateTime.day}.${dateTime.month}.${dateTime.year} ${dateTime.hour}:${dateTime.minute}"
-            mFilter.timeTo = dateTime.getLong()
+            mTimeTo = dateTime.getLong()
         }
 
     }
@@ -99,22 +107,29 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
      * Fill views with data passed from parent fragment
      */
     private fun setupViews() {
-        rootView.filterDialog_popup_sort.text = when (mFilter.sortBy) {
+        mSortType = mFilter.sortBy
+        mDirectionAsc = mFilter.directionAsc
+        mLikesFrom = mFilter.likesFrom
+        mLikesTo = mFilter.likesTo
+        mTimeFrom = mFilter.timeFrom
+        mTimeTo = mFilter.timeTo
+
+        rootView.filterDialog_popup_sort.text = when (mSortType) {
             SortType.TITLE -> titleString
             SortType.LIKES -> likesString
             else -> dateString
         }
 
         when {
-            mFilter.directionAsc -> rootView.filterDialog_button_sortDirection.setImageDrawable(ascendingDrawable)
+            mDirectionAsc -> rootView.filterDialog_button_sortDirection.setImageDrawable(ascendingDrawable)
             else -> rootView.filterDialog_button_sortDirection.setImageDrawable(descendingDrawable)
         }
 
-        if (mFilter.timeFrom != 0L)
-            rootView.filterDialog_button_timeFrom.text = convertLongToDate(mFilter.timeFrom, "dd MMM yyyy HH:mm")
+        if (mTimeFrom != 0L)
+            rootView.filterDialog_button_timeFrom.text = convertLongToDate(mTimeFrom, "dd MMM yyyy HH:mm")
 
-        if (mFilter.timeTo != 0L)
-            rootView.filterDialog_button_timeTo.text = convertLongToDate(mFilter.timeTo, "dd MMM yyyy HH:mm")
+        if (mTimeTo != 0L)
+            rootView.filterDialog_button_timeTo.text = convertLongToDate(mTimeTo, "dd MMM yyyy HH:mm")
     }
 
     /**
@@ -132,15 +147,15 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
     /**
      * Adjust range min and max values. When max value is selected replace it with "more then" sign
      */
-    private fun adjustLikesRangeValues(){
-        rootView.filterDialog_text_likesMin.text = when(mFilter.likesFrom == filterLikesTo){
+    private fun adjustLikesRangeValues() {
+        rootView.filterDialog_text_likesMin.text = when (mLikesFrom == filterLikesTo) {
             true -> "$filterLikesTo"
-            else -> mFilter.likesFrom.toString()
+            else -> mLikesFrom.toString()
         }
 
-        rootView.filterDialog_text_likesMax.text = when(mFilter.likesTo == filterLikesTo){
+        rootView.filterDialog_text_likesMax.text = when (mLikesTo == filterLikesTo) {
             true -> ">$filterLikesTo"
-            else -> mFilter.likesTo.toString()
+            else -> mLikesTo.toString()
         }
     }
 
@@ -151,15 +166,15 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
         when (item.itemId) {
             R.id.filter_sort_title -> {
                 filterDialog_popup_sort.text = titleString
-                mFilter.sortBy = SortType.TITLE
+                mSortType = SortType.TITLE
             }
             R.id.filter_sort_likes -> {
                 filterDialog_popup_sort.text = likesString
-                mFilter.sortBy = SortType.LIKES
+                mSortType = SortType.LIKES
             }
             else -> {
                 filterDialog_popup_sort.text = dateString
-                mFilter.sortBy = SortType.DATE
+                mSortType = SortType.DATE
             }
         }
 
@@ -170,7 +185,7 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
      * Switch sorting direction
      */
     private fun switchSortDirection() {
-        mFilter.directionAsc = if (mFilter.directionAsc) {
+        mDirectionAsc = if (mDirectionAsc) {
             filterDialog_button_sortDirection.setImageDrawable(descendingDrawable)
             false
         } else {
@@ -184,7 +199,7 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
      */
     private fun setupSeekBar() {
         rootView.filterDialog_slider_likes.setRange(0f, filterLikesTo.toFloat())
-        rootView.filterDialog_slider_likes.setValue(mFilter.likesFrom.toFloat(), mFilter.likesTo.toFloat())
+        rootView.filterDialog_slider_likes.setValue(mLikesFrom.toFloat(), mLikesTo.toFloat())
         adjustLikesRangeValues()
 
         rootView.filterDialog_slider_likes.setOnRangeChangedListener(object : OnRangeChangedListener {
@@ -192,8 +207,8 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
             }
 
             override fun onRangeChanged(view: RangeSeekBar?, leftValue: Float, rightValue: Float, isFromUser: Boolean) {
-                mFilter.likesFrom = leftValue.toInt()
-                mFilter.likesTo = rightValue.toInt()
+                mLikesFrom = leftValue.toInt()
+                mLikesTo = rightValue.toInt()
 
                 adjustLikesRangeValues()
             }
@@ -219,6 +234,26 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
      * Store every filter value inserted by user and pass them to [MainFragment] where they will be handled
      */
     private fun positiveButtonClick() {
+        mFilter.sortBy = mSortType
+        mFilter.directionAsc = mDirectionAsc
+        mFilter.likesFrom = mLikesFrom
+        mFilter.likesTo = mLikesTo
+        mFilter.timeFrom = mTimeFrom
+        mFilter.timeTo = mTimeTo
+
+        val i = Intent()
+                .putExtra(INTENT_MAIN_FILTER, mFilter)
+
+        targetFragment?.onActivityResult(REQUEST_TARGET_MAIN_FRAGMENT, Activity.RESULT_OK, i)
+        dismiss()
+    }
+
+    /**
+     * Reset all fields to their default values
+     */
+    private fun resetButtonClick(){
+        mFilter = Filter()
+
         val i = Intent()
                 .putExtra(INTENT_MAIN_FILTER, mFilter)
 
