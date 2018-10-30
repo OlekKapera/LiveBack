@@ -64,7 +64,8 @@ class MainActivity : FragmentActivity() {
     private var mStorageRef: StorageReference? = null
     private var isAnonymousUser = false
     private val mEventsPerPage = 5
-    private lateinit var mFilter: Filter
+    private lateinit var mOrderString: String
+    private lateinit var mOrderDirection: Query.Direction
 
     override fun getLayoutRes(): Int = R.layout.activity_main
 
@@ -77,7 +78,6 @@ class MainActivity : FragmentActivity() {
         mFireStoreRef = FirebaseFirestore.getInstance()
 
         isAnonymousUser = intent.getBooleanExtra(INTENT_MAIN_LOGGING, false)
-        mFilter = intent.getParcelableExtra(INTENT_MAIN_FILTER) ?: Filter()
 
         //when no user is logged in open login fragment
         if (mAuth.currentUser != null || isAnonymousUser) {
@@ -131,7 +131,7 @@ class MainActivity : FragmentActivity() {
                                     if (it.documents.isNotEmpty())
                                         lastDocument = it.documents.last()
 
-                                    EventBus.getDefault().post(EventsReceivedEvent(mEvents))
+                                    EventBus.getDefault().post(EventsReceivedEvent(mEvents, true))
                                 }
                             }
                             else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
@@ -154,7 +154,7 @@ class MainActivity : FragmentActivity() {
                                     if (it.documents.isNotEmpty())
                                         lastDocument = it.documents.last()
 
-                                    EventBus.getDefault().post(EventsReceivedEvent(mEvents))
+                                    EventBus.getDefault().post(EventsReceivedEvent(mEvents, false))
                                 }
                             }
                             else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
@@ -170,23 +170,26 @@ class MainActivity : FragmentActivity() {
      * Retrieve events from database. When lastDocument is not null it means that initial call has been made
      * and it's calling for adding more events.
      */
-    fun getEvents() {
+    fun getEvents(sortBy: SortType? = SortType.DATE, directionAsc: Boolean? = true, flushEvents: Boolean = true) {
         main_view_load.show()
 
-        val orderString = when (mFilter.sortBy) {
+        mOrderString = when (sortBy) {
             SortType.TITLE -> "title"
             SortType.LIKES -> "likes"
             else -> "date"
         }
 
-        val orderDirection = when (mFilter.directionAsc) {
-            true -> Query.Direction.ASCENDING
-            else -> Query.Direction.DESCENDING
+        mOrderDirection = when (directionAsc) {
+            false -> Query.Direction.DESCENDING
+            else -> Query.Direction.ASCENDING
         }
+
+        if(flushEvents)
+            lastDocument = null
 
         lastDocument?.let {
             mEventsCol
-                    .orderBy(orderString, orderDirection)
+                    .orderBy(mOrderString, mOrderDirection)
                     .limit(mEventsPerPage.toLong())
                     .startAfter(it)
                     .get().addOnCompleteListener {
@@ -197,7 +200,7 @@ class MainActivity : FragmentActivity() {
                                     if (it.documents.isNotEmpty())
                                         lastDocument = it.documents.last()
 
-                                    EventBus.getDefault().post(EventsReceivedEvent(mEvents))
+                                    EventBus.getDefault().post(EventsReceivedEvent(mEvents, true))
                                 }
                             }
                             else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
@@ -208,7 +211,7 @@ class MainActivity : FragmentActivity() {
                     }
         } ?: run {
             mEventsCol
-                    .orderBy(orderString, orderDirection)
+                    .orderBy(mOrderString, mOrderDirection)
                     .limit(mEventsPerPage.toLong())
                     .get().addOnCompleteListener {
                         when {
@@ -216,7 +219,7 @@ class MainActivity : FragmentActivity() {
                                 it.result?.let {
                                     mEvents = it.toObjects(Event::class.java)
                                     lastDocument = it.documents.last()
-                                    EventBus.getDefault().post(EventsReceivedEvent(mEvents))
+                                    EventBus.getDefault().post(EventsReceivedEvent(mEvents, false))
                                 }
                             }
                             else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()

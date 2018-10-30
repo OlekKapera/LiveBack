@@ -14,4 +14,5 @@ data class Filter(var sortBy: SortType = SortType.DATE,
                   var likesFrom: Int = 0,
                   var likesTo: Int = filterLikesTo,
                   var timeFrom: Long = 0L,
-                  var timeTo: Long = 0L) : Parcelable
+                  var timeTo: Long = 0L,
+                  var sortChanged: Boolean = false) : Parcelable

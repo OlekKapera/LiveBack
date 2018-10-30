@@ -82,7 +82,7 @@ class MainFragment : BaseFragment() {
             main_toolbar_title.visibility = View.GONE
         }
 
-        main_layout_swipe.setOnRefreshListener { (activity as MainActivity).getEvents() }
+        main_layout_swipe.setOnRefreshListener { (activity as MainActivity).getEvents(mFilter?.sortBy, mFilter?.directionAsc) }
         main_toolbar_filter.setOnClickListener {
             val dialog = FilterDialogFragment.newInstance(mFilter)
             dialog.setTargetFragment(this, REQUEST_TARGET_MAIN_FRAGMENT)
@@ -97,8 +97,14 @@ class MainFragment : BaseFragment() {
         if (requestCode == REQUEST_TARGET_MAIN_FRAGMENT && resultCode == Activity.RESULT_OK) {
             data?.let {
                 val bundle = it.extras
-                mFilter = bundle.getParcelable(INTENT_MAIN_FILTER)
-                filter()
+                mFilter = bundle.getParcelable(INTENT_MAIN_FILTER) as Filter?
+
+                mFilter?.let {
+                    if (it.sortChanged)
+                        (activity as MainActivity).getEvents(it.sortBy, it.directionAsc)
+                    else
+                        filter()
+                }
             }
         }
     }
@@ -113,14 +119,14 @@ class MainFragment : BaseFragment() {
             mEndlessScrollListener = object : EndlessScrollListener(layoutManager) {
                 override fun onLoadMore() {
                     if (main_toolbar_search.query.isEmpty())
-                        (activity as MainActivity).getEvents()
+                        (activity as MainActivity).getEvents(mFilter?.sortBy, mFilter?.directionAsc, false)
                     else
                         (activity as MainActivity).search(main_toolbar_search.query.toString())
                 }
             }
             main_recycler_events.addOnScrollListener(mEndlessScrollListener)
 
-            (activity as MainActivity).getEvents()
+            (activity as MainActivity).getEvents(mFilter?.sortBy, mFilter?.directionAsc)
 
             val bottomOffset = BottomOffsetDecoration(getNavigationBarHeight())
             main_recycler_events.addItemDecoration(bottomOffset)
@@ -169,10 +175,17 @@ class MainFragment : BaseFragment() {
     @Subscribe
     fun onEventsReceivedEvent(event: EventsReceivedEvent) {
         mEvents = event.events
+
+        if (!event.loadMore) {
+            main_recycler_events.smoothScrollToPosition(0)
+            mEndlessScrollListener.resetPaging()
+        }
+
         if (mFilter != null)
             filter()
         else
             mAdapter.replaceData(mEvents)
+
         main_layout_swipe.isRefreshing = false
     }
 }

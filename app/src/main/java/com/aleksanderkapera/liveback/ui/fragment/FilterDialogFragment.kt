@@ -40,6 +40,7 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
     private var mLikesTo = filterLikesTo
     private var mTimeFrom = 0L
     private var mTimeTo = 0L
+    private var mSortChanged = false
 
     private lateinit var mFilter: Filter
 
@@ -178,6 +179,8 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
             }
         }
 
+        mSortChanged = true
+
         return true
     }
 
@@ -192,6 +195,8 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
             filterDialog_button_sortDirection.setImageDrawable(ascendingDrawable)
             true
         }
+
+        mSortChanged = true
     }
 
     /**
@@ -240,6 +245,7 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
         mFilter.likesTo = mLikesTo
         mFilter.timeFrom = mTimeFrom
         mFilter.timeTo = mTimeTo
+        mFilter.sortChanged = mSortChanged
 
         val i = Intent()
                 .putExtra(INTENT_MAIN_FILTER, mFilter)
