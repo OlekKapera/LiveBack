@@ -10,7 +10,7 @@ import android.support.v7.widget.RecyclerView
 abstract class EndlessScrollListener(private val manager: LinearLayoutManager) : RecyclerView.OnScrollListener() {
 
     private var previousTotal = 0 // The total number of items in the data set after the last load.
-    private var loading = true // True if we are still waiting for the last set of data to load.
+    private var loading = false // True if we are still waiting for the last set of data to load.
     private var visibleThreshold = 3 // The minimum amount of items to have below your current scroll position before loading more.
 
     private var firstVisibleItem = 0

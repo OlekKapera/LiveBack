@@ -169,6 +169,10 @@ class MainActivity : FragmentActivity() {
     /**
      * Retrieve events from database. When lastDocument is not null it means that initial call has been made
      * and it's calling for adding more events.
+     *
+     * @param sortBy defines by what user wants to have events ordered
+     * @param directionAsc order direction ascending or descending
+     * @param flushEvents delete all existing events and replace them with new ones
      */
     fun getEvents(sortBy: SortType? = SortType.DATE, directionAsc: Boolean? = true, flushEvents: Boolean = true) {
         main_view_load.show()

@@ -115,12 +115,12 @@ class MainFragment : BaseFragment() {
             val layoutManager = LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
             main_recycler_events.layoutManager = layoutManager
             main_recycler_events.adapter = mAdapter
-
             mEndlessScrollListener = object : EndlessScrollListener(layoutManager) {
                 override fun onLoadMore() {
-                    if (main_toolbar_search.query.isEmpty())
+                    main_recycler_events.stopScroll()
+                    if (main_toolbar_search.query.isEmpty()) {
                         (activity as MainActivity).getEvents(mFilter?.sortBy, mFilter?.directionAsc, false)
-                    else
+                    } else
                         (activity as MainActivity).search(main_toolbar_search.query.toString())
                 }
             }
