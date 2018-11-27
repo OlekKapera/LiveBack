@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit
  */
 class MainFragment : BaseFragment() {
 
-    private lateinit var mEvents: List<Event>
+    private var mEvents = listOf<Event>()
     private lateinit var mEndlessScrollListener: EndlessScrollListener
     private lateinit var mAdapter: EventsRecyclerAdapter
     private var mFilter: Filter? = null
