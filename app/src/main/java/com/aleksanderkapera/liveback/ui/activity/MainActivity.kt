@@ -188,7 +188,7 @@ class MainActivity : FragmentActivity() {
             else -> Query.Direction.ASCENDING
         }
 
-        if(flushEvents)
+        if (flushEvents)
             lastDocument = null
 
         lastDocument?.let {

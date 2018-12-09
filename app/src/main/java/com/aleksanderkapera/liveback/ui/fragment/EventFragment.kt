@@ -3,7 +3,13 @@ package com.aleksanderkapera.liveback.ui.fragment
 import android.animation.Animator
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlarmManager
+import android.app.Notification
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.os.SystemClock
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.design.widget.CoordinatorLayout
@@ -11,10 +17,13 @@ import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.app.NotificationCompat
+import android.support.v4.content.ContextCompat.getSystemService
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.aleksanderkapera.liveback.R
+import com.aleksanderkapera.liveback.bus.EventNotificationsReceiver
 import com.aleksanderkapera.liveback.model.Comment
 import com.aleksanderkapera.liveback.model.Event
 import com.aleksanderkapera.liveback.model.User
@@ -322,6 +331,9 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
      */
     private fun switchLike() {
         event_view_load.show()
+        event?.date?.let {
+            scheduleNotification(it)
+        }
 
         if (!mIsLiked) {
             mFireStore.document("events/${event?.eventUid}").update("likes", FieldValue.arrayUnion(LoggedUser.uid)).addOnCompleteListener {
@@ -505,6 +517,40 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                 emptyView.visibility = View.VISIBLE
             }
         }
+    }
+
+    /**
+     * Create notification pending intent when user likes the event
+     */
+    private fun scheduleNotification(time: Long) {
+        val builder = NotificationCompat.Builder(context)
+                .setContentTitle("Title")
+                .setContentText("text")
+                .setSmallIcon(R.mipmap.ic_launcher_round)
+
+        val intent = Intent(context, EventFragment::class.java)
+        val activity = PendingIntent.getActivity(context, NOTIFICATION_ID_EVENT, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        builder.setContentIntent(activity)
+
+        val notification = builder.build()
+
+        val notificationIntent = Intent(context, EventNotificationsReceiver::class.java)
+        notificationIntent.putExtra(NOTIFICATION_RECEIVER_ID, NOTIFICATION_ID_EVENT)
+        notificationIntent.putExtra(NOTIFICATION_RECEIVER_TEXT, notification)
+        val pendingIntent = PendingIntent.getBroadcast(context, NOTIFICATION_ID_EVENT, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val futureInMillis = System.currentTimeMillis() + 5000
+        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent)
+
+//        val notificationIntent = Intent(context, EventNotificationsReceiver::class.java)
+//        notificationIntent.putExtra(NOTIFICATION_RECEIVER_ID, 1)
+//        notificationIntent.putExtra(NOTIFICATION_RECEIVER_TEXT, getNotification())
+//        val pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+//
+//        val futureInMillis = SystemClock.elapsedRealtime() + 5000
+//        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+//        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent)
     }
 
     /**

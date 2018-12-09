@@ -42,3 +42,7 @@ const val INTENT_MAIN_LOGGING = "Intent Main Logging"
 const val INTENT_MAIN_FILTER = "Intent Main Filter"
 const val INTENT_SETTINGS_ELEMENTS = "Intent Settings Activity"
 const val INTENT_ADD_EVENT_EVENT = "Intent Add Event Activity Event"
+
+const val NOTIFICATION_ID_EVENT = 100
+const val NOTIFICATION_RECEIVER_ID = "Notification Receiver Id"
+const val NOTIFICATION_RECEIVER_TEXT = "Notification Receiver Text"
