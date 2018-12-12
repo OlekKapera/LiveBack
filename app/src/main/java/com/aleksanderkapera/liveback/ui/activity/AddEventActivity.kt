@@ -53,6 +53,7 @@ class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChos
     private var mSelectedChip: String = ""
     private var mBackgroundUri: Uri? = null
     private lateinit var mEvent: Event
+    private var mIsEdit = false
 
     private val DATE_PICKER = "DATE PICKER"
     private val DIALOG_TAG_OPEN = "ADD EVENT DIALOG OPEN"
@@ -81,8 +82,9 @@ class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChos
 
         mEvent = Event()
 
-        (intent.getSerializableExtra(INTENT_ADD_EVENT_EVENT) as? Event)?.let {
+        intent.getParcelableExtra<Event>(INTENT_ADD_EVENT_EVENT)?.let {
             mEvent = it
+            mIsEdit = true
         }
 
         // set toolbar
@@ -283,10 +285,14 @@ class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChos
         docRef.set(mEvent).addOnCompleteListener {
             when {
                 it.isSuccessful -> {
-                    showToast(R.string.successful_add)
+                    if (mIsEdit) showToast(R.string.successful_edit)
+                    else showToast(R.string.successful_add)
                     MainActivity.startActivity(this, LoggedUser.uid.isEmpty())
                 }
-                else -> showToast(R.string.addEvent_error)
+                else -> {
+                    if (mIsEdit) showToast(R.string.editEvent_error)
+                    else showToast(R.string.addEvent_error)
+                }
             }
             addEvent_view_load.hide()
         }

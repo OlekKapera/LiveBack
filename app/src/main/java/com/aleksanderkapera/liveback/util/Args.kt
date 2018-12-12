@@ -33,6 +33,7 @@ const val TAG_MAIN_FILTER = "Main Filter Tag"
 const val TAG_FILTER_TIME = "Filter Time Tag"
 const val TAG_DATE_PICKER = "Date Picker Tag"
 
+
 const val REQUEST_TARGET_EVENT_FRAGMENT = 25
 const val REQUEST_TARGET_DELETE_FRAGMENT = 26
 const val REQUEST_TARGET_FILTER_FRAGMENT = 27
@@ -42,6 +43,8 @@ const val INTENT_MAIN_LOGGING = "Intent Main Logging"
 const val INTENT_MAIN_FILTER = "Intent Main Filter"
 const val INTENT_SETTINGS_ELEMENTS = "Intent Settings Activity"
 const val INTENT_ADD_EVENT_EVENT = "Intent Add Event Activity Event"
+const val INTENT_NOTIFICATION_EVENT = "Intent Notification Event"
+const val INTENT_NOTIFICATION_USER = "Intent Notification User"
 
 const val NOTIFICATION_ID_EVENT = 100
 const val NOTIFICATION_RECEIVER_ID = "Notification Receiver Id"

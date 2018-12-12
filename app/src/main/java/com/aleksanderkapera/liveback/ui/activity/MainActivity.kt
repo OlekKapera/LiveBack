@@ -14,13 +14,11 @@ import com.aleksanderkapera.liveback.model.Filter
 import com.aleksanderkapera.liveback.model.User
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.ui.base.FragmentActivity
+import com.aleksanderkapera.liveback.ui.fragment.EventFragment
 import com.aleksanderkapera.liveback.ui.fragment.MainFragment
 import com.aleksanderkapera.liveback.ui.fragment.SortType
 import com.aleksanderkapera.liveback.ui.widget.NavigationViewHelper
-import com.aleksanderkapera.liveback.util.INTENT_MAIN_FILTER
-import com.aleksanderkapera.liveback.util.INTENT_MAIN_LOGGING
-import com.aleksanderkapera.liveback.util.LoggedUser
-import com.aleksanderkapera.liveback.util.asString
+import com.aleksanderkapera.liveback.util.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -78,6 +76,14 @@ class MainActivity : FragmentActivity() {
         mFireStoreRef = FirebaseFirestore.getInstance()
 
         isAnonymousUser = intent.getBooleanExtra(INTENT_MAIN_LOGGING, false)
+
+        val notificationEvent = intent.getParcelableExtra<Event>(INTENT_NOTIFICATION_EVENT)
+        val notificationUser = intent.getParcelableExtra<User>(INTENT_NOTIFICATION_USER)
+        notificationEvent?.let { event ->
+            notificationUser?.let { user ->
+                showFragment(EventFragment.newInstance(event, user))
+            }
+        }
 
         //when no user is logged in open login fragment
         if (mAuth.currentUser != null || isAnonymousUser) {

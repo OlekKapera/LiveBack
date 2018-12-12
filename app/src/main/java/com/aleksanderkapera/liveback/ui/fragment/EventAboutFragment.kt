@@ -36,8 +36,8 @@ class EventAboutFragment : BaseFragment() {
     override fun getLayoutRes(): Int = R.layout.fragment_event_about
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        arguments?.getSerializable(BUNDLE_EVENT_ABOUT)?.let {
-            mEvent = it as Event
+        arguments?.getParcelable<Event>(BUNDLE_EVENT_ABOUT)?.let {
+            mEvent = it
         }
 
         return super.onCreateView(inflater, container, savedInstanceState)

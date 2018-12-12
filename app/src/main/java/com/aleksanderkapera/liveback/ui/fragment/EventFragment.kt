@@ -4,12 +4,11 @@ import android.animation.Animator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlarmManager
-import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.media.RingtoneManager
 import android.os.Bundle
-import android.os.SystemClock
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.design.widget.CoordinatorLayout
@@ -18,7 +17,6 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.app.NotificationCompat
-import android.support.v4.content.ContextCompat.getSystemService
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -332,7 +330,10 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     private fun switchLike() {
         event_view_load.show()
         event?.date?.let {
-            scheduleNotification(it)
+            if (!mIsLiked)
+                scheduleNotification(it, true)
+            else
+                scheduleNotification(it, false)
         }
 
         if (!mIsLiked) {
@@ -520,17 +521,25 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     }
 
     /**
-     * Create notification pending intent when user likes the event
+     * Create notification pending intent when user likes the event. If the event is disliked cancel
+     * pending notification
      */
-    private fun scheduleNotification(time: Long) {
+    private fun scheduleNotification(time: Long, set: Boolean) {
         val builder = NotificationCompat.Builder(context)
-                .setContentTitle("Title")
-                .setContentText("text")
+                .setContentTitle("${event?.title}")
+                .setContentText("Event you liked starts in ${LoggedUser.reminder} minutes")
                 .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true)
 
-        val intent = Intent(context, EventFragment::class.java)
+        val intent = Intent(context, MainActivity::class.java)
+        intent.putExtra(INTENT_NOTIFICATION_EVENT, event)
+        intent.putExtra(INTENT_NOTIFICATION_USER, mUser)
         val activity = PendingIntent.getActivity(context, NOTIFICATION_ID_EVENT, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setContentIntent(activity)
+
+        val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        builder.setSound(alarmSound)
 
         val notification = builder.build()
 
@@ -539,18 +548,12 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
         notificationIntent.putExtra(NOTIFICATION_RECEIVER_TEXT, notification)
         val pendingIntent = PendingIntent.getBroadcast(context, NOTIFICATION_ID_EVENT, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val futureInMillis = System.currentTimeMillis() + 5000
         val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent)
 
-//        val notificationIntent = Intent(context, EventNotificationsReceiver::class.java)
-//        notificationIntent.putExtra(NOTIFICATION_RECEIVER_ID, 1)
-//        notificationIntent.putExtra(NOTIFICATION_RECEIVER_TEXT, getNotification())
-//        val pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-//
-//        val futureInMillis = SystemClock.elapsedRealtime() + 5000
-//        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-//        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent)
+        if (set)
+            alarmManager.set(AlarmManager.RTC_WAKEUP, time - (LoggedUser.reminder * 60000), pendingIntent)
+        else
+            alarmManager.cancel(pendingIntent)
     }
 
     /**
@@ -558,9 +561,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
      */
     private val onFabClick = View.OnClickListener {
         when (currentTab) {
-            0 -> {
-                switchLike()
-            }
+            0 -> switchLike()
             1 -> {
                 val dialog = AddFeedbackDialogFragment.newInstance(AddFeedbackDialogType.COMMENT, null, null)
                 dialog.setTargetFragment(this, REQUEST_TARGET_EVENT_FRAGMENT)
