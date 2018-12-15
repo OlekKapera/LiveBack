@@ -11,9 +11,7 @@ import com.aleksanderkapera.liveback.model.User
 import com.aleksanderkapera.liveback.ui.activity.*
 import com.aleksanderkapera.liveback.ui.fragment.ProfileFragment
 import com.aleksanderkapera.liveback.util.*
-import com.bumptech.glide.Glide
-import com.bumptech.glide.signature.StringSignature
-import com.firebase.ui.storage.images.FirebaseImageLoader
+import com.bumptech.glide.signature.ObjectKey
 import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.navigation_header.*
@@ -114,10 +112,10 @@ class NavigationViewHelper(private val activity: MainActivity, private val drawe
         }
 
         profilePic?.let {
-            Glide.with(activity)
-                    .using(FirebaseImageLoader())
+            GlideApp.with(activity)
                     .load(profilePic)
-                    .signature(StringSignature(user?.profilePicTime.toString()))
+                    .signature(ObjectKey(user?.profilePicTime.toString()))
+                    .displayRoundPlaceholder()
                     .into(activity.navigation_header_image)
         } ?: run {
             activity.navigation_header_image.setImageDrawable(R.drawable.ic_user_round.asDrawable())

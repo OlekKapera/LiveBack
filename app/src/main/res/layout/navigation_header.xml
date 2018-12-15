@@ -5,12 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <ImageView
         android:id="@+id/navigation_header_image"
         android:layout_width="@dimen/navHeader_imageSize"
         android:layout_height="@dimen/navHeader_imageSize"
         android:layout_marginTop="@dimen/spacing16"
-        android:src="@color/bgColor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

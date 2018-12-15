@@ -54,7 +54,7 @@ class MainActivity : FragmentActivity() {
 
     lateinit var mAuth: FirebaseAuth
     private lateinit var mFireStoreRef: FirebaseFirestore
-    private lateinit var mEventsCol: CollectionReference
+    private var mEventsCol: CollectionReference? = null
     private lateinit var mEvents: MutableList<Event>
 
     var lastDocument: DocumentSnapshot? = null
@@ -122,53 +122,53 @@ class MainActivity : FragmentActivity() {
     fun search(query: String) {
         main_view_load.show()
 
-        lastDocument?.let {
-            mEventsCol
-                    .orderBy("title", Query.Direction.ASCENDING)
-                    .startAt(query)
-                    .endAt("$query\uf8ff")
-                    .limit(mEventsPerPage.toLong())
-                    .startAfter(it)
-                    .get().addOnCompleteListener {
-                        when {
-                            it.isSuccessful -> {
-                                it.result?.let {
-                                    mEvents.addAll(it.toObjects(Event::class.java))
-                                    if (it.documents.isNotEmpty())
-                                        lastDocument = it.documents.last()
+        mEventsCol?.let { eventsCol ->
+            lastDocument?.let {
+                eventsCol.orderBy("title", Query.Direction.ASCENDING)
+                        .startAt(query)
+                        .endAt("$query\uf8ff")
+                        .limit(mEventsPerPage.toLong())
+                        .startAfter(it)
+                        .get().addOnCompleteListener {
+                            when {
+                                it.isSuccessful -> {
+                                    it.result?.let {
+                                        mEvents.addAll(it.toObjects(Event::class.java))
+                                        if (it.documents.isNotEmpty())
+                                            lastDocument = it.documents.last()
 
-                                    EventBus.getDefault().post(EventsReceivedEvent(mEvents, true))
+                                        EventBus.getDefault().post(EventsReceivedEvent(mEvents, true))
+                                    }
                                 }
+                                else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
                             }
-                            else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
+
+                            //hide loader
+                            main_view_load.hide()
                         }
+            } ?: run {
+                eventsCol.orderBy("title", Query.Direction.ASCENDING)
+                        .startAt(query)
+                        .endAt("$query\uf8ff")
+                        .limit(mEventsPerPage.toLong())
+                        .get().addOnCompleteListener {
+                            when {
+                                it.isSuccessful -> {
+                                    it.result?.let {
+                                        mEvents = it.toObjects(Event::class.java)
+                                        if (it.documents.isNotEmpty())
+                                            lastDocument = it.documents.last()
 
-                        //hide loader
-                        main_view_load.hide()
-                    }
-        } ?: run {
-            mEventsCol
-                    .orderBy("title", Query.Direction.ASCENDING)
-                    .startAt(query)
-                    .endAt("$query\uf8ff")
-                    .limit(mEventsPerPage.toLong())
-                    .get().addOnCompleteListener {
-                        when {
-                            it.isSuccessful -> {
-                                it.result?.let {
-                                    mEvents = it.toObjects(Event::class.java)
-                                    if (it.documents.isNotEmpty())
-                                        lastDocument = it.documents.last()
-
-                                    EventBus.getDefault().post(EventsReceivedEvent(mEvents, false))
+                                        EventBus.getDefault().post(EventsReceivedEvent(mEvents, false))
+                                    }
                                 }
+                                else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
                             }
-                            else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
-                        }
 
-                        //hide loader
-                        main_view_load.hide()
-                    }
+                            //hide loader
+                            main_view_load.hide()
+                        }
+            }
         }
     }
 
@@ -197,47 +197,47 @@ class MainActivity : FragmentActivity() {
         if (flushEvents)
             lastDocument = null
 
-        lastDocument?.let {
-            mEventsCol
-                    .orderBy(mOrderString, mOrderDirection)
-                    .limit(mEventsPerPage.toLong())
-                    .startAfter(it)
-                    .get().addOnCompleteListener {
-                        when {
-                            it.isSuccessful -> {
-                                it.result?.let {
-                                    mEvents.addAll(it.toObjects(Event::class.java))
-                                    if (it.documents.isNotEmpty())
+        mEventsCol?.let { eventsCol ->
+            lastDocument?.let {
+                eventsCol.orderBy(mOrderString, mOrderDirection)
+                        .limit(mEventsPerPage.toLong())
+                        .startAfter(it)
+                        .get().addOnCompleteListener {
+                            when {
+                                it.isSuccessful -> {
+                                    it.result?.let {
+                                        mEvents.addAll(it.toObjects(Event::class.java))
+                                        if (it.documents.isNotEmpty())
+                                            lastDocument = it.documents.last()
+
+                                        EventBus.getDefault().post(EventsReceivedEvent(mEvents, true))
+                                    }
+                                }
+                                else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
+                            }
+
+                            //hide loader
+                            main_view_load.hide()
+                        }
+            } ?: run {
+                eventsCol.orderBy(mOrderString, mOrderDirection)
+                        .limit(mEventsPerPage.toLong())
+                        .get().addOnCompleteListener {
+                            when {
+                                it.isSuccessful -> {
+                                    it.result?.let {
+                                        mEvents = it.toObjects(Event::class.java)
                                         lastDocument = it.documents.last()
-
-                                    EventBus.getDefault().post(EventsReceivedEvent(mEvents, true))
+                                        EventBus.getDefault().post(EventsReceivedEvent(mEvents, false))
+                                    }
                                 }
+                                else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
                             }
-                            else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
-                        }
 
-                        //hide loader
-                        main_view_load.hide()
-                    }
-        } ?: run {
-            mEventsCol
-                    .orderBy(mOrderString, mOrderDirection)
-                    .limit(mEventsPerPage.toLong())
-                    .get().addOnCompleteListener {
-                        when {
-                            it.isSuccessful -> {
-                                it.result?.let {
-                                    mEvents = it.toObjects(Event::class.java)
-                                    lastDocument = it.documents.last()
-                                    EventBus.getDefault().post(EventsReceivedEvent(mEvents, false))
-                                }
-                            }
-                            else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
+                            //hide loader
+                            main_view_load.hide()
                         }
-
-                        //hide loader
-                        main_view_load.hide()
-                    }
+            }
         }
     }
 

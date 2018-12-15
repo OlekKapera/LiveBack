@@ -2,9 +2,14 @@ package com.aleksanderkapera.liveback.ui.fragment
 
 import android.animation.Animator
 import android.app.Activity
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
+import android.support.v4.widget.CircularProgressDrawable
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.aleksanderkapera.liveback.R
@@ -16,9 +21,13 @@ import com.aleksanderkapera.liveback.ui.activity.SettingsCaller
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.ui.widget.EmptyScreenView
 import com.aleksanderkapera.liveback.util.*
-import com.bumptech.glide.Glide
-import com.bumptech.glide.signature.StringSignature
-import com.firebase.ui.storage.images.FirebaseImageLoader
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.signature.ObjectKey
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -124,17 +133,18 @@ class ProfileFragment : BaseFragment() {
             if (user.profilePicPath.isNotEmpty()) {
                 val storageRef = FirebaseStorage.getInstance().getReference(user.profilePicPath)
 
-                Glide.with(context)
-                        .using(FirebaseImageLoader())
-                        .load(storageRef)
-                        .signature(StringSignature(user.profilePicTime.toString()))
-                        .into(profile_image_profile)
+                context?.let {
+                    GlideApp.with(it)
+                            .load(storageRef)
+                            .signature(ObjectKey(user.profilePicTime.toString()))
+                            .displayRoundPlaceholder()
+                            .into(profile_image_profile)
 
-                Glide.with(context)
-                        .using(FirebaseImageLoader())
-                        .load(storageRef)
-                        .signature(StringSignature(user.profilePicTime.toString()))
-                        .into(profile_image_background)
+                    GlideApp.with(it)
+                            .load(storageRef)
+                            .signature(ObjectKey(user.profilePicTime.toString()))
+                            .into(profile_image_background)
+                }
             } else {
                 profile_image_profile.setImageDrawable(mProfilePhoto)
                 profile_image_background.setImageDrawable(mBackgroundPhoto)

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusable="true"
@@ -37,14 +36,14 @@
         android:id="@+id/register_image_profile"
         android:layout_width="@dimen/icon82"
         android:layout_height="@dimen/icon82"
-        android:layout_marginBottom="@dimen/spacing16"
         android:layout_marginTop="@dimen/spacing8"
+        android:layout_marginBottom="@dimen/spacing16"
+        android:background="@drawable/ic_rounded_add"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toTopOf="@+id/register_input_username"
         app:layout_constraintEnd_toEndOf="@id/register_guide_right"
         app:layout_constraintStart_toStartOf="@id/register_guide_left"
-        app:layout_constraintTop_toBottomOf="@+id/register_text_appName"
-        android:foreground="?android:attr/selectableItemBackgroundBorderless"
-        android:background="@drawable/ic_rounded_add"/>
+        app:layout_constraintTop_toBottomOf="@+id/register_text_appName" />
 
     <android.support.constraint.Guideline
         android:id="@+id/register_guide_left"

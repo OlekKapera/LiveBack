@@ -8,12 +8,11 @@ import com.aleksanderkapera.liveback.model.Event
 import com.aleksanderkapera.liveback.model.User
 import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.fragment.EventFragment
+import com.aleksanderkapera.liveback.util.GlideApp
 import com.aleksanderkapera.liveback.util.asDrawable
 import com.aleksanderkapera.liveback.util.convertLongToDate
 import com.aleksanderkapera.liveback.util.setBackgroundCategory
-import com.bumptech.glide.Glide
-import com.bumptech.glide.signature.StringSignature
-import com.firebase.ui.storage.images.FirebaseImageLoader
+import com.bumptech.glide.signature.ObjectKey
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -51,10 +50,10 @@ class EventsRecyclerAdapter(val context: Context) : BaseRecyclerAdapter<EventsRe
 
                             if (user.profilePicPath.isNotEmpty()) {
                                 mStorageRef = FirebaseStorage.getInstance().getReference(user.profilePicPath)
-                                Glide.with(context)
-                                        .using(FirebaseImageLoader())
+                                GlideApp.with(context)
                                         .load(mStorageRef)
-                                        .signature(StringSignature(user.profilePicTime.toString()))
+                                        .signature(ObjectKey(user.profilePicTime.toString()))
+                                        .displayRoundPlaceholder()
                                         .into(itemView.cardMain_image_profile)
                             } else
                                 itemView.cardMain_image_profile.setImageDrawable(R.drawable.ic_user_round_solid.asDrawable())
@@ -73,10 +72,10 @@ class EventsRecyclerAdapter(val context: Context) : BaseRecyclerAdapter<EventsRe
 
             if (item.backgroundPicturePath.isNotEmpty()) {
                 mStorageRef = FirebaseStorage.getInstance().getReference(item.backgroundPicturePath)
-                Glide.with(context)
-                        .using(FirebaseImageLoader())
+                GlideApp.with(context)
                         .load(mStorageRef)
-                        .signature(StringSignature(item.backgroundPictureTime.toString()))
+                        .signature(ObjectKey(item.backgroundPictureTime.toString()))
+                        .displayPlaceholder()
                         .into(itemView.cardMain_image_background)
             } else {
                 setBackgroundCategory(item.category, itemView.cardMain_image_background)

@@ -12,13 +12,8 @@ import com.aleksanderkapera.liveback.ui.fragment.AddFeedbackDialogFragment
 import com.aleksanderkapera.liveback.ui.fragment.AddFeedbackDialogType
 import com.aleksanderkapera.liveback.ui.fragment.EventFragment
 import com.aleksanderkapera.liveback.ui.fragment.ProfileFragment
-import com.aleksanderkapera.liveback.util.REQUEST_TARGET_EVENT_FRAGMENT
-import com.aleksanderkapera.liveback.util.TAG_ADD_FEEDBACK_COMMENT_FILLED
-import com.aleksanderkapera.liveback.util.asDrawable
-import com.aleksanderkapera.liveback.util.longToStringAgo
-import com.bumptech.glide.Glide
-import com.bumptech.glide.signature.StringSignature
-import com.firebase.ui.storage.images.FirebaseImageLoader
+import com.aleksanderkapera.liveback.util.*
+import com.bumptech.glide.signature.ObjectKey
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -50,10 +45,10 @@ class EventCommentsAdapter(val context: Context, val fragment: BaseFragment) : B
                             itemView.eventComment_text_title.text = user.username
                             if (user.profilePicPath.isNotEmpty()) {
                                 mStorageRef = FirebaseStorage.getInstance().getReference(user.profilePicPath)
-                                Glide.with(context)
-                                        .using(FirebaseImageLoader())
+                                GlideApp.with(context)
                                         .load(mStorageRef)
-                                        .signature(StringSignature(user.profilePicTime.toString()))
+                                        .signature(ObjectKey(user.profilePicTime.toString()))
+                                        .displayRoundPlaceholder()
                                         .into(itemView.eventComment_image_profile)
                             } else
                                 itemView.eventComment_image_profile.setImageDrawable(R.drawable.ic_user_round_solid.asDrawable())

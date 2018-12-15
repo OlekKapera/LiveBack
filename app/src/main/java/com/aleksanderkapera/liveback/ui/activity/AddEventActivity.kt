@@ -23,7 +23,7 @@ import com.aleksanderkapera.liveback.ui.fragment.ImagePickerDialogFragment
 import com.aleksanderkapera.liveback.ui.fragment.TimePickerDialogFragment
 import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.Glide
-import com.bumptech.glide.signature.StringSignature
+import com.bumptech.glide.signature.ObjectKey
 import com.firebase.ui.storage.images.FirebaseImageLoader
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -124,9 +124,10 @@ class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChos
 
         if (requestCode == ImagePickerDialogFragment.REQUEST_CAPTURE_IMAGE) {
             // Handle image returned from camera app. Load it into image view.
-            Glide.with(this)
+            GlideApp.with(this)
                     .load(imageFilePath)
-                    .signature(StringSignature(mEvent.backgroundPictureTime.toString()))
+                    .signature(ObjectKey(mEvent.backgroundPictureTime.toString()))
+                    .displayPlaceholder()
                     .into(addEvent_image_background)
             mBackgroundUri = Uri.parse(imageFilePath)
 
@@ -135,9 +136,10 @@ class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChos
             val uri = data.data
 
             try {
-                Glide.with(this)
+                GlideApp.with(this)
                         .load(uri)
-                        .signature(StringSignature(mEvent.backgroundPictureTime.toString()))
+                        .signature(ObjectKey(mEvent.backgroundPictureTime.toString()))
+                        .displayPlaceholder()
                         .into(addEvent_image_background)
                 mBackgroundUri = uri
             } catch (e: IOException) {
@@ -174,10 +176,10 @@ class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChos
             addEvent_view_date.input_input_text.setText(convertLongToDate(mEvent.date, "d.M.yyyy HH:mm"))
 
             if (mEvent.backgroundPicturePath.isNotEmpty()) {
-                Glide.with(this)
-                        .using(FirebaseImageLoader())
+                GlideApp.with(this)
                         .load(mStorageRef.child(mEvent.backgroundPicturePath))
-                        .signature(StringSignature(mEvent.backgroundPictureTime.toString()))
+                        .signature(ObjectKey(mEvent.backgroundPictureTime.toString()))
+                        .displayPlaceholder()
                         .into(addEvent_image_background)
 
                 addEvent_button_addBackground.visibility = View.GONE

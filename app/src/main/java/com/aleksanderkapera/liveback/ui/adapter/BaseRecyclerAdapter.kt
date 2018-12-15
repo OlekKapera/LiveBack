@@ -39,7 +39,6 @@ abstract class BaseRecyclerAdapter<VH: BaseRecyclerAdapter.ViewHolder,T>(context
 
     fun removeItem(item: T): T {
         val position = mData.indexOf(item)
-        val removed = mData.remove(item)
         notifyItemRemoved(position)
         return item
     }

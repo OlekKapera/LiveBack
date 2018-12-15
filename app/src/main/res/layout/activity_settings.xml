@@ -18,12 +18,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <ImageView
                 android:id="@+id/settings_image_profile"
                 android:layout_width="@dimen/settings_circleImage_size"
                 android:layout_height="@dimen/settings_circleImage_size"
                 android:layout_marginTop="@dimen/spacing32"
-                android:src="@color/lightGrey"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

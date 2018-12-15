@@ -18,7 +18,7 @@ import com.aleksanderkapera.liveback.ui.fragment.ImagePickerDialogFragment
 import com.aleksanderkapera.liveback.ui.fragment.ReminderDialogFragment
 import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.Glide
-import com.bumptech.glide.signature.StringSignature
+import com.bumptech.glide.signature.ObjectKey
 import com.firebase.ui.storage.images.FirebaseImageLoader
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -112,9 +112,10 @@ class SettingsActivity : BaseActivity() {
 
         if (requestCode == ImagePickerDialogFragment.REQUEST_CAPTURE_IMAGE) {
             // Handle image returned from camera app. Load it into image view.
-            Glide.with(this)
+            GlideApp.with(this)
                     .load(imageFilePath)
-                    .signature(StringSignature(LoggedUser.profilePicTime.toString()))
+                    .signature(ObjectKey(LoggedUser.profilePicTime.toString()))
+                    .displayRoundPlaceholder()
                     .into(settings_image_profile)
             mImageUri = Uri.parse(imageFilePath)
 
@@ -123,9 +124,10 @@ class SettingsActivity : BaseActivity() {
             val uri = data.data
 
             try {
-                Glide.with(this)
+                GlideApp.with(this)
                         .load(uri)
-                        .signature(StringSignature(LoggedUser.profilePicTime.toString()))
+                        .signature(ObjectKey(LoggedUser.profilePicTime.toString()))
+                        .displayRoundPlaceholder()
                         .into(settings_image_profile)
                 mImageUri = uri
             } catch (e: IOException) {
@@ -163,10 +165,10 @@ class SettingsActivity : BaseActivity() {
         updateReminderText()
 
         if (LoggedUser.profilePicPath.isNotEmpty())
-            Glide.with(this)
-                    .using(FirebaseImageLoader())
+            GlideApp.with(this)
                     .load(mStorageRef.child(LoggedUser.profilePicPath))
-                    .signature(StringSignature(LoggedUser.profilePicTime.toString()))
+                    .signature(ObjectKey(LoggedUser.profilePicTime.toString()))
+                    .displayRoundPlaceholder()
                     .into(settings_image_profile)
         else
             settings_image_profile.setImageDrawable(mUserImage)
@@ -218,7 +220,7 @@ class SettingsActivity : BaseActivity() {
             when {
                 it.isSuccessful -> {
                     it.result?.metadata?.let {
-                        it.path?.let {
+                        it.path.let {
                             LoggedUser.profilePicPath = it
                         }
                         LoggedUser.profilePicTime = it.updatedTimeMillis

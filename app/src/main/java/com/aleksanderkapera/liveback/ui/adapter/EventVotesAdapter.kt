@@ -13,9 +13,7 @@ import com.aleksanderkapera.liveback.ui.base.DeleteDialogFragment
 import com.aleksanderkapera.liveback.ui.fragment.DeleteDialogType
 import com.aleksanderkapera.liveback.ui.fragment.ProfileFragment
 import com.aleksanderkapera.liveback.util.*
-import com.bumptech.glide.Glide
-import com.bumptech.glide.signature.StringSignature
-import com.firebase.ui.storage.images.FirebaseImageLoader
+import com.bumptech.glide.signature.ObjectKey
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -64,13 +62,13 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val fragment
                 when {
                     it.isSuccessful -> {
                         it.result?.toObject(User::class.java)?.let { user ->
-                            user.profilePicPath?.let {
+                            user.profilePicPath.let {
                                 if (it.isNotEmpty()) {
                                     mStorageRef = FirebaseStorage.getInstance().getReference(it)
-                                    Glide.with(context)
-                                            .using(FirebaseImageLoader())
+                                    GlideApp.with(context)
                                             .load(mStorageRef)
-                                            .signature(StringSignature(user.profilePicTime.toString()))
+                                            .signature(ObjectKey(user.profilePicTime.toString()))
+                                            .displayRoundPlaceholder()
                                             .into(itemView.eventVote_image_profile)
                                 } else
                                     itemView.eventVote_image_profile.setImageDrawable(R.drawable.ic_user_round_solid.asDrawable())

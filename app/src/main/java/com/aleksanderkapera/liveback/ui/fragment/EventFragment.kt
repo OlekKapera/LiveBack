@@ -31,9 +31,7 @@ import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.ui.widget.EmptyScreenView
 import com.aleksanderkapera.liveback.util.*
-import com.bumptech.glide.Glide
-import com.bumptech.glide.signature.StringSignature
-import com.firebase.ui.storage.images.FirebaseImageLoader
+import com.bumptech.glide.signature.ObjectKey
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -171,32 +169,33 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
         event?.let { event ->
             event_text_eventName.text = event.title
 
-            if (event.backgroundPicturePath.isNotEmpty()) {
-                Glide.with(context)
-                        .using(FirebaseImageLoader())
-                        .load(FirebaseStorage.getInstance().getReference(event.backgroundPicturePath))
-                        .signature(StringSignature(event.backgroundPictureTime.toString()))
-                        .into(event_image_background)
-            } else
-                setBackgroundCategory(event.category, event_image_background)
-
-            mUser?.let { user ->
-                if (user.profilePicPath.isNotEmpty()) {
-                    Glide.with(context)
-                            .using(FirebaseImageLoader())
-                            .load(FirebaseStorage.getInstance().getReference(user.profilePicPath))
-                            .signature(StringSignature(user.profilePicTime.toString()))
-                            .into(event_image_profile)
+            context?.let { context ->
+                if (event.backgroundPicturePath.isNotEmpty()) {
+                    GlideApp.with(context)
+                            .load(FirebaseStorage.getInstance().getReference(event.backgroundPicturePath))
+                            .signature(ObjectKey(event.backgroundPictureTime.toString()))
+                            .into(event_image_background)
                 } else
-                    event_image_profile.setImageDrawable(R.drawable.ic_user_round.asDrawable())
+                    setBackgroundCategory(event.category, event_image_background)
 
-                event_image_edit.visibility = when {
-                    event.userUid == LoggedUser.uid -> View.VISIBLE
-                    else -> View.GONE
+                mUser?.let { user ->
+                    if (user.profilePicPath.isNotEmpty()) {
+                        GlideApp.with(context)
+                                .load(FirebaseStorage.getInstance().getReference(user.profilePicPath))
+                                .signature(ObjectKey(user.profilePicTime.toString()))
+                                .displayRoundPlaceholder()
+                                .into(event_image_profile)
+                    } else
+                        event_image_profile.setImageDrawable(R.drawable.ic_user_round.asDrawable())
+
+                    event_image_edit.visibility = when {
+                        event.userUid == LoggedUser.uid -> View.VISIBLE
+                        else -> View.GONE
+                    }
+
+                    event_image_edit.setOnClickListener { AddEventActivity.startActivity(activity as Activity, event) }
+                    event_image_profile.setOnClickListener { (activity as MainActivity).showFragment(ProfileFragment.newInstance(user.uid)) }
                 }
-
-                event_image_edit.setOnClickListener { AddEventActivity.startActivity(activity as Activity, event) }
-                event_image_profile.setOnClickListener { (activity as MainActivity).showFragment(ProfileFragment.newInstance(user.uid)) }
             }
         }
     }

@@ -38,12 +38,11 @@
             android:orientation="vertical"
             app:layout_constraintGuide_begin="@dimen/spacing16" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <ImageView
             android:id="@+id/cardMain_image_profile"
             android:layout_width="@dimen/card_profile_size"
             android:layout_height="@dimen/card_profile_size"
             android:layout_marginStart="@dimen/spacing16"
-            android:src="@color/bgColor"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/cardMain_guideline_horizontal" />
 
