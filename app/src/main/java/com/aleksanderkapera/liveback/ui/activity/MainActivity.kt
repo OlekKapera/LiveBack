@@ -75,6 +75,7 @@ class MainActivity : FragmentActivity() {
         mAuth = FirebaseAuth.getInstance()
         mFireStoreRef = FirebaseFirestore.getInstance()
 
+        //get intent extras regarding from where it was called
         isAnonymousUser = intent.getBooleanExtra(INTENT_MAIN_LOGGING, false)
 
         val notificationEvent = intent.getParcelableExtra<Event>(INTENT_NOTIFICATION_EVENT)
@@ -83,6 +84,10 @@ class MainActivity : FragmentActivity() {
             notificationUser?.let { user ->
                 showFragment(EventFragment.newInstance(event, user))
             }
+        }
+
+        intent.getStringExtra(INTENT_NOTIFICATION_EVENTUID)?.let {
+            showEventFragment(it)
         }
 
         //when no user is logged in open login fragment
@@ -237,6 +242,29 @@ class MainActivity : FragmentActivity() {
                             //hide loader
                             main_view_load.hide()
                         }
+            }
+        }
+    }
+
+    /**
+     * Get specific event and user and then open event fragment
+     */
+    private fun showEventFragment(eventUid: String) {
+        mFireStoreRef.document("events/$eventUid").get().addOnCompleteListener {
+            when{
+                it.isSuccessful -> {
+                    it.result?.toObject(Event::class.java)?.let { event ->
+                        mFireStoreRef.document("users/${event.userUid}").get().addOnCompleteListener {
+                            when {
+                                it.isSuccessful -> {
+                                    it.result?.toObject(User::class.java)?.let { user ->
+                                        showFragment(EventFragment.newInstance(event, user))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

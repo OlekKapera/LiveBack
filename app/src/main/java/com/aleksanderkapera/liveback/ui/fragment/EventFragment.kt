@@ -19,6 +19,7 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.app.NotificationCompat
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.View
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.bus.EventNotificationsReceiver
@@ -36,6 +37,7 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.app_bar_event.*
 import kotlinx.android.synthetic.main.fragment_event.*
@@ -327,6 +329,11 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
      * Adding or deleting switchLike
      */
     private fun switchLike() {
+        FirebaseMessaging.getInstance().subscribeToTopic("V123456789")
+                .addOnCompleteListener { task ->
+                    Log.d("TAG", "Subscribed")
+                }
+
         event_view_load.show()
         event?.date?.let {
             if (!mIsLiked)

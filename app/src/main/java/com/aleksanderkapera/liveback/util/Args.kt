@@ -6,7 +6,7 @@ package com.aleksanderkapera.liveback.util
 const val BUNDLE_EVENT = "Event Bundle Key"
 const val BUNDLE_EVENT_USER = "Event User Bundle Key"
 const val BUNDLE_EVENT_ABOUT = "Event About Bundle Key"
-const val BUNDLE_EVENT_COMMENT = "Event About Bundle Key"
+const val BUNDLE_EVENT_COMMENT = "Event Comment Bundle Key"
 const val BUNDLE_EVENT_VOTE = "Event Vote Bundle Key"
 const val BUNDLE_EVENT_VOTE_UID = "Event Vote UID Bundle Key"
 const val BUNDLE_EVENT_DIALOG_TYPE = "Event Dialog Type Bundle Key"
@@ -45,6 +45,7 @@ const val INTENT_SETTINGS_ELEMENTS = "Intent Settings Activity"
 const val INTENT_ADD_EVENT_EVENT = "Intent Add Event Activity Event"
 const val INTENT_NOTIFICATION_EVENT = "Intent Notification Event"
 const val INTENT_NOTIFICATION_USER = "Intent Notification User"
+const val INTENT_NOTIFICATION_EVENTUID = "Intent Notification EventUid"
 
 const val NOTIFICATION_ID_EVENT = 100
 const val NOTIFICATION_RECEIVER_ID = "Notification Receiver Id"
