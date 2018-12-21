@@ -72,6 +72,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
 
     private lateinit var mFireStore: FirebaseFirestore
     private lateinit var mEventDoc: DocumentReference
+    private lateinit var mFireMessaging: FirebaseMessaging
 
     var event: Event? = null
     private var mUser: User? = null
@@ -109,6 +110,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
 
         mFireStore = FirebaseFirestore.getInstance()
         mEventDoc = mFireStore.document("events/${event?.eventUid}")
+        mFireMessaging = FirebaseMessaging.getInstance()
     }
 
     @SuppressLint("RestrictedApi")
@@ -329,12 +331,8 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
      * Adding or deleting switchLike
      */
     private fun switchLike() {
-        FirebaseMessaging.getInstance().subscribeToTopic("V123456789")
-                .addOnCompleteListener { task ->
-                    Log.d("TAG", "Subscribed")
-                }
-
         event_view_load.show()
+
         event?.date?.let {
             if (!mIsLiked)
                 scheduleNotification(it, true)
@@ -356,6 +354,9 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                     }
                 }
             }
+
+            mFireMessaging.subscribeToTopic("V${event?.eventUid}")
+            mFireMessaging.subscribeToTopic("C${event?.eventUid}")
         } else {
             mFireStore.document("events/${event?.eventUid}").update("likes", FieldValue.arrayRemove(LoggedUser.uid)).addOnCompleteListener {
                 event_view_load.hide()
@@ -370,6 +371,9 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                     }
                 }
             }
+
+            mFireMessaging.unsubscribeFromTopic("V${event?.eventUid}")
+            mFireMessaging.unsubscribeFromTopic("C${event?.eventUid}")
         }
     }
 
