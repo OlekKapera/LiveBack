@@ -185,13 +185,13 @@ class DeleteDialogFragment : DialogFragment() {
                 votesTask.isSuccessful -> {
                     votesTask.result?.let { result ->
                         result.documents.forEach {
-                        mBatch.delete(it.reference)
+                            mBatch.delete(it.reference)
 
-                        if (it == result.documents.last()) {
-                            mVotesDone = true
-                            commitBatch()
+                            if (it == result.documents.last()) {
+                                mVotesDone = true
+                                commitBatch()
+                            }
                         }
-                    }
                     }
                 }
             }

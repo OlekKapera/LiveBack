@@ -11,16 +11,17 @@ import android.support.design.widget.AppBarLayout
 import android.util.Log
 import android.widget.Switch
 import com.aleksanderkapera.liveback.R
+import com.aleksanderkapera.liveback.model.User
+import com.aleksanderkapera.liveback.service.NotificationType
 import com.aleksanderkapera.liveback.ui.base.BaseActivity
 import com.aleksanderkapera.liveback.ui.fragment.ChangePasswordDialogFragment
 import com.aleksanderkapera.liveback.ui.fragment.DeleteAccountDialogFragment
 import com.aleksanderkapera.liveback.ui.fragment.ImagePickerDialogFragment
 import com.aleksanderkapera.liveback.ui.fragment.ReminderDialogFragment
 import com.aleksanderkapera.liveback.util.*
-import com.bumptech.glide.Glide
 import com.bumptech.glide.signature.ObjectKey
-import com.firebase.ui.storage.images.FirebaseImageLoader
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.activity_settings.*
@@ -52,12 +53,18 @@ class SettingsActivity : BaseActivity() {
 
     private lateinit var mFireStore: FirebaseFirestore
     private lateinit var mStorageRef: StorageReference
+    private lateinit var mFireMessaging: FirebaseMessaging
 
     private lateinit var mUploadBytes: ByteArray
     private var mImageUri: Uri? = null
 
     private lateinit var mPermissionResolvedListener: PermissionResolvedListener
     private lateinit var mPreviousElement: SettingsCaller
+
+    private var mFavCommentChanged = false
+    private var mYourCommentChanged = false
+    private var mFavVoteChanged = false
+    private var mYourVoteChanged = false
 
     companion object {
         fun startActivity(activity: Activity, elementType: SettingsCaller) {
@@ -76,6 +83,7 @@ class SettingsActivity : BaseActivity() {
 
         mFireStore = FirebaseFirestore.getInstance()
         mStorageRef = FirebaseStorage.getInstance().reference
+        mFireMessaging = FirebaseMessaging.getInstance()
 
         mPreviousElement = intent.extras?.get(INTENT_SETTINGS_ELEMENTS) as SettingsCaller
 
@@ -152,15 +160,27 @@ class SettingsActivity : BaseActivity() {
         settings_input_name.setText(LoggedUser.username)
         settings_input_email.setText(LoggedUser.email)
 
-        settings_switch_yourEvent.isChecked = LoggedUser.commentAddedOnYour
-        settings_switch_favEvent.isChecked = LoggedUser.commentAddedOnFav
+        settings_switch_yourComment.isChecked = LoggedUser.commentAddedOnYour
+        settings_switch_favComment.isChecked = LoggedUser.commentAddedOnFav
         settings_switch_yourVote.isChecked = LoggedUser.voteAddedOnYour
         settings_switch_favVote.isChecked = LoggedUser.voteAddedOnFav
 
-        settings_switch_yourEvent.setOnClickListener { LoggedUser.commentAddedOnYour = (it as Switch).isChecked }
-        settings_switch_favEvent.setOnClickListener { LoggedUser.commentAddedOnFav = (it as Switch).isChecked }
-        settings_switch_yourVote.setOnClickListener { LoggedUser.voteAddedOnYour = (it as Switch).isChecked }
-        settings_switch_favVote.setOnClickListener { LoggedUser.voteAddedOnFav = (it as Switch).isChecked }
+        settings_switch_yourComment.setOnClickListener {
+            LoggedUser.commentAddedOnYour = (it as Switch).isChecked
+            mYourCommentChanged = true
+        }
+        settings_switch_favComment.setOnClickListener {
+            LoggedUser.commentAddedOnFav = (it as Switch).isChecked
+            mFavCommentChanged = true
+        }
+        settings_switch_yourVote.setOnClickListener {
+            LoggedUser.voteAddedOnYour = (it as Switch).isChecked
+            mYourVoteChanged = true
+        }
+        settings_switch_favVote.setOnClickListener {
+            LoggedUser.voteAddedOnFav = (it as Switch).isChecked
+            mFavVoteChanged = true
+        }
 
         updateReminderText()
 
@@ -240,11 +260,19 @@ class SettingsActivity : BaseActivity() {
      */
     private fun executeProfileUpload() {
         val docRef = mFireStore.document("users/${LoggedUser.uid}")
+        val user = User(LoggedUser.uid, LoggedUser.username, LoggedUser.email, LoggedUser.profilePicPath,
+                LoggedUser.commentAddedOnYour, LoggedUser.commentAddedOnFav, LoggedUser.voteAddedOnYour,
+                LoggedUser.voteAddedOnFav, LoggedUser.reminder, LoggedUser.profilePicTime, LoggedUser.likedEvents)
 
-        docRef.set(LoggedUser).addOnCompleteListener {
+        docRef.set(user).addOnCompleteListener {
             when {
                 it.isSuccessful -> {
                     showToast(successful)
+
+                    resubscribeNotifications()
+                    //TODO
+//                    resheduleReminders()
+
                     when (mPreviousElement) {
                         SettingsCaller.MAIN_ACTIVITY -> MainActivity.startActivity(this, false)
                         SettingsCaller.PROFILE_FRAGMENT -> finish()
@@ -253,6 +281,42 @@ class SettingsActivity : BaseActivity() {
                 else -> showToast(updateError)
             }
             settings_view_load.hide()
+        }
+    }
+
+    /**
+     * Subscribe or unsubscribe from notifications when user changes notification settings
+     */
+    private fun resubscribeNotifications() {
+        LoggedUser.likedEvents.forEach { eventUid ->
+            when {
+                mFavCommentChanged and !LoggedUser.yourEvents.contains(eventUid) -> resubscribeEachEvent(settings_switch_favComment.isChecked, NotificationType.COMMENT, eventUid)
+                mFavVoteChanged and !LoggedUser.yourEvents.contains(eventUid) -> resubscribeEachEvent(settings_switch_favVote.isChecked, NotificationType.VOTE, eventUid)
+            }
+        }
+
+        LoggedUser.yourEvents.forEach { eventUid ->
+            when {
+                mYourCommentChanged -> resubscribeEachEvent(settings_switch_yourComment.isChecked, NotificationType.COMMENT, eventUid)
+                mYourVoteChanged -> resubscribeEachEvent(settings_switch_yourVote.isChecked, NotificationType.VOTE, eventUid)
+            }
+        }
+    }
+
+    /**
+     * Execute un/subscribing for each event regarding which switch has been toggled
+     */
+    private fun resubscribeEachEvent(subscribe: Boolean, notifcationType: NotificationType, eventUid: String) {
+        if (subscribe) {
+            mFireMessaging.subscribeToTopic(when (notifcationType) {
+                NotificationType.COMMENT -> "C$eventUid"
+                else -> "V$eventUid"
+            })
+        } else {
+            mFireMessaging.unsubscribeFromTopic(when (notifcationType) {
+                NotificationType.COMMENT -> "C$eventUid"
+                else -> "V$eventUid"
+            })
         }
     }
 

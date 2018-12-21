@@ -17,4 +17,5 @@ data class User(val uid: String = "",
                 var voteAddedOnYour: Boolean = true,
                 var voteAddedOnFav: Boolean = true,
                 var reminder: Int = 60,
-                var profilePicTime: Long = 0) : Parcelable
+                var profilePicTime: Long = 0,
+                var likedEvents: MutableList<String> = mutableListOf()) : Parcelable

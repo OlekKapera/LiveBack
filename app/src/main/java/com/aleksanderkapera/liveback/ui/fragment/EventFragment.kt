@@ -19,7 +19,6 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.app.NotificationCompat
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.View
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.bus.EventNotificationsReceiver
@@ -328,7 +327,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     }
 
     /**
-     * Adding or deleting switchLike
+     * Adding or deleting like. Also saving info about like into the BE of event and user
      */
     private fun switchLike() {
         event_view_load.show()
@@ -340,40 +339,56 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                 scheduleNotification(it, false)
         }
 
-        if (!mIsLiked) {
-            mFireStore.document("events/${event?.eventUid}").update("likes", FieldValue.arrayUnion(LoggedUser.uid)).addOnCompleteListener {
-                event_view_load.hide()
-                when {
-                    it.isSuccessful -> {
-                        mIsLiked = true
-                        event?.let {
-                            it.likes.add(LoggedUser.uid)
+        event?.let { event ->
+            val batch = mFireStore.batch()
+            val userRef = mFireStore.document("users/${LoggedUser.uid}")
+
+            if (!mIsLiked) {
+                batch.update(mEventDoc, "likes", FieldValue.arrayUnion(LoggedUser.uid))
+                batch.update(userRef, "likedEvents", FieldValue.arrayUnion(event.eventUid))
+
+                batch.commit().addOnCompleteListener {
+                    event_view_load.hide()
+                    when {
+                        it.isSuccessful -> {
+                            mIsLiked = true
+                            event.likes.add(LoggedUser.uid)
                             event_fab.setImageDrawable(R.drawable.ic_heart_white.asDrawable())
-                            eventAbout_container_likes.eventItem_text_description.text = R.plurals.event_likes.asPluralsString(it.likes.size)
+                            eventAbout_container_likes.eventItem_text_description.text = R.plurals.event_likes.asPluralsString(event.likes.size)
+
+                            LoggedUser.likedEvents.add(event.eventUid)
                         }
                     }
                 }
-            }
 
-            mFireMessaging.subscribeToTopic("V${event?.eventUid}")
-            mFireMessaging.subscribeToTopic("C${event?.eventUid}")
-        } else {
-            mFireStore.document("events/${event?.eventUid}").update("likes", FieldValue.arrayRemove(LoggedUser.uid)).addOnCompleteListener {
-                event_view_load.hide()
-                when {
-                    it.isSuccessful -> {
-                        mIsLiked = false
-                        event?.let {
-                            it.likes.remove(LoggedUser.uid)
+                if (LoggedUser.voteAddedOnFav)
+                    mFireMessaging.subscribeToTopic("V${event.eventUid}")
+                if (LoggedUser.commentAddedOnFav)
+                    mFireMessaging.subscribeToTopic("C${event.eventUid}")
+            } else {
+                batch.update(mEventDoc, "likes", FieldValue.arrayRemove(LoggedUser.uid))
+                batch.update(userRef, "likedEvents", FieldValue.arrayRemove(event.eventUid))
+
+                batch.commit().addOnCompleteListener {
+                    event_view_load.hide()
+                    when {
+                        it.isSuccessful -> {
+                            mIsLiked = false
+                            event.likes.remove(LoggedUser.uid)
                             event_fab.setImageDrawable(R.drawable.ic_heart_outline.asDrawable())
-                            eventAbout_container_likes.eventItem_text_description.text = R.plurals.event_likes.asPluralsString(it.likes.size)
+                            eventAbout_container_likes.eventItem_text_description.text = R.plurals.event_likes.asPluralsString(event.likes.size)
+
+                            LoggedUser.likedEvents.remove(event.eventUid)
                         }
                     }
                 }
-            }
 
-            mFireMessaging.unsubscribeFromTopic("V${event?.eventUid}")
-            mFireMessaging.unsubscribeFromTopic("C${event?.eventUid}")
+                if ((event.userUid != LoggedUser.uid) or (!LoggedUser.voteAddedOnYour and (event.userUid == LoggedUser.uid)))
+                    mFireMessaging.unsubscribeFromTopic("V${event.eventUid}")
+
+                if ((event.userUid != LoggedUser.uid) or (!LoggedUser.commentAddedOnYour and (event.userUid == LoggedUser.uid)))
+                    mFireMessaging.unsubscribeFromTopic("C${event.eventUid}")
+            }
         }
     }
 
@@ -532,7 +547,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
 
     /**
      * Create notification pending intent when user likes the event. If the event is disliked cancel
-     * pending notification
+     * pending notification. Don't create alarm if the event already happened
      */
     private fun scheduleNotification(time: Long, set: Boolean) {
         val builder = NotificationCompat.Builder(context)
@@ -560,9 +575,10 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
 
         val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        if (set)
-            alarmManager.set(AlarmManager.RTC_WAKEUP, time - (LoggedUser.reminder * 60000), pendingIntent)
-        else
+        if (set) {
+            if (time > System.currentTimeMillis() && LoggedUser.reminder != 0)
+                alarmManager.set(AlarmManager.RTC_WAKEUP, time - (LoggedUser.reminder * 60000), pendingIntent)
+        } else
             alarmManager.cancel(pendingIntent)
     }
 

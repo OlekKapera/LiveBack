@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
+import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import com.aleksanderkapera.liveback.R
@@ -199,6 +200,15 @@ class MainActivity : FragmentActivity() {
             else -> Query.Direction.ASCENDING
         }
 
+        //get logged user's events
+        mEventsCol?.whereEqualTo("userUid", LoggedUser.uid)?.get()?.addOnSuccessListener {
+            LoggedUser.yourEvents = mutableListOf()
+
+            it.toObjects(Event::class.java).forEach {
+                LoggedUser.yourEvents.add(it.eventUid)
+            }
+        }
+
         if (flushEvents)
             lastDocument = null
 
@@ -251,7 +261,7 @@ class MainActivity : FragmentActivity() {
      */
     private fun showEventFragment(eventUid: String) {
         mFireStoreRef.document("events/$eventUid").get().addOnCompleteListener {
-            when{
+            when {
                 it.isSuccessful -> {
                     it.result?.toObject(Event::class.java)?.let { event ->
                         mFireStoreRef.document("users/${event.userUid}").get().addOnCompleteListener {
@@ -292,6 +302,7 @@ class MainActivity : FragmentActivity() {
                         LoggedUser.voteAddedOnYour = user.voteAddedOnYour
                         LoggedUser.voteAddedOnFav = user.voteAddedOnFav
                         LoggedUser.reminder = user.reminder
+                        LoggedUser.likedEvents = user.likedEvents
                     }
                 }
                 else -> showToast(R.string.getUser_error)

@@ -22,11 +22,10 @@ import com.aleksanderkapera.liveback.ui.fragment.DeleteDialogType
 import com.aleksanderkapera.liveback.ui.fragment.ImagePickerDialogFragment
 import com.aleksanderkapera.liveback.ui.fragment.TimePickerDialogFragment
 import com.aleksanderkapera.liveback.util.*
-import com.bumptech.glide.Glide
 import com.bumptech.glide.signature.ObjectKey
-import com.firebase.ui.storage.images.FirebaseImageLoader
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.activity_add_event.*
@@ -46,6 +45,7 @@ class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChos
 
     private lateinit var mFireStore: FirebaseFirestore
     private lateinit var mStorageRef: StorageReference
+    private lateinit var mFireMessaging: FirebaseMessaging
 
     private lateinit var mUploadBytes: ByteArray
 
@@ -79,6 +79,7 @@ class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChos
 
         mFireStore = FirebaseFirestore.getInstance()
         mStorageRef = FirebaseStorage.getInstance().reference
+        mFireMessaging = FirebaseMessaging.getInstance()
 
         mEvent = Event()
 
@@ -273,7 +274,7 @@ class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChos
     }
 
     /**
-     * Upload only event pojo without background photo
+     * Upload only event pojo without background photo. If user has notifications turned on, apply them.
      */
     private fun executeEventUpload() {
         val docRef: DocumentReference?
@@ -288,7 +289,16 @@ class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChos
             when {
                 it.isSuccessful -> {
                     if (mIsEdit) showToast(R.string.successful_edit)
-                    else showToast(R.string.successful_add)
+                    else {
+                        showToast(R.string.successful_add)
+
+                        if (LoggedUser.commentAddedOnYour)
+                            mFireMessaging.subscribeToTopic("C${mEvent.eventUid}")
+
+                        if (LoggedUser.voteAddedOnYour)
+                            mFireMessaging.subscribeToTopic("V${mEvent.eventUid}")
+                    }
+
                     MainActivity.startActivity(this, LoggedUser.uid.isEmpty())
                 }
                 else -> {

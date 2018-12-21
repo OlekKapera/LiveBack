@@ -23,42 +23,42 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/settings_text_yourEvent"
+            android:id="@+id/settings_text_yourComment"
             style="@style/SettingsNotificationText"
             android:text="@string/notification_comment_your"
-            app:layout_constraintEnd_toStartOf="@id/settings_switch_yourEvent"
+            app:layout_constraintEnd_toStartOf="@id/settings_switch_yourComment"
             app:layout_constraintStart_toStartOf="@id/settings_text_notiTitle"
             app:layout_constraintTop_toBottomOf="@id/settings_text_notiTitle" />
 
         <Switch
-            android:id="@+id/settings_switch_yourEvent"
+            android:id="@+id/settings_switch_yourComment"
             style="@style/SettingsNotificationSwitch"
-            app:layout_constraintBottom_toBottomOf="@id/settings_text_yourEvent"
+            app:layout_constraintBottom_toBottomOf="@id/settings_text_yourComment"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/settings_text_yourEvent" />
+            app:layout_constraintTop_toTopOf="@id/settings_text_yourComment" />
 
         <TextView
-            android:id="@+id/settings_text_favEvent"
+            android:id="@+id/settings_text_favComment"
             style="@style/SettingsNotificationText"
             android:text="@string/notification_comment_fav"
-            app:layout_constraintEnd_toStartOf="@id/settings_switch_favEvent"
-            app:layout_constraintStart_toStartOf="@id/settings_text_yourEvent"
-            app:layout_constraintTop_toBottomOf="@id/settings_text_yourEvent" />
+            app:layout_constraintEnd_toStartOf="@id/settings_switch_favComment"
+            app:layout_constraintStart_toStartOf="@id/settings_text_yourComment"
+            app:layout_constraintTop_toBottomOf="@id/settings_text_yourComment" />
 
         <Switch
-            android:id="@+id/settings_switch_favEvent"
+            android:id="@+id/settings_switch_favComment"
             style="@style/SettingsNotificationSwitch"
-            app:layout_constraintBottom_toBottomOf="@id/settings_text_favEvent"
+            app:layout_constraintBottom_toBottomOf="@id/settings_text_favComment"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/settings_text_favEvent" />
+            app:layout_constraintTop_toTopOf="@id/settings_text_favComment" />
 
         <TextView
             android:id="@+id/settings_text_yourVote"
             style="@style/SettingsNotificationText"
             android:text="@string/notification_vote_your"
             app:layout_constraintEnd_toStartOf="@id/settings_switch_yourVote"
-            app:layout_constraintStart_toStartOf="@id/settings_text_favEvent"
-            app:layout_constraintTop_toBottomOf="@id/settings_text_favEvent" />
+            app:layout_constraintStart_toStartOf="@id/settings_text_favComment"
+            app:layout_constraintTop_toBottomOf="@id/settings_text_favComment" />
 
         <Switch
             android:id="@+id/settings_switch_yourVote"

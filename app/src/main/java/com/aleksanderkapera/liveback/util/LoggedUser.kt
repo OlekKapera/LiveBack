@@ -15,6 +15,8 @@ class LoggedUser {
         var voteAddedOnFav = true
         var reminder = 60
         var profilePicTime: Long = 0
+        var likedEvents: MutableList<String> = mutableListOf()
+        var yourEvents: MutableList<String> = mutableListOf()
 
         fun clear() {
             uid = ""
@@ -27,6 +29,8 @@ class LoggedUser {
             voteAddedOnFav = true
             reminder = 60
             profilePicTime = 0
+            likedEvents = mutableListOf()
+            yourEvents = mutableListOf()
         }
     }
 }
