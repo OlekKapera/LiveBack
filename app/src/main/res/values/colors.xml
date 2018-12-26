@@ -12,6 +12,7 @@
     <color name="black">#000000</color>
     <color name="transparent">#00ffffff</color>
     <color name="iconGrey">#696969</color>
+    <color name="notification">#25B60E</color>
 
     <color name="navbar">#d7000000</color>
     <color name="categoryBlue">#0876C4</color>

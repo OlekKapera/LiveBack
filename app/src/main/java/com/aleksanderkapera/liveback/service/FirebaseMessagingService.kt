@@ -5,12 +5,11 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
+import android.os.Build
 import android.support.v4.app.NotificationCompat
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.ui.activity.MainActivity
-import com.aleksanderkapera.liveback.util.INTENT_NOTIFICATION_EVENTUID
-import com.aleksanderkapera.liveback.util.NOTIFICATION_ID_EVENT
-import com.aleksanderkapera.liveback.util.context
+import com.aleksanderkapera.liveback.util.*
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
@@ -29,13 +28,14 @@ class FirebaseMessagingService : FirebaseMessagingService() {
 
                     val builder = NotificationCompat.Builder(context)
                             .setContentTitle(eventName)
-                            .setSmallIcon(R.mipmap.ic_launcher_round)
+                            .setSmallIcon(R.drawable.ic_notification)
+                            .setColor(R.color.notification.asColor())
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                             .setAutoCancel(true)
 
                     val intent = Intent(context, MainActivity::class.java)
                     intent.putExtra(INTENT_NOTIFICATION_EVENTUID, eventUid)
-                    val activity = PendingIntent.getActivity(context, NOTIFICATION_ID_EVENT, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    val activity = PendingIntent.getActivity(context, NOTIFICATION_ID_EVENT, intent, PendingIntent.FLAG_IMMUTABLE)
                     builder.setContentIntent(activity)
 
                     val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
@@ -47,7 +47,15 @@ class FirebaseMessagingService : FirebaseMessagingService() {
                     })
 
                     val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                    notificationManager.notify(0, builder.build())
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        builder.setChannelId(when (NotificationType.valueOf(notificationType)) {
+                            NotificationType.COMMENT -> NOTIFICATION_COMMENT_CHANNEL
+                            else -> NOTIFICATION_VOTE_CHANNEL
+                        })
+                    }
+
+                    notificationManager.notify(message.sentTime.toInt(), builder.build())
                 }
             }
         }

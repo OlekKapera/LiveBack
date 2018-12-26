@@ -1,11 +1,14 @@
 package com.aleksanderkapera.liveback.ui.activity
 
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
-import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import com.aleksanderkapera.liveback.R
@@ -86,6 +89,8 @@ class MainActivity : FragmentActivity() {
                 showFragment(EventFragment.newInstance(event, user))
             }
         }
+
+        createNotificationChannels()
 
         intent.getStringExtra(INTENT_NOTIFICATION_EVENTUID)?.let {
             showEventFragment(it)
@@ -201,7 +206,7 @@ class MainActivity : FragmentActivity() {
         }
 
         //get logged user's events
-        mEventsCol?.whereEqualTo("userUid", LoggedUser.uid)?.get()?.addOnSuccessListener {
+        mEventsCol?.whereEqualTo("userUid", mAuth.currentUser?.uid)?.get()?.addOnSuccessListener {
             LoggedUser.yourEvents = mutableListOf()
 
             it.toObjects(Event::class.java).forEach {
@@ -253,6 +258,19 @@ class MainActivity : FragmentActivity() {
                             main_view_load.hide()
                         }
             }
+        }
+    }
+
+    /**
+     * Create notification channels for all notification types
+     */
+    private fun createNotificationChannels() {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationManager.createNotificationChannel(NotificationChannel(NOTIFICATION_COMMENT_CHANNEL, R.string.notification_comment_channel.asString(), NotificationManager.IMPORTANCE_DEFAULT))
+            notificationManager.createNotificationChannel(NotificationChannel(NOTIFICATION_VOTE_CHANNEL, R.string.notification_vote_channel.asString(), NotificationManager.IMPORTANCE_DEFAULT))
+            notificationManager.createNotificationChannel(NotificationChannel(NOTIFICATION_REMINDER_CHANNEL, R.string.notification_reminder_channel.asString(), NotificationManager.IMPORTANCE_DEFAULT))
         }
     }
 

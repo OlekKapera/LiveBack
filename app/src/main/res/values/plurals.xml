@@ -14,10 +14,17 @@
         <item quantity="other">%d minutes before</item>
     </plurals>
 
-    <plurals name="event_starts_in">
-        <item quantity="one">Event you liked starts in %d minute.</item>
-        <item quantity="few">Event you liked starts in %d minutes.</item>
-        <item quantity="many">Event you liked starts in %d minutes.</item>
-        <item quantity="other">Event you liked starts in %d minutes.</item>
+    <plurals name="starts_in_minutes">
+        <item quantity="one">%d minute.</item>
+        <item quantity="few">%d minutes.</item>
+        <item quantity="many">%d minutes.</item>
+        <item quantity="other">%d minutes.</item>
+    </plurals>
+
+    <plurals name="starts_in_hours">
+        <item quantity="one">%d hour.</item>
+        <item quantity="few">%d hours.</item>
+        <item quantity="many">%d hours.</item>
+        <item quantity="other">%d hours.</item>
     </plurals>
 </resources>

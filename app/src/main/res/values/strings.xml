@@ -167,6 +167,11 @@
     <!--Notifications-->
     <string name="notification_vote_added">Someone just added a vote in %1$s event.</string>
     <string name="notification_comment_added">Someone just added a comment in %1$s event.</string>
+    <string name="notification_vote_channel">Votes notifications</string>
+    <string name="notification_comment_channel">Comments notifications</string>
+    <string name="notification_reminder_channel">Event reminders</string>
+    <string name="your_event_starts">Your event starts in</string>
+    <string name="event_you_liked">Event you liked starts in</string>
 
     <!--Categories-->
     <string name="concert">Concert</string>

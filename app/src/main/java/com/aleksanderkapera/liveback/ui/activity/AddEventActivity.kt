@@ -1,20 +1,27 @@
 package com.aleksanderkapera.liveback.ui.activity
 
 import android.app.Activity
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.media.RingtoneManager
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.design.chip.Chip
 import android.support.design.widget.CollapsingToolbarLayout
+import android.support.v4.app.NotificationCompat
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import com.aleksanderkapera.liveback.R
+import com.aleksanderkapera.liveback.bus.EventNotificationsReceiver
 import com.aleksanderkapera.liveback.model.DateTime
 import com.aleksanderkapera.liveback.model.Event
+import com.aleksanderkapera.liveback.model.User
 import com.aleksanderkapera.liveback.ui.base.BaseActivity
 import com.aleksanderkapera.liveback.ui.base.DeleteDialogFragment
 import com.aleksanderkapera.liveback.ui.fragment.DatePickerDialogFragment
@@ -297,6 +304,9 @@ class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChos
 
                         if (LoggedUser.voteAddedOnYour)
                             mFireMessaging.subscribeToTopic("V${mEvent.eventUid}")
+
+                        if (LoggedUser.reminder != 0)
+                            scheduleNotification(mEvent.date)
                     }
 
                     MainActivity.startActivity(this, LoggedUser.uid.isEmpty())
@@ -308,6 +318,47 @@ class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChos
             }
             addEvent_view_load.hide()
         }
+    }
+
+    /**
+     * Create notification pending intent when user creates the event. Don't create alarm if the
+     * event already happened
+     */
+    private fun scheduleNotification(time: Long) {
+        val builder = NotificationCompat.Builder(context)
+                .setContentTitle("${mEvent?.title}")
+                .setContentText(when {
+                    LoggedUser.reminder < 60 -> "${R.string.your_event_starts.asString()} ${R.plurals.starts_in_minutes.asPluralsString(LoggedUser.reminder)}"
+                    else -> "${R.string.your_event_starts.asString()} ${R.plurals.starts_in_hours.asPluralsString(LoggedUser.reminder)}"
+                })
+                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true)
+                .setChannelId(NOTIFICATION_REMINDER_CHANNEL)
+
+        var user = User()
+        LoggedUser.apply {
+            user = User(uid, username, email, profilePicPath, commentAddedOnYour, commentAddedOnFav, voteAddedOnYour, voteAddedOnFav, reminder, profilePicTime, likedEvents)
+        }
+
+        val intent = Intent(context, MainActivity::class.java)
+        intent.putExtra(INTENT_NOTIFICATION_EVENT, mEvent)
+        intent.putExtra(INTENT_NOTIFICATION_USER, user)
+        val activity = PendingIntent.getActivity(context, NOTIFICATION_ID_EVENT, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        builder.setContentIntent(activity)
+
+        val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        builder.setSound(alarmSound)
+
+        val notification = builder.build()
+
+        val notificationIntent = Intent(context, EventNotificationsReceiver::class.java)
+        notificationIntent.putExtra(NOTIFICATION_RECEIVER_ID, NOTIFICATION_ID_EVENT)
+        notificationIntent.putExtra(NOTIFICATION_RECEIVER_TEXT, notification)
+        val pendingIntent = PendingIntent.getBroadcast(context, NOTIFICATION_ID_EVENT, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.set(AlarmManager.RTC_WAKEUP, time - (LoggedUser.reminder * 60000), pendingIntent)
     }
 
     /**

@@ -332,11 +332,15 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     private fun switchLike() {
         event_view_load.show()
 
-        event?.date?.let {
-            if (!mIsLiked)
-                scheduleNotification(it, true)
-            else
-                scheduleNotification(it, false)
+        event?.let { event ->
+            if (event.userUid != LoggedUser.uid) {
+                event.date?.let {
+                    if (!mIsLiked)
+                        scheduleNotification(it, true)
+                    else
+                        scheduleNotification(it, false)
+                }
+            }
         }
 
         event?.let { event ->
@@ -552,10 +556,14 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     private fun scheduleNotification(time: Long, set: Boolean) {
         val builder = NotificationCompat.Builder(context)
                 .setContentTitle("${event?.title}")
-                .setContentText("Event you liked starts in ${LoggedUser.reminder} minutes")
+                .setContentText(when{
+                    LoggedUser.reminder < 60 -> "${R.string.event_you_liked.asString()} ${R.plurals.starts_in_minutes.asPluralsString(LoggedUser.reminder)}"
+                    else ->"${R.string.event_you_liked.asString()} ${R.plurals.starts_in_hours.asPluralsString(LoggedUser.reminder)}"
+                })
                 .setSmallIcon(R.mipmap.ic_launcher_round)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true)
+                .setChannelId(NOTIFICATION_REMINDER_CHANNEL)
 
         val intent = Intent(context, MainActivity::class.java)
         intent.putExtra(INTENT_NOTIFICATION_EVENT, event)

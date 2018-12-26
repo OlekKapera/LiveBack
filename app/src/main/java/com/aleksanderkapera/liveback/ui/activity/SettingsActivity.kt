@@ -289,16 +289,20 @@ class SettingsActivity : BaseActivity() {
      */
     private fun resubscribeNotifications() {
         LoggedUser.likedEvents.forEach { eventUid ->
-            when {
-                mFavCommentChanged and !LoggedUser.yourEvents.contains(eventUid) -> resubscribeEachEvent(settings_switch_favComment.isChecked, NotificationType.COMMENT, eventUid)
-                mFavVoteChanged and !LoggedUser.yourEvents.contains(eventUid) -> resubscribeEachEvent(settings_switch_favVote.isChecked, NotificationType.VOTE, eventUid)
+            if (mFavCommentChanged and !LoggedUser.yourEvents.contains(eventUid)) {
+                resubscribeEachEvent(settings_switch_favComment.isChecked, NotificationType.COMMENT, eventUid)
+            }
+            if (mFavVoteChanged and !LoggedUser.yourEvents.contains(eventUid)) {
+                resubscribeEachEvent(settings_switch_favVote.isChecked, NotificationType.VOTE, eventUid)
             }
         }
 
         LoggedUser.yourEvents.forEach { eventUid ->
-            when {
-                mYourCommentChanged -> resubscribeEachEvent(settings_switch_yourComment.isChecked, NotificationType.COMMENT, eventUid)
-                mYourVoteChanged -> resubscribeEachEvent(settings_switch_yourVote.isChecked, NotificationType.VOTE, eventUid)
+            if (mYourCommentChanged) {
+                resubscribeEachEvent(settings_switch_yourComment.isChecked, NotificationType.COMMENT, eventUid)
+            }
+            if (mYourVoteChanged) {
+                resubscribeEachEvent(settings_switch_yourVote.isChecked, NotificationType.VOTE, eventUid)
             }
         }
     }
