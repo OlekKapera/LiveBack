@@ -1,16 +1,23 @@
 package com.aleksanderkapera.liveback.ui.activity
 
 import android.app.Activity
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.media.RingtoneManager
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.design.widget.AppBarLayout
+import android.support.v4.app.NotificationCompat
 import android.util.Log
 import android.widget.Switch
 import com.aleksanderkapera.liveback.R
+import com.aleksanderkapera.liveback.bus.EventNotificationsReceiver
+import com.aleksanderkapera.liveback.model.Event
 import com.aleksanderkapera.liveback.model.User
 import com.aleksanderkapera.liveback.service.NotificationType
 import com.aleksanderkapera.liveback.ui.base.BaseActivity
@@ -20,10 +27,15 @@ import com.aleksanderkapera.liveback.ui.fragment.ImagePickerDialogFragment
 import com.aleksanderkapera.liveback.ui.fragment.ReminderDialogFragment
 import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.signature.ObjectKey
+import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_settings.*
 import kotlinx.android.synthetic.main.app_bar_settings.*
 import kotlinx.android.synthetic.main.container_settings_credentials.*
@@ -54,6 +66,9 @@ class SettingsActivity : BaseActivity() {
     private lateinit var mFireStore: FirebaseFirestore
     private lateinit var mStorageRef: StorageReference
     private lateinit var mFireMessaging: FirebaseMessaging
+    private lateinit var mFirebaseFunctions: FirebaseFunctions
+    private lateinit var mEventsCollection: CollectionReference
+    private lateinit var mUsersCollection: CollectionReference
 
     private lateinit var mUploadBytes: ByteArray
     private var mImageUri: Uri? = null
@@ -65,6 +80,8 @@ class SettingsActivity : BaseActivity() {
     private var mYourCommentChanged = false
     private var mFavVoteChanged = false
     private var mYourVoteChanged = false
+    private var mOldReminder = LoggedUser.reminder
+    private lateinit var mLoggedUser: User
 
     companion object {
         fun startActivity(activity: Activity, elementType: SettingsCaller) {
@@ -84,6 +101,9 @@ class SettingsActivity : BaseActivity() {
         mFireStore = FirebaseFirestore.getInstance()
         mStorageRef = FirebaseStorage.getInstance().reference
         mFireMessaging = FirebaseMessaging.getInstance()
+        mFirebaseFunctions = FirebaseFunctions.getInstance()
+        mEventsCollection = mFireStore.collection("events")
+        mUsersCollection = mFireStore.collection("users")
 
         mPreviousElement = intent.extras?.get(INTENT_SETTINGS_ELEMENTS) as SettingsCaller
 
@@ -270,8 +290,7 @@ class SettingsActivity : BaseActivity() {
                     showToast(successful)
 
                     resubscribeNotifications()
-                    //TODO
-//                    resheduleReminders()
+                    rescheduleReminders()
 
                     when (mPreviousElement) {
                         SettingsCaller.MAIN_ACTIVITY -> MainActivity.startActivity(this, false)
@@ -322,6 +341,135 @@ class SettingsActivity : BaseActivity() {
                 else -> "V$eventUid"
             })
         }
+    }
+
+    /**
+     * If user changed the value of reminder reschedule alarms for each liked or user's event. Retrieve
+     * event and it's user. If the event belongs to logged user, there is no need for fetching him
+     * so don't that.
+     */
+    private fun rescheduleReminders() {
+        if (LoggedUser.reminder != mOldReminder) {
+            val likedEventsUid = LoggedUser.likedEvents
+            likedEventsUid.removeAll(LoggedUser.yourEvents)
+            val likedEvents = mutableListOf<Event>()
+            val users = mutableListOf<User>()
+            var usersEvents: List<Event>
+
+            mLoggedUser = User()
+            LoggedUser.apply {
+                mLoggedUser = User(uid, username, email, profilePicPath, commentAddedOnYour, commentAddedOnFav, voteAddedOnYour, voteAddedOnFav, reminder, profilePicTime, LoggedUser.likedEvents)
+            }
+
+            getEventDocuments(likedEventsUid).addOnCompleteListener {
+                when {
+                    it.isSuccessful -> {
+                        it.result?.let {
+                            likedEvents.addAll(it)
+
+                            val userUids = likedEvents.map { it.userUid }.distinct()
+
+                            getUserDocuments(userUids).addOnCompleteListener {
+                                when {
+                                    it.isSuccessful -> {
+                                        it.result?.let {
+                                            users.addAll(it)
+
+                                            likedEvents.forEach { event ->
+                                                scheduleNotification(event, users.single { user -> user.uid == event.userUid })
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            getEventDocuments(LoggedUser.yourEvents).addOnCompleteListener {
+                when {
+                    it.isSuccessful -> {
+                        it.result?.let {
+                            usersEvents = it.toList()
+
+                            usersEvents.forEach { event ->
+                                scheduleNotification(event, mLoggedUser)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Get one or more events from firebase and convert returned Json to list of events
+     */
+    private fun getEventDocuments(eventUids: List<String>): Task<List<Event>> {
+        return mFirebaseFunctions.getHttpsCallable("getEventDocuments")
+                .call(eventUids)
+                .continueWith { task ->
+                    val gson = GsonBuilder().setPrettyPrinting().create()
+                    val events: List<Event> = gson.fromJson(task.result?.data.toString(), object : TypeToken<List<Event>>() {}.type)
+                    events
+                }
+    }
+
+    /**
+     * Get one or more users from firebase and convert returned Json to list of users
+     */
+    private fun getUserDocuments(userUids: List<String>): Task<List<User>> {
+        return mFirebaseFunctions.getHttpsCallable("getUserDocuments")
+                .call(userUids)
+                .continueWith { task ->
+                    val gson = GsonBuilder().setPrettyPrinting().create()
+                    val users: List<User> = gson.fromJson(task.result?.data.toString(), object : TypeToken<List<User>>() {}.type)
+                    users
+                }
+    }
+
+    /**
+     * Create notification pending intent. Don't create alarm if the event already happened
+     */
+    private fun scheduleNotification(event: Event, user: User) {
+        val builder = NotificationCompat.Builder(context)
+                .setContentTitle(event.title)
+                .setContentText(when {
+                    LoggedUser.reminder < 60 && mLoggedUser == user -> "${R.string.your_event_starts.asString()} ${R.plurals.starts_in_minutes.asPluralsString(LoggedUser.reminder)}"
+                    LoggedUser.reminder >= 60 && mLoggedUser == user -> "${R.string.your_event_starts.asString()} ${R.plurals.starts_in_hours.asPluralsString(LoggedUser.reminder)}"
+                    LoggedUser.reminder < 60 && mLoggedUser != user -> "${R.string.event_you_liked.asString()} ${R.plurals.starts_in_minutes.asPluralsString(LoggedUser.reminder)}"
+                    else -> "${R.string.event_you_liked.asString()} ${R.plurals.starts_in_hours.asPluralsString(LoggedUser.reminder)}"
+                })
+                .setSmallIcon(R.drawable.ic_notification)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true)
+                .setChannelId(NOTIFICATION_REMINDER_CHANNEL)
+
+        val intent = Intent(applicationContext, MainActivity::class.java)
+        intent.putExtra(INTENT_NOTIFICATION_EVENT, event)
+        intent.putExtra(INTENT_NOTIFICATION_USER, user)
+        val activity = PendingIntent.getActivity(applicationContext, NOTIFICATION_ID_EVENT, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        builder.setContentIntent(activity)
+
+        val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        builder.setSound(alarmSound)
+
+        val notification = builder.build()
+
+        val notificationIntent = Intent(applicationContext, EventNotificationsReceiver::class.java)
+        notificationIntent.putExtra(NOTIFICATION_RECEIVER_ID, NOTIFICATION_ID_EVENT)
+        notificationIntent.putExtra(event.eventUid, notification)
+        notificationIntent.putExtra(NOTIFICATION_EVENT_UID, event.eventUid)
+        val pendingIntent = PendingIntent.getBroadcast(applicationContext, NOTIFICATION_ID_EVENT, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        //cancel previous alarm
+        val alarmManager = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+//        alarmManager.cancel(pendingIntent)
+
+        //set new one if it's in the future
+        if (event.date > (System.currentTimeMillis() + (LoggedUser.reminder * 60000)) && LoggedUser.reminder != 0)
+            alarmManager.set(AlarmManager.RTC_WAKEUP, event.date - (LoggedUser.reminder * 60000), pendingIntent)
     }
 
     inner class ImageResize : AsyncTask<Uri, Int, ByteArray>() {

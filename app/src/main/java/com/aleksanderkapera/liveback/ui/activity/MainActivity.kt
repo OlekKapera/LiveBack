@@ -24,10 +24,7 @@ import com.aleksanderkapera.liveback.ui.fragment.SortType
 import com.aleksanderkapera.liveback.ui.widget.NavigationViewHelper
 import com.aleksanderkapera.liveback.util.*
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.activity_main.*
@@ -78,18 +75,15 @@ class MainActivity : FragmentActivity() {
 
         mAuth = FirebaseAuth.getInstance()
         mFireStoreRef = FirebaseFirestore.getInstance()
+        val settings = FirebaseFirestoreSettings.Builder()
+                .setTimestampsInSnapshotsEnabled(true)
+                .build()
+        mFireStoreRef.firestoreSettings = settings
 
         //get intent extras regarding from where it was called
         isAnonymousUser = intent.getBooleanExtra(INTENT_MAIN_LOGGING, false)
 
-        val notificationEvent = intent.getParcelableExtra<Event>(INTENT_NOTIFICATION_EVENT)
-        val notificationUser = intent.getParcelableExtra<User>(INTENT_NOTIFICATION_USER)
-        notificationEvent?.let { event ->
-            notificationUser?.let { user ->
-                showFragment(EventFragment.newInstance(event, user))
-            }
-        }
-
+        openEvent()
         createNotificationChannels()
 
         intent.getStringExtra(INTENT_NOTIFICATION_EVENTUID)?.let {
@@ -124,6 +118,46 @@ class MainActivity : FragmentActivity() {
                 return true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    /**
+     * If activity contains intents with event and user open event fragment directly. If it contains
+     * eventUid fetch it with user and then open fragment.
+     */
+    private fun openEvent() {
+        val notificationEvent = intent.getParcelableExtra<Event>(INTENT_NOTIFICATION_EVENT)
+        val notificationUser = intent.getParcelableExtra<User>(INTENT_NOTIFICATION_USER)
+
+        notificationEvent?.let { event ->
+            notificationUser?.let { user ->
+                showFragment(EventFragment.newInstance(event, user))
+            }
+        }
+
+        val notificationEventUid = intent.getStringExtra(INTENT_NOTIFICATION_EVENTUID)
+        notificationEventUid?.let { eventUid ->
+            var event: Event
+            var user: User
+            mFireStoreRef.document("events/$eventUid").get().addOnCompleteListener {
+                when {
+                    it.isSuccessful -> {
+                        it.result?.toObject(Event::class.java)?.let {
+                            event = it
+                            mFireStoreRef.document("users/${event.userUid}").get().addOnCompleteListener {
+                                when {
+                                    it.isSuccessful -> {
+                                        it.result?.toObject(User::class.java)?.let {
+                                            user = it
+                                            showFragment(EventFragment.newInstance(event, user))
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -201,8 +235,8 @@ class MainActivity : FragmentActivity() {
         }
 
         mOrderDirection = when (directionAsc) {
-            false -> Query.Direction.DESCENDING
-            else -> Query.Direction.ASCENDING
+            true -> Query.Direction.ASCENDING
+            else -> Query.Direction.DESCENDING
         }
 
         //get logged user's events

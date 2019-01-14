@@ -35,7 +35,7 @@ class FirebaseMessagingService : FirebaseMessagingService() {
 
                     val intent = Intent(context, MainActivity::class.java)
                     intent.putExtra(INTENT_NOTIFICATION_EVENTUID, eventUid)
-                    val activity = PendingIntent.getActivity(context, NOTIFICATION_ID_EVENT, intent, PendingIntent.FLAG_IMMUTABLE)
+                    val activity = PendingIntent.getActivity(context, NOTIFICATION_ID_EVENT, intent, PendingIntent.FLAG_UPDATE_CURRENT)
                     builder.setContentIntent(activity)
 
                     val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)

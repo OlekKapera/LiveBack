@@ -334,7 +334,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
 
         event?.let { event ->
             if (event.userUid != LoggedUser.uid) {
-                event.date?.let {
+                event.date.let {
                     if (!mIsLiked)
                         scheduleNotification(it, true)
                     else
@@ -558,17 +558,19 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                 .setContentTitle("${event?.title}")
                 .setContentText(when{
                     LoggedUser.reminder < 60 -> "${R.string.event_you_liked.asString()} ${R.plurals.starts_in_minutes.asPluralsString(LoggedUser.reminder)}"
-                    else ->"${R.string.event_you_liked.asString()} ${R.plurals.starts_in_hours.asPluralsString(LoggedUser.reminder)}"
+                    else ->"${R.string.event_you_liked.asString()} ${R.plurals.starts_in_hours.asPluralsString(LoggedUser.reminder / 60)}"
                 })
-                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true)
                 .setChannelId(NOTIFICATION_REMINDER_CHANNEL)
 
-        val intent = Intent(context, MainActivity::class.java)
+        val applicationContext = activity?.applicationContext
+
+        val intent = Intent(applicationContext, MainActivity::class.java)
         intent.putExtra(INTENT_NOTIFICATION_EVENT, event)
         intent.putExtra(INTENT_NOTIFICATION_USER, mUser)
-        val activity = PendingIntent.getActivity(context, NOTIFICATION_ID_EVENT, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val activity = PendingIntent.getActivity(applicationContext, NOTIFICATION_ID_EVENT, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setContentIntent(activity)
 
         val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
@@ -576,15 +578,15 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
 
         val notification = builder.build()
 
-        val notificationIntent = Intent(context, EventNotificationsReceiver::class.java)
+        val notificationIntent = Intent(applicationContext, EventNotificationsReceiver::class.java)
         notificationIntent.putExtra(NOTIFICATION_RECEIVER_ID, NOTIFICATION_ID_EVENT)
         notificationIntent.putExtra(NOTIFICATION_RECEIVER_TEXT, notification)
-        val pendingIntent = PendingIntent.getBroadcast(context, NOTIFICATION_ID_EVENT, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getBroadcast(applicationContext, NOTIFICATION_ID_EVENT, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmManager = applicationContext?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         if (set) {
-            if (time > System.currentTimeMillis() && LoggedUser.reminder != 0)
+            if (time > (System.currentTimeMillis()  + (LoggedUser.reminder * 60000)) && LoggedUser.reminder != 0)
                 alarmManager.set(AlarmManager.RTC_WAKEUP, time - (LoggedUser.reminder * 60000), pendingIntent)
         } else
             alarmManager.cancel(pendingIntent)

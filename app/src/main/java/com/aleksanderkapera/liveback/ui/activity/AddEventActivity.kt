@@ -295,8 +295,12 @@ class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChos
         docRef.set(mEvent).addOnCompleteListener {
             when {
                 it.isSuccessful -> {
-                    if (mIsEdit) showToast(R.string.successful_edit)
-                    else {
+                    if (mIsEdit) {
+                        showToast(R.string.successful_edit)
+
+                        scheduleNotification(mEvent.date)
+
+                    } else {
                         showToast(R.string.successful_add)
 
                         if (LoggedUser.commentAddedOnYour)
@@ -305,8 +309,6 @@ class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChos
                         if (LoggedUser.voteAddedOnYour)
                             mFireMessaging.subscribeToTopic("V${mEvent.eventUid}")
 
-                        if (LoggedUser.reminder != 0)
-                            scheduleNotification(mEvent.date)
                     }
 
                     MainActivity.startActivity(this, LoggedUser.uid.isEmpty())
@@ -329,9 +331,9 @@ class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChos
                 .setContentTitle("${mEvent?.title}")
                 .setContentText(when {
                     LoggedUser.reminder < 60 -> "${R.string.your_event_starts.asString()} ${R.plurals.starts_in_minutes.asPluralsString(LoggedUser.reminder)}"
-                    else -> "${R.string.your_event_starts.asString()} ${R.plurals.starts_in_hours.asPluralsString(LoggedUser.reminder)}"
+                    else -> "${R.string.your_event_starts.asString()} ${R.plurals.starts_in_hours.asPluralsString(LoggedUser.reminder / 60)}"
                 })
-                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true)
                 .setChannelId(NOTIFICATION_REMINDER_CHANNEL)
@@ -341,10 +343,10 @@ class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChos
             user = User(uid, username, email, profilePicPath, commentAddedOnYour, commentAddedOnFav, voteAddedOnYour, voteAddedOnFav, reminder, profilePicTime, likedEvents)
         }
 
-        val intent = Intent(context, MainActivity::class.java)
+        val intent = Intent(applicationContext, MainActivity::class.java)
         intent.putExtra(INTENT_NOTIFICATION_EVENT, mEvent)
         intent.putExtra(INTENT_NOTIFICATION_USER, user)
-        val activity = PendingIntent.getActivity(context, NOTIFICATION_ID_EVENT, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val activity = PendingIntent.getActivity(applicationContext, NOTIFICATION_ID_EVENT, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setContentIntent(activity)
 
         val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
@@ -352,13 +354,15 @@ class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChos
 
         val notification = builder.build()
 
-        val notificationIntent = Intent(context, EventNotificationsReceiver::class.java)
+        val notificationIntent = Intent(applicationContext, EventNotificationsReceiver::class.java)
         notificationIntent.putExtra(NOTIFICATION_RECEIVER_ID, NOTIFICATION_ID_EVENT)
         notificationIntent.putExtra(NOTIFICATION_RECEIVER_TEXT, notification)
-        val pendingIntent = PendingIntent.getBroadcast(context, NOTIFICATION_ID_EVENT, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getBroadcast(applicationContext, NOTIFICATION_ID_EVENT, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.set(AlarmManager.RTC_WAKEUP, time - (LoggedUser.reminder * 60000), pendingIntent)
+        val alarmManager = applicationContext?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val currentTime = System.currentTimeMillis()
+        if (time > (System.currentTimeMillis() + (LoggedUser.reminder * 60000)) || LoggedUser.reminder != 0)
+            alarmManager.set(AlarmManager.RTC_WAKEUP, time - (LoggedUser.reminder * 60000), pendingIntent)
     }
 
     /**
