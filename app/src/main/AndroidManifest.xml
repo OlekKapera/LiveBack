@@ -30,7 +30,8 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <receiver android:name=".bus.EventNotificationsReceiver" />
+        <receiver android:name=".bus.EventNotificationsReceiver"
+            android:exported="true"/>
 
         <activity
             android:name=".ui.activity.MainActivity"

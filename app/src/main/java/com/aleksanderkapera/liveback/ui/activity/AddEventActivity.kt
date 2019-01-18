@@ -338,7 +338,7 @@ class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChos
                 .setAutoCancel(true)
                 .setChannelId(NOTIFICATION_REMINDER_CHANNEL)
 
-        var user = User()
+        var user: User
         LoggedUser.apply {
             user = User(uid, username, email, profilePicPath, commentAddedOnYour, commentAddedOnFav, voteAddedOnYour, voteAddedOnFav, reminder, profilePicTime, likedEvents)
         }
@@ -360,7 +360,6 @@ class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChos
         val pendingIntent = PendingIntent.getBroadcast(applicationContext, NOTIFICATION_ID_EVENT, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val alarmManager = applicationContext?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val currentTime = System.currentTimeMillis()
         if (time > (System.currentTimeMillis() + (LoggedUser.reminder * 60000)) || LoggedUser.reminder != 0)
             alarmManager.set(AlarmManager.RTC_WAKEUP, time - (LoggedUser.reminder * 60000), pendingIntent)
     }
