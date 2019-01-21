@@ -329,14 +329,14 @@ class SettingsActivity : BaseActivity() {
     /**
      * Execute un/subscribing for each event regarding which switch has been toggled
      */
-    private fun resubscribeEachEvent(subscribe: Boolean, notifcationType: NotificationType, eventUid: String) {
+    private fun resubscribeEachEvent(subscribe: Boolean, notificationType: NotificationType, eventUid: String) {
         if (subscribe) {
-            mFireMessaging.subscribeToTopic(when (notifcationType) {
+            mFireMessaging.subscribeToTopic(when (notificationType) {
                 NotificationType.COMMENT -> "C$eventUid"
                 else -> "V$eventUid"
             })
         } else {
-            mFireMessaging.unsubscribeFromTopic(when (notifcationType) {
+            mFireMessaging.unsubscribeFromTopic(when (notificationType) {
                 NotificationType.COMMENT -> "C$eventUid"
                 else -> "V$eventUid"
             })

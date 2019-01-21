@@ -92,6 +92,7 @@ class AddFeedbackDialogFragment : DialogFragment() {
                         mVote.title = mRootView.feedbackDialog_input_subject.text.toString()
                         mVote.text = mRootView.feedbackDialog_input_description.text.toString()
                         mVote.voteAuthorUid = LoggedUser.uid
+                        mVote.postedTime = System.currentTimeMillis()
                         mFeedbackSentListener.positiveButtonClicked(null, mVote)
                     }
                 }

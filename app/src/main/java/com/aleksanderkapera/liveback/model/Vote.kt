@@ -11,5 +11,6 @@ data class Vote(var voteUid: String = "",
                 var title: String = "",
                 var text: String = "",
                 var voteAuthorUid: String = "",
+                var postedTime: Long = 0,
                 var upVotes: MutableList<String> = mutableListOf(),
                 var downVotes: MutableList<String> = mutableListOf()) : Parcelable
