@@ -261,10 +261,12 @@ class MainActivity : FragmentActivity() {
                                 it.isSuccessful -> {
                                     it.result?.let {
                                         mEvents.addAll(it.toObjects(Event::class.java))
-                                        if (it.documents.isNotEmpty())
+                                        if (it.documents.isNotEmpty()) {
                                             lastDocument = it.documents.last()
-
-                                        EventBus.getDefault().post(EventsReceivedEvent(mEvents, true))
+                                            EventBus.getDefault().post(EventsReceivedEvent(mEvents, true))
+                                        } else{
+                                            //TODO show empty screen
+                                        }
                                     }
                                 }
                                 else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
@@ -281,8 +283,12 @@ class MainActivity : FragmentActivity() {
                                 it.isSuccessful -> {
                                     it.result?.let {
                                         mEvents = it.toObjects(Event::class.java)
-                                        lastDocument = it.documents.last()
-                                        EventBus.getDefault().post(EventsReceivedEvent(mEvents, false))
+                                        if(mEvents.size != 0) {
+                                            lastDocument = it.documents.last()
+                                            EventBus.getDefault().post(EventsReceivedEvent(mEvents, false))
+                                        } else {
+                                            //TODO show empty screen
+                                        }
                                     }
                                 }
                                 else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
