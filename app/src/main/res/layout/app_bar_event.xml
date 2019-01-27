@@ -73,6 +73,7 @@
             <ImageView
                 android:id="@+id/event_image_share"
                 style="@style/AppTheme.Toolbar.Button"
+                android:visibility="gone"
                 android:layout_gravity="end"
                 app:srcCompat="@drawable/ic_share" />
 

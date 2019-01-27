@@ -8,6 +8,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
@@ -20,6 +21,7 @@ import android.support.v4.app.NotificationCompat
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import android.widget.Toast
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.bus.EventNotificationsReceiver
 import com.aleksanderkapera.liveback.model.Comment
@@ -32,6 +34,9 @@ import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.ui.widget.EmptyScreenView
 import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.signature.ObjectKey
+import com.google.android.gms.appinvite.AppInviteInvitation
+import com.google.firebase.dynamiclinks.DynamicLink
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -150,6 +155,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
         }
 
         event_fab.setOnClickListener(onFabClick)
+//        event_image_share.setOnClickListener { onShareButtonClicked() }
 
         setToolbarViews()
         setToolbarAnimation()
@@ -556,9 +562,9 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     private fun scheduleNotification(time: Long, set: Boolean) {
         val builder = NotificationCompat.Builder(context)
                 .setContentTitle("${event?.title}")
-                .setContentText(when{
+                .setContentText(when {
                     LoggedUser.reminder < 60 -> "${R.string.event_you_liked.asString()} ${R.plurals.starts_in_minutes.asPluralsString(LoggedUser.reminder)}"
-                    else ->"${R.string.event_you_liked.asString()} ${R.plurals.starts_in_hours.asPluralsString(LoggedUser.reminder / 60)}"
+                    else -> "${R.string.event_you_liked.asString()} ${R.plurals.starts_in_hours.asPluralsString(LoggedUser.reminder / 60)}"
                 })
                 .setSmallIcon(R.drawable.ic_notification)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -586,7 +592,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
         val alarmManager = applicationContext?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         if (set) {
-            if (time > (System.currentTimeMillis()  + (LoggedUser.reminder * 60000)) && LoggedUser.reminder != 0)
+            if (time > (System.currentTimeMillis() + (LoggedUser.reminder * 60000)) && LoggedUser.reminder != 0)
                 alarmManager.set(AlarmManager.RTC_WAKEUP, time - (LoggedUser.reminder * 60000), pendingIntent)
         } else
             alarmManager.cancel(pendingIntent)
@@ -610,6 +616,30 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
             }
         }
     }
+
+//    /**
+//     * Create deep link and share it
+//     */
+//    private fun onShareButtonClicked() {
+//        event?.let { event ->
+//            val dynamicLink = FirebaseDynamicLinks.getInstance().createDynamicLink()
+//                    .setLink(Uri.parse("https://www.liveback.com/${event.eventUid}"))
+//                    .setDomainUriPrefix("https://liveback.page.link")
+//                    .setAndroidParameters(DynamicLink.AndroidParameters.Builder().build())
+//                    .setSocialMetaTagParameters(DynamicLink.SocialMetaTagParameters.Builder()
+//                            .setTitle(event.title)
+//                            .setDescription(event.description)
+//                            .build())
+//                    .buildDynamicLink()
+//
+//            Toast.makeText(context, dynamicLink.toString(), Toast.LENGTH_SHORT).show()
+//
+//            val intent = Intent(Intent.ACTION_SEND)
+//            intent.type = "text/plain"
+//            intent.putExtra(android.content.Intent.EXTRA_SUBJECT,dynamicLink.uri.toString())
+//            startActivity(intent)
+//        }
+//    }
 
     class ViewPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
 
