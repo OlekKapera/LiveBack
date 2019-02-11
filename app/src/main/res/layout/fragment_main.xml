@@ -24,12 +24,29 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/main_recycler_events"
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/spacing8"
-            android:layout_marginEnd="@dimen/spacing8"
-            android:overScrollMode="never" />
+            android:layout_height="match_parent">
+
+            <com.aleksanderkapera.liveback.ui.widget.EmptyScreenView
+                android:id="@+id/main_view_emptyScreen"
+                android:layout_width="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_marginBottom="@dimen/spacing64"
+                app:layout_constraintTop_toTopOf="parent"
+                app:message="@string/empty_events"
+                app:messageColor="@color/white" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/main_recycler_events"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/spacing8"
+                android:layout_marginEnd="@dimen/spacing8"
+                android:overScrollMode="never"
+                android:visibility="visible" />
+        </android.support.constraint.ConstraintLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
 </android.support.design.widget.CoordinatorLayout>

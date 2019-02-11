@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.bus.EventsReceivedEvent
@@ -28,6 +29,7 @@ import com.google.firebase.firestore.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_main.*
 import org.greenrobot.eventbus.EventBus
 
 
@@ -179,10 +181,7 @@ class MainActivity : FragmentActivity() {
                                 it.isSuccessful -> {
                                     it.result?.let {
                                         mEvents.addAll(it.toObjects(Event::class.java))
-                                        if (it.documents.isNotEmpty())
-                                            lastDocument = it.documents.last()
-
-                                        EventBus.getDefault().post(EventsReceivedEvent(mEvents, true))
+                                        sendEvents(it, true)
                                     }
                                 }
                                 else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
@@ -201,10 +200,7 @@ class MainActivity : FragmentActivity() {
                                 it.isSuccessful -> {
                                     it.result?.let {
                                         mEvents = it.toObjects(Event::class.java)
-                                        if (it.documents.isNotEmpty())
-                                            lastDocument = it.documents.last()
-
-                                        EventBus.getDefault().post(EventsReceivedEvent(mEvents, false))
+                                        sendEvents(it, false)
                                     }
                                 }
                                 else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
@@ -261,12 +257,7 @@ class MainActivity : FragmentActivity() {
                                 it.isSuccessful -> {
                                     it.result?.let {
                                         mEvents.addAll(it.toObjects(Event::class.java))
-                                        if (it.documents.isNotEmpty()) {
-                                            lastDocument = it.documents.last()
-                                            EventBus.getDefault().post(EventsReceivedEvent(mEvents, true))
-                                        } else{
-                                            //TODO show empty screen
-                                        }
+                                        sendEvents(it, true)
                                     }
                                 }
                                 else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
@@ -283,12 +274,7 @@ class MainActivity : FragmentActivity() {
                                 it.isSuccessful -> {
                                     it.result?.let {
                                         mEvents = it.toObjects(Event::class.java)
-                                        if(mEvents.size != 0) {
-                                            lastDocument = it.documents.last()
-                                            EventBus.getDefault().post(EventsReceivedEvent(mEvents, false))
-                                        } else {
-                                            //TODO show empty screen
-                                        }
+                                        sendEvents(it, false)
                                     }
                                 }
                                 else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()
@@ -311,6 +297,23 @@ class MainActivity : FragmentActivity() {
             notificationManager.createNotificationChannel(NotificationChannel(NOTIFICATION_COMMENT_CHANNEL, R.string.notification_comment_channel.asString(), NotificationManager.IMPORTANCE_DEFAULT))
             notificationManager.createNotificationChannel(NotificationChannel(NOTIFICATION_VOTE_CHANNEL, R.string.notification_vote_channel.asString(), NotificationManager.IMPORTANCE_DEFAULT))
             notificationManager.createNotificationChannel(NotificationChannel(NOTIFICATION_REMINDER_CHANNEL, R.string.notification_reminder_channel.asString(), NotificationManager.IMPORTANCE_DEFAULT))
+        }
+    }
+
+    /**
+     * Switch visibility of empty events view and recycler view and send events to @MainFragment
+     */
+    private fun sendEvents(querySnapshot: QuerySnapshot, loadMore: Boolean) {
+        if (!mEvents.isEmpty()) {
+            main_view_emptyScreen.visibility = View.GONE
+            main_recycler_events.visibility = View.VISIBLE
+            if (querySnapshot.documents.isNotEmpty())
+                lastDocument = querySnapshot.documents.last()
+            EventBus.getDefault().post(EventsReceivedEvent(mEvents, loadMore))
+        } else {
+            //show empty screen
+            main_view_emptyScreen.visibility = View.VISIBLE
+            main_recycler_events.visibility = View.GONE
         }
     }
 

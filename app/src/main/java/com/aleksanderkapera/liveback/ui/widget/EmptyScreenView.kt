@@ -22,10 +22,12 @@ class EmptyScreenView @JvmOverloads constructor(
             val a = resources.obtainAttributes(it, R.styleable.EmptyScreenView)
 
             val message = a.getString(R.styleable.EmptyScreenView_message)
+            val color = a.getColor(R.styleable.EmptyScreenView_messageColor, resources.getColor(R.color.darkGrey))
 
             // set message text
             message?.let {
                 emptyScreen_text_message.text = it
+                emptyScreen_text_message.setTextColor(color)
             }
 
             a.recycle()

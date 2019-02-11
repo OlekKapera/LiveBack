@@ -19,5 +19,6 @@
 
     <declare-styleable name="EmptyScreenView">
         <attr name="message" format="string" />
+        <attr name="messageColor" format="color" />
     </declare-styleable>
 </resources>
