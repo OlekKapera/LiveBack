@@ -23,7 +23,8 @@
     <string name="events_error">Couldn\'t retrieve events! Try again later.</string>
     <string name="comments_error">Couldn\'t retrieve comments! Try again later.</string>
     <string name="comment_add_error">Adding comment failed! Please, try again later.</string>
-    <string name="vote_error">Adding vote failed! Please, try again later.</string>
+    <string name="add_vote_error">Adding vote failed! Please, try again later.</string>
+    <string name="get_vote_error">Receiving votes failed! Please, try again later.</string>
     <string name="comment_edit_error">Editing comment failed! Please, try again later.</string>
     <string name="vote_edit_error">Editing vote failed! Please, try again later.</string>
     <string name="empty_votes">There are no votes to be displayed.</string>

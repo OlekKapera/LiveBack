@@ -1,8 +1,11 @@
 package com.aleksanderkapera.liveback.ui.adapter
 
 import android.content.Context
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.Toast
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.User
@@ -20,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.fragment_event.*
+import kotlinx.android.synthetic.main.fragment_event_vote.*
 import kotlinx.android.synthetic.main.item_vote.view.*
 import kotlin.math.absoluteValue
 
@@ -30,6 +34,48 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val fragment
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(mInflater.inflate(R.layout.item_vote, parent, false))
+    }
+
+    /**
+     * Replace item and change its position
+     */
+    fun changeItem(oldVote: Vote, newVote: Vote) {
+        val oldPosition = mData.indexOf(oldVote)
+        mData.remove(oldVote).also {
+            mData.add(newVote)
+        }
+        mData = ArrayList(mData.sortedByDescending { vote -> vote.upVotes.size - vote.downVotes.size })
+
+        val newPosition = mData.indexOf(newVote)
+        notifyItemMoved(oldPosition, newPosition)
+        notifyItemChanged(newPosition)
+
+        fragment.eventVote_recycler_votes.apply {
+            if ((layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() == 0 && (oldPosition == 0 || newPosition == 0))
+                scrollToPosition(0)
+        }
+    }
+
+    /**
+     * Returns vote by vote uid
+     */
+    fun getVoteByUid(voteUid: String): Vote? {
+        mData.forEach {
+            if (it.voteUid == voteUid)
+                return it
+        }
+        return null
+    }
+
+    /**
+     * Convert votes difference to desirable format
+     */
+    private fun convertVotesDifference(upVotes: Int, downVotes: Int): String {
+        val voteDif = upVotes - downVotes
+        return when {
+            voteDif.absoluteValue >= 1000 -> "${voteDif.div(1000)} k"
+            else -> voteDif.toString()
+        }
     }
 
     inner class ViewHolder(itemView: View) : BaseRecyclerAdapter.ViewHolder(itemView) {
@@ -46,7 +92,6 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val fragment
 
         private var mUpVoted = false
         private var mDownVoted = false
-        private var mVoteDif = 0
 
         override fun bind(position: Int) {
             item = mData[position]
@@ -54,7 +99,7 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val fragment
 
             itemView.eventVote_text_title.text = item.title
             itemView.eventVote_text_description.text = item.text
-            itemView.eventVote_text_votes.text = convertVotesDifference()
+            itemView.eventVote_text_votes.text = convertVotesDifference(item.upVotes.size, item.downVotes.size)
 
             itemView.eventVote_image_profile.setOnClickListener { (context as MainActivity).showFragment(ProfileFragment.newInstance(item.voteAuthorUid)) }
 
@@ -108,17 +153,6 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val fragment
         }
 
         /**
-         * Convert votes difference to desirable format
-         */
-        private fun convertVotesDifference(): String {
-            mVoteDif = item.upVotes.size - item.downVotes.size
-            return when {
-                mVoteDif.absoluteValue >= 1000 -> "${mVoteDif.div(1000)} k"
-                else -> mVoteDif.toString()
-            }
-        }
-
-        /**
          * Add or remove user's uid to the up votes list, but first remove it from down votes list
          */
         private fun upVote() {
@@ -138,7 +172,7 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val fragment
                                     item.upVotes.add(LoggedUser.uid)
                                     itemView.eventVote_button_upVote.setColorFilter(mButtonColorRed)
                                     itemView.eventVote_button_downVote.setColorFilter(mButtonColorDefault)
-                                    itemView.eventVote_text_votes.text = convertVotesDifference()
+                                    itemView.eventVote_text_votes.text = convertVotesDifference(item.upVotes.size, item.downVotes.size)
                                 }
                                 else -> {
                                     Toast.makeText(context, mUpVoteString, Toast.LENGTH_SHORT).show()
@@ -154,7 +188,7 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val fragment
                                     mUpVoted = false
                                     item.upVotes.remove(LoggedUser.uid)
                                     itemView.eventVote_button_upVote.setColorFilter(mButtonColorDefault)
-                                    itemView.eventVote_text_votes.text = convertVotesDifference()
+                                    itemView.eventVote_text_votes.text = convertVotesDifference(item.upVotes.size, item.downVotes.size)
                                 }
                                 else -> {
                                     Toast.makeText(context, mUpVoteString, Toast.LENGTH_SHORT).show()
@@ -188,7 +222,7 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val fragment
                                     item.downVotes.add(LoggedUser.uid)
                                     itemView.eventVote_button_downVote.setColorFilter(mButtonColorRed)
                                     itemView.eventVote_button_upVote.setColorFilter(mButtonColorDefault)
-                                    itemView.eventVote_text_votes.text = convertVotesDifference()
+                                    itemView.eventVote_text_votes.text = convertVotesDifference(item.upVotes.size, item.downVotes.size)
                                 }
                                 else -> {
                                     Toast.makeText(context, mDownVoteString, Toast.LENGTH_SHORT).show()
@@ -203,7 +237,7 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val fragment
                                     mDownVoted = false
                                     item.downVotes.remove(LoggedUser.uid)
                                     itemView.eventVote_button_downVote.setColorFilter(mButtonColorDefault)
-                                    itemView.eventVote_text_votes.text = convertVotesDifference()
+                                    itemView.eventVote_text_votes.text = convertVotesDifference(item.upVotes.size, item.downVotes.size)
                                 }
                                 else -> {
                                     Toast.makeText(context, mDownVoteString, Toast.LENGTH_SHORT).show()

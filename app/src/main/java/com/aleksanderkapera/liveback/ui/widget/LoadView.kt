@@ -47,10 +47,12 @@ class LoadView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     }
 
     fun show() {
-        startAnimation(mFadeIn)
+        if (visibility == View.GONE)
+            startAnimation(mFadeIn)
     }
 
     fun hide() {
-        startAnimation(mFadeOut)
+        if (visibility == View.VISIBLE)
+            startAnimation(mFadeOut)
     }
 }

@@ -8,7 +8,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
-import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
@@ -21,7 +20,6 @@ import android.support.v4.app.NotificationCompat
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import android.widget.Toast
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.bus.EventNotificationsReceiver
 import com.aleksanderkapera.liveback.model.Comment
@@ -34,9 +32,6 @@ import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.ui.widget.EmptyScreenView
 import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.signature.ObjectKey
-import com.google.android.gms.appinvite.AppInviteInvitation
-import com.google.firebase.dynamiclinks.DynamicLink
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -63,7 +58,8 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     private val mCommentSuccString = R.string.comment_successful.asString()
     private val mVoteSuccString = R.string.vote_successful.asString()
     private val mCommentFailString = R.string.comment_add_error.asString()
-    private val mVoteFailString = R.string.vote_error.asString()
+    private val mAddVoteFailString = R.string.add_vote_error.asString()
+    private val mGetVoteFailString = R.string.get_vote_error.asString()
     private val mCommentEditSuccString = R.string.comment_edit_successful.asString()
     private val mVoteEditSuccString = R.string.vote_edit_successful.asString()
     private val mCommentEditFailString = R.string.comment_edit_error.asString()
@@ -81,9 +77,10 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
     var event: Event? = null
     private var mUser: User? = null
     private var mComments: MutableList<Comment>? = null
-    private var mVotes: MutableList<Vote>? = null
+    private var mVotes = mutableListOf<Vote>()
     private var mIsLiked = false
 
+    private var mTabsAdapter: ViewPagerAdapter? = null
     lateinit var commentFragment: EventCommentsFragment
     lateinit var votesFragment: EventVoteFragment
 
@@ -320,14 +317,43 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
      * Retrieve all votes for this event
      */
     private fun getVotes() {
-        mEventDoc.collection("votes").get().addOnCompleteListener {
-            when {
-                it.isSuccessful -> {
-                    mVotes = it.result?.toObjects(Vote::class.java)
-                    setupTabs()
+        mEventDoc.collection("votes").addSnapshotListener { snapshots, e ->
+            if (e != null) {
+                showToast(mGetVoteFailString)
+                return@addSnapshotListener
+            }
+
+            snapshots?.let {
+                if (!it.metadata.hasPendingWrites()) {
+                    mVotes?.clear()
+                    for (doc in it.documents) {
+                        doc.toObject(Vote::class.java)?.let {
+                            mVotes?.add(it)
+                        }
+                    }
+
+                    var changedVote: Vote? = null
+                    var originalVote: Vote? = null
+
+                    if (it.documentChanges.size == 1) {
+                        changedVote = (it.documentChanges.toList()[0]).document.toObject(Vote::class.java)
+                        originalVote = votesFragment.votesAdapter.getVoteByUid(changedVote.voteUid)
+                    }
+
+                    if (mTabsAdapter == null)
+                        setupTabs()
+                    else {
+                        safeLet(changedVote, originalVote) { changedVote, originalVote ->
+                            if (changedVote.downVotes.size != originalVote.downVotes.size || changedVote.upVotes.size != originalVote.upVotes.size)
+                                votesFragment.votesAdapter.changeItem(originalVote, changedVote)
+                        }
+                        if (originalVote == null)
+                            changedVote?.let { votesFragment.addData(it)}
+                    }
                 }
             }
-            event_layout_swipe.isRefreshing = false
+
+            event_layout_swipe?.isRefreshing = false
             event_view_load.hide()
         }
     }
@@ -490,7 +516,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                         }
                     }
                 }
-                else -> if (vote.voteUid.isEmpty()) showToast(mVoteFailString) else showToast(mVoteEditFailString)
+                else -> if (vote.voteUid.isEmpty()) showToast(mAddVoteFailString) else showToast(mVoteEditFailString)
             }
 
             switchEmptyView(mVotes as MutableList<Any>, eventVote_recycler_votes, eventVote_view_emptyScreen)
@@ -503,15 +529,15 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
      */
     private fun setupTabs() {
         event?.let {
-            val adapter = ViewPagerAdapter(childFragmentManager)
+            mTabsAdapter = ViewPagerAdapter(childFragmentManager)
             commentFragment = EventCommentsFragment.newInstance(mComments)
             votesFragment = EventVoteFragment.newInstance(mVotes, it.eventUid)
 
-            adapter.addFragment(EventAboutFragment.newInstance(it), mAboutString)
-            adapter.addFragment(commentFragment, mCommentsString)
-            adapter.addFragment(votesFragment, mVoteString)
+            mTabsAdapter?.addFragment(EventAboutFragment.newInstance(it), mAboutString)
+            mTabsAdapter?.addFragment(commentFragment, mCommentsString)
+            mTabsAdapter?.addFragment(votesFragment, mVoteString)
 
-            event_layout_viewPager.adapter = adapter
+            event_layout_viewPager.adapter = mTabsAdapter
             event_layout_tabs.setupWithViewPager(event_layout_viewPager)
 
             event_layout_tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {

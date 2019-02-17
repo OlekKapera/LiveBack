@@ -9,6 +9,7 @@ import com.aleksanderkapera.liveback.ui.adapter.EventVotesAdapter
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.ui.widget.BottomOffsetDecoration
 import com.aleksanderkapera.liveback.util.*
+import kotlinx.android.synthetic.main.fragment_event_comments.*
 import kotlinx.android.synthetic.main.fragment_event_vote.*
 import java.io.Serializable
 
@@ -17,7 +18,7 @@ import java.io.Serializable
  */
 class EventVoteFragment : BaseFragment() {
 
-    var votes = listOf<Vote>()
+    var votes = mutableListOf<Vote>()
     private var mEventUid = ""
     lateinit var votesAdapter: EventVotesAdapter
 
@@ -37,8 +38,8 @@ class EventVoteFragment : BaseFragment() {
     override fun getLayoutRes(): Int = R.layout.fragment_event_vote
 
     override fun setupViews(rootView: View) {
-        votes = arguments?.get(BUNDLE_EVENT_VOTE) as List<Vote>
-        mEventUid = arguments?.get(BUNDLE_EVENT_VOTE_UID) as String
+        votes = arguments?.get(BUNDLE_EVENT_VOTE) as MutableList<Vote>
+        mEventUid = arguments?.get(BUNDLE_EVENT_VOTE_UID) as? String ?: ""
         initAdapter()
     }
 
@@ -56,5 +57,13 @@ class EventVoteFragment : BaseFragment() {
         }
 
         (parentFragment as EventFragment).switchEmptyView(votes as MutableList<Any>, eventVote_recycler_votes, eventVote_view_emptyScreen)
+    }
+
+    /**
+     * Add newly added vote to the end of a list
+     */
+    fun addData(vote: Vote) {
+        votesAdapter.addItem(votes.size-1, vote)
+        votes.add(vote)
     }
 }
