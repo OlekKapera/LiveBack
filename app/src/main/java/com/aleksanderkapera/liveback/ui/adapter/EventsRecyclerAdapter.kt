@@ -8,15 +8,13 @@ import com.aleksanderkapera.liveback.model.Event
 import com.aleksanderkapera.liveback.model.User
 import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.fragment.EventFragment
-import com.aleksanderkapera.liveback.util.GlideApp
-import com.aleksanderkapera.liveback.util.asDrawable
-import com.aleksanderkapera.liveback.util.convertLongToDate
-import com.aleksanderkapera.liveback.util.setBackgroundCategory
+import com.aleksanderkapera.liveback.util.*
 import com.bumptech.glide.signature.ObjectKey
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.card_main.view.*
+import java.util.*
 
 /**
  * Created by kapera on 29-May-18.
@@ -65,7 +63,7 @@ class EventsRecyclerAdapter(val context: Context) : BaseRecyclerAdapter<EventsRe
             itemView.cardMain_text_date.text = convertLongToDate(item.date)
             itemView.cardMain_text_title.text = item.title
             itemView.cardMain_text_description.text = item.description
-            itemView.cardMain_text_category.text = item.category
+            itemView.cardMain_text_category.text = if(Locale.getDefault().displayLanguage == "slovenčina") translateCategories("", item.category) else item.category
             itemView.cardMain_text_favourite.text = item.likes.size.toString()
             itemView.cardMain_text_feedback.text = item.comments.toString()
             itemView.cardMain_text_vote.text = item.votes.toString()
@@ -83,7 +81,8 @@ class EventsRecyclerAdapter(val context: Context) : BaseRecyclerAdapter<EventsRe
         }
 
         override fun onClick(view: View?) {
-            (context as MainActivity).showFragment(EventFragment.newInstance(item, mUser))
+            if (::item.isInitialized && ::mUser.isInitialized)
+                (context as MainActivity).showFragment(EventFragment.newInstance(item, mUser))
         }
     }
 }

@@ -11,10 +11,7 @@ import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.User
 import com.aleksanderkapera.liveback.ui.activity.SigningActivity
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
-import com.aleksanderkapera.liveback.util.TAG_REGISTER_DIALOG
-import com.aleksanderkapera.liveback.util.asString
-import com.aleksanderkapera.liveback.util.decodeSampledBitmapFromResource
-import com.aleksanderkapera.liveback.util.getNavigationBarHeight
+import com.aleksanderkapera.liveback.util.*
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_signing.*
 import kotlinx.android.synthetic.main.fragment_register.*
@@ -36,6 +33,10 @@ class RegisterFragment : BaseFragment() {
     private lateinit var mAuth: FirebaseAuth
 
     var mImageUri: Uri? = null
+    var mUserName = ""
+    var mEmail = ""
+    var mPassword = ""
+    var mConfirmPassword = ""
 
     override fun getLayoutRes(): Int = R.layout.fragment_register
 
@@ -53,11 +54,18 @@ class RegisterFragment : BaseFragment() {
         params.setMargins(0, 0, 0, getNavigationBarHeight() + 32)
         register_button_signUp.layoutParams = params
 
+        mUserName.apply { if (isNotEmpty()) register_input_username.setText(this) }
+        mEmail.apply { if (isNotEmpty()) register_input_email.setText(this) }
+        mPassword.apply { if (isNotEmpty()) register_input_password.setText(this) }
+        mConfirmPassword.apply { if (isNotEmpty()) register_input_confirm.setText(this) }
+
         register_image_profile.setOnClickListener(onRegisterImageClick)
         register_button_signUp.setOnClickListener(onSignUpClick)
     }
 
     private val onRegisterImageClick = View.OnClickListener {
+        getFieldValues()
+
         ImagePickerDialogFragment.newInstance().show(fragmentManager, TAG_REGISTER_DIALOG)
     }
 
@@ -65,19 +73,16 @@ class RegisterFragment : BaseFragment() {
      * If all fields are valid perform auth call, write data to user database and upload his picture
      */
     private val onSignUpClick = View.OnClickListener {
-        val userName = register_input_username.text.toString()
-        val email = register_input_email.text.toString()
-        val password = register_input_password.text.toString()
-        val confirmPassword = register_input_confirm.text.toString()
+        getFieldValues()
 
-        if (areValid(userName, email, password, confirmPassword)) {
+        if (areValid(mUserName, mEmail, mPassword, mConfirmPassword)) {
             //show loader
             activity?.signing_view_load?.show()
 
-            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
+            mAuth.createUserWithEmailAndPassword(mEmail, mPassword).addOnCompleteListener {
                 if (it.isSuccessful) {
                     val userId = mAuth.currentUser!!.uid
-                    val userPojo = User(userId, userName, email, "")
+                    val userPojo = User(userId, mUserName, mEmail, "")
 
                     mImageUri?.let {
                         (activity as SigningActivity).uploadImage(it, userPojo)
@@ -90,6 +95,16 @@ class RegisterFragment : BaseFragment() {
                 }
             }
         }
+    }
+
+    /**
+     * Retrieve inputs from fields
+     */
+    private fun getFieldValues() {
+        mUserName = register_input_username.text.toString()
+        mEmail = register_input_email.text.toString()
+        mPassword = register_input_password.text.toString()
+        mConfirmPassword = register_input_confirm.text.toString()
     }
 
     /**

@@ -332,17 +332,17 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                         }
                     }
 
-                    var changedVote: Vote? = null
-                    var originalVote: Vote? = null
-
-                    if (it.documentChanges.size == 1) {
-                        changedVote = (it.documentChanges.toList()[0]).document.toObject(Vote::class.java)
-                        originalVote = votesFragment.votesAdapter.getVoteByUid(changedVote.voteUid)
-                    }
-
                     if (mTabsAdapter == null)
                         setupTabs()
                     else {
+                        var changedVote: Vote? = null
+                        var originalVote: Vote? = null
+
+                        if (it.documentChanges.size == 1) {
+                            changedVote = (it.documentChanges.toList()[0]).document.toObject(Vote::class.java)
+                            originalVote = votesFragment.votesAdapter.getVoteByUid(changedVote.voteUid)
+                        }
+
                         safeLet(changedVote, originalVote) { changedVote, originalVote ->
                             if (changedVote.downVotes.size != originalVote.downVotes.size || changedVote.upVotes.size != originalVote.upVotes.size)
                                 votesFragment.votesAdapter.changeItem(originalVote, changedVote)
@@ -354,7 +354,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
             }
 
             event_layout_swipe?.isRefreshing = false
-            event_view_load.hide()
+            event_view_load?.hide()
         }
     }
 

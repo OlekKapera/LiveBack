@@ -59,7 +59,7 @@ class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChos
     private val mChips = R.array.categories.asStringArray()
     private var mSelectedChip: String = ""
     private var mBackgroundUri: Uri? = null
-    private lateinit var mEvent: Event
+    lateinit var mEvent: Event
     private var mIsEdit = false
 
     private val DATE_PICKER = "DATE PICKER"
@@ -423,7 +423,7 @@ class AddEventActivity : BaseActivity(), TimePickerDialogFragment.TimePickerChos
             mEvent.description = description
             mEvent.address = address
             mEvent.date = date!!
-            mEvent.category = mSelectedChip
+            mEvent.category = if(Locale.getDefault().displayLanguage == "slovenčina") translateCategories(mSelectedChip, "") else mSelectedChip
 
             addEventUpload()
         }

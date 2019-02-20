@@ -24,6 +24,7 @@ import kotlinx.android.synthetic.main.fragment_login.*
 class LoginFragment : BaseFragment() {
 
     private val incorrectCredentials = R.string.incorrect_email_password.asString()
+    private val requiredField = R.string.required_field.asString()
 
     companion object {
         fun newInstance(): BaseFragment = LoginFragment()
@@ -53,17 +54,19 @@ class LoginFragment : BaseFragment() {
     }
 
     private fun onLogInClick() {
-        //show loader
-        (activity as SigningActivity).signing_view_load.show()
+        if (isFilled(login_input_email.text.toString(), login_input_password.text.toString())) {
+            //show loader
+            (activity as SigningActivity).signing_view_load.show()
 
-        mAuth.signInWithEmailAndPassword(login_input_email.text.toString(), login_input_password.text.toString()).addOnCompleteListener {
-            if (it.isSuccessful) {
-                MainActivity.startActivity(activity as Activity, false)
-            } else {
-                Toast.makeText(context, incorrectCredentials, Toast.LENGTH_SHORT).show()
+            mAuth.signInWithEmailAndPassword(login_input_email.text.toString(), login_input_password.text.toString()).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    MainActivity.startActivity(activity as Activity, false)
+                } else {
+                    Toast.makeText(context, incorrectCredentials, Toast.LENGTH_SHORT).show()
+                }
+                //hide loader
+                (activity as SigningActivity).signing_view_load.hide()
             }
-            //hide loader
-            (activity as SigningActivity).signing_view_load.hide()
         }
     }
 
@@ -71,7 +74,24 @@ class LoginFragment : BaseFragment() {
         (activity as SigningActivity).showFragment(RegisterFragment.newInstance())
     }
 
-    private fun onContinueClick(){
+    private fun onContinueClick() {
         MainActivity.startActivity(activity as Activity, true)
+    }
+
+    /**
+     * Validate input fields in empty condition
+     */
+    private fun isFilled(email: String, password: String): Boolean {
+        return when {
+            email.isEmpty() -> {
+                login_input_email.error = requiredField
+                false
+            }
+            password.isEmpty() -> {
+                login_input_password.error = requiredField
+                false
+            }
+            else -> true
+        }
     }
 }

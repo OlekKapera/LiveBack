@@ -164,8 +164,6 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val fragment
 
                     if (!mUpVoted) {
                         mVoteRef.update("upVotes", FieldValue.arrayUnion(LoggedUser.uid)).addOnCompleteListener {
-                            fragment.event_view_load.hide()
-
                             when {
                                 it.isSuccessful -> {
                                     mUpVoted = true
@@ -178,11 +176,11 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val fragment
                                     Toast.makeText(context, mUpVoteString, Toast.LENGTH_SHORT).show()
                                 }
                             }
+                            fragment.event_view_load.hide()
                         }
                     } else {
                         item.upVotes.remove(LoggedUser.uid)
                         mVoteRef.update("upVotes", FieldValue.arrayRemove(LoggedUser.uid)).addOnCompleteListener {
-                            fragment.event_view_load.hide()
                             when {
                                 it.isSuccessful -> {
                                     mUpVoted = false
@@ -194,6 +192,7 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val fragment
                                     Toast.makeText(context, mUpVoteString, Toast.LENGTH_SHORT).show()
                                 }
                             }
+                            fragment.event_view_load.hide()
                         }
                     }
                 } else {
@@ -215,7 +214,6 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val fragment
 
                     if (!mDownVoted) {
                         mVoteRef.update("downVotes", FieldValue.arrayUnion(LoggedUser.uid)).addOnCompleteListener {
-                            fragment.event_view_load.hide()
                             when {
                                 it.isSuccessful -> {
                                     mDownVoted = true
@@ -228,10 +226,10 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val fragment
                                     Toast.makeText(context, mDownVoteString, Toast.LENGTH_SHORT).show()
                                 }
                             }
+                            fragment.event_view_load.hide()
                         }
                     } else {
                         mVoteRef.update("downVotes", FieldValue.arrayRemove(LoggedUser.uid)).addOnCompleteListener {
-                            fragment.event_view_load.hide()
                             when {
                                 it.isSuccessful -> {
                                     mDownVoted = false
@@ -243,6 +241,7 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val fragment
                                     Toast.makeText(context, mDownVoteString, Toast.LENGTH_SHORT).show()
                                 }
                             }
+                            fragment.event_view_load.hide()
                         }
                     }
                 } else {

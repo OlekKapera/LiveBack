@@ -2,18 +2,19 @@ package com.aleksanderkapera.liveback.util
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
-import android.support.constraint.ConstraintLayout
 import android.support.design.widget.CoordinatorLayout
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.res.ResourcesCompat
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.aleksanderkapera.liveback.App
+import java.util.*
+
 
 val context = App.context
 val resources = context.resources
@@ -32,9 +33,9 @@ fun Int.asString() = context.getString(this)
 
 fun Int.asStringArray() = resources.getStringArray(this)
 
-fun Int.asPluralsString(number: Int) = resources.getQuantityString(this, number,number)
+fun Int.asPluralsString(number: Int) = resources.getQuantityString(this, number, number)
 
-fun Int.asFont() = ResourcesCompat.getFont(context,this)
+fun Int.asFont() = ResourcesCompat.getFont(context, this)
 
 fun hideKeyboard(activity: Activity) {
     val view = activity.currentFocus
@@ -93,13 +94,59 @@ fun setToolbarMargin(view: View) {
 }
 
 //section returns only null checked vars
-fun <T1: Any, T2: Any, R: Any> safeLet(p1: T1?, p2: T2?, block: (T1, T2)->R?): R? {
+fun <T1 : Any, T2 : Any, R : Any> safeLet(p1: T1?, p2: T2?, block: (T1, T2) -> R?): R? {
     return if (p1 != null && p2 != null) block(p1, p2) else null
 }
-fun <T1: Any, T2: Any, T3: Any, R: Any> safeLet(p1: T1?, p2: T2?, p3: T3?, block: (T1, T2, T3)->R?): R? {
+
+fun <T1 : Any, T2 : Any, T3 : Any, R : Any> safeLet(p1: T1?, p2: T2?, p3: T3?, block: (T1, T2, T3) -> R?): R? {
     return if (p1 != null && p2 != null && p3 != null) block(p1, p2, p3) else null
 }
-fun <T1: Any, T2: Any, T3: Any, T4: Any, R: Any> safeLet(p1: T1?, p2: T2?, p3: T3?, p4: T4?, block: (T1, T2, T3, T4)->R?): R? {
+
+fun <T1 : Any, T2 : Any, T3 : Any, T4 : Any, R : Any> safeLet(p1: T1?, p2: T2?, p3: T3?, p4: T4?, block: (T1, T2, T3, T4) -> R?): R? {
     return if (p1 != null && p2 != null && p3 != null && p4 != null) block(p1, p2, p3, p4) else null
 }
 //end section
+
+/**
+ * Return localized resources
+ */
+fun getLocalizedResources(context: Context, desiredLocale: Locale): Resources {
+    var conf = context.resources.configuration
+    conf = Configuration(conf)
+    conf.setLocale(desiredLocale)
+    val localizedContext = context.createConfigurationContext(conf)
+    return localizedContext.resources
+}
+
+/**
+ * Translate slovak categories to english
+ */
+fun translateCategories(slovak: String, english: String): String {
+    if (slovak.isNotEmpty()) {
+        return when (slovak) {
+            "Koncert" -> "Concert"
+            "Voľný čas" -> "Free Time"
+            "Škola" -> "School"
+            "Párty" -> "Party"
+            "Reštaurácia" -> "Restaurant"
+            "Bar" -> "Bar"
+            "Športy" -> "Sports"
+            else -> "Other"
+        }
+    }
+
+    if (english.isNotEmpty()) {
+        return when (english) {
+            "Concert" -> "Koncert"
+            "Free Time" -> "Voľný čas"
+            "School" -> "Škola"
+            "Party" -> "Párty"
+            "Restaurant" -> "Reštaurácia"
+            "Bar" -> "Bar"
+            "Sports" -> "Športy"
+            else -> "Iné"
+        }
+    }
+
+    return ""
+}

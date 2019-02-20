@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="event_likes">
+        <item quantity="one">%d človekovi sa páči táto udalosť</item>
+        <item quantity="few">%d ľuďom sa páči táto udalosť</item>
+        <item quantity="other">%d ľuďom sa páči táto udalosť</item>
+    </plurals>
+
+    <plurals name="settings_reminder_minutes">
+        <item quantity="one">%d minútu pred</item>
+        <item quantity="few">%d minút pred</item>
+        <item quantity="other">%d minút pred</item>
+    </plurals>
+
+    <plurals name="starts_in_minutes">
+        <item quantity="one">%d minútu.</item>
+        <item quantity="few">%d minút.</item>
+        <item quantity="other">%d minút.</item>
+    </plurals>
+
+    <plurals name="starts_in_hours">
+        <item quantity="one">%d hodinu.</item>
+        <item quantity="few">%d hodín.</item>
+        <item quantity="other">%d hodín.</item>
+    </plurals>
+</resources>

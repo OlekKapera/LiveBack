@@ -1,6 +1,5 @@
 package com.aleksanderkapera.liveback.util
 
-import android.text.format.DateFormat
 import com.aleksanderkapera.liveback.R
 import java.text.SimpleDateFormat
 import java.util.*
@@ -10,18 +9,22 @@ import java.util.*
  */
 
 fun convertLongToDate(timestamp: Long): String {
-    return DateFormat.format("dd MMM yyyy", Date(timestamp)).toString()
+//    val date = Date(timestamp)
+//    SimpleDateFormat("dd MMM yyyy", Locale.)
+//    val date = DateFormat.getDateInstance().format("dd MMM yyyy", Date(timestamp)).toString()
+    return SimpleDateFormat("dd MMM yyyy", Locale("sk", "SK")).format(Date(timestamp))
 }
 
 fun convertLongToDate(timestamp: Long, dateFormat: String): String {
-    return DateFormat.format(dateFormat, Date(timestamp)).toString()
+//    return DateFormat.format(dateFormat, Date(timestamp)).toString()
+    return SimpleDateFormat(dateFormat, Locale("sk", "SK")).format(Date(timestamp))
 }
 
-fun convertStringToLongTime(text: String): Long{
+fun convertStringToLongTime(text: String): Long {
     return convertStringToLongTime(text, "d.M.yyyy HH:mm")
 }
 
-fun convertStringToLongTime(text: String, dateFormat: String): Long{
+fun convertStringToLongTime(text: String, dateFormat: String): Long {
     val format = SimpleDateFormat(dateFormat, Locale.ENGLISH)
     return format.parse(text).time
 }
@@ -31,12 +34,12 @@ private val secToHour = 3600
 private val secToDay = 86400
 private val secToWeek = 604800
 private val secToMonth = 2629743
-private val secToYear =  31556926
+private val secToYear = 31556926
 
-fun longToStringAgo(time: Long): String{
+fun longToStringAgo(time: Long): String {
     val difference = (System.currentTimeMillis() - time) / 1000
 
-    return when{
+    return when {
         difference >= secToYear -> "${difference.div(secToYear)} ${R.string.years_short.asString()}"
         difference >= secToMonth -> "${difference.div(secToMonth)} ${R.string.months_short.asString()}"
         difference >= secToWeek -> "${difference.div(secToWeek)} ${R.string.week_short.asString()}"

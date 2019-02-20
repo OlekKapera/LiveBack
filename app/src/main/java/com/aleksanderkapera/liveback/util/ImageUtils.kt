@@ -121,14 +121,16 @@ fun deletePhotoContent(imageUri: Uri?): Boolean {
  * Set background image when user hasn't provided one according to event category
  */
 fun setBackgroundCategory(category: String, imageView: ImageView){
+    val resources = getLocalizedResources(context, Locale("en"))
+
     when (category) {
-        R.string.category.asString() -> imageView.setImageBitmap(decodeSampledBitmapFromResource(resources, R.drawable.bg_category_concert, 600, 200))
-        R.string.free_time.asString() -> imageView.setImageBitmap(decodeSampledBitmapFromResource(resources, R.drawable.bg_category_free_time, 600, 200))
-        R.string.school.asString() -> imageView.setImageBitmap(decodeSampledBitmapFromResource(resources, R.drawable.bg_category_school, 600, 200))
-        R.string.party.asString() -> imageView.setImageBitmap(decodeSampledBitmapFromResource(resources, R.drawable.bg_category_party, 600, 200))
-        R.string.restaurant.asString() -> imageView.setImageBitmap(decodeSampledBitmapFromResource(resources, R.drawable.bg_category_restaurant, 600, 200))
-        R.string.bar.asString() -> imageView.setImageBitmap(decodeSampledBitmapFromResource(resources, R.drawable.bg_category_bar, 600, 200))
-        R.string.sports.asString() -> imageView.setImageBitmap(decodeSampledBitmapFromResource(resources, R.drawable.bg_category_sports, 600, 200))
+        resources.getString(R.string.category) -> imageView.setImageBitmap(decodeSampledBitmapFromResource(resources, R.drawable.bg_category_concert, 600, 200))
+        resources.getString(R.string.free_time) -> imageView.setImageBitmap(decodeSampledBitmapFromResource(resources, R.drawable.bg_category_free_time, 600, 200))
+        resources.getString(R.string.school) -> imageView.setImageBitmap(decodeSampledBitmapFromResource(resources, R.drawable.bg_category_school, 600, 200))
+        resources.getString(R.string.party) -> imageView.setImageBitmap(decodeSampledBitmapFromResource(resources, R.drawable.bg_category_party, 600, 200))
+        resources.getString(R.string.restaurant) -> imageView.setImageBitmap(decodeSampledBitmapFromResource(resources, R.drawable.bg_category_restaurant, 600, 200))
+        resources.getString(R.string.bar) -> imageView.setImageBitmap(decodeSampledBitmapFromResource(resources, R.drawable.bg_category_bar, 600, 200))
+        resources.getString(R.string.sports) -> imageView.setImageBitmap(decodeSampledBitmapFromResource(resources, R.drawable.bg_category_sports, 600, 200))
         else -> imageView.setImageBitmap(decodeSampledBitmapFromResource(resources, R.drawable.bg_category_other, 600, 200))
     }
 }

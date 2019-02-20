@@ -11,6 +11,7 @@ import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.Comment
 import com.aleksanderkapera.liveback.model.Event
 import com.aleksanderkapera.liveback.model.Vote
+import com.aleksanderkapera.liveback.ui.activity.AddEventActivity
 import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.fragment.DeleteDialogType
 import com.aleksanderkapera.liveback.ui.fragment.EventFragment
@@ -89,9 +90,9 @@ class DeleteDialogFragment : DialogFragment() {
             mItemId = it.getString(BUNDLE_DELETE_DIALOG_ITEM_ID) ?: ""
         }
 
-        (targetFragment as EventFragment).event?.let {
-            mEvent = it
-        }
+        (activity as? AddEventActivity)?.mEvent?.let { mEvent = it }
+        (targetFragment as? EventFragment)?.event?.let { mEvent = it }
+
         mBatch = FirebaseFirestore.getInstance().batch()
         mStorageRef = FirebaseStorage.getInstance().reference
         mEventDocRef = FirebaseFirestore.getInstance().document("events/${mEvent.eventUid}")
@@ -175,6 +176,11 @@ class DeleteDialogFragment : DialogFragment() {
                                 commitBatch()
                             }
                         }
+
+                        if (result.documents.size == 0) {
+                            mCommentsDone = true
+                            commitBatch()
+                        }
                     }
                 }
             }
@@ -191,6 +197,11 @@ class DeleteDialogFragment : DialogFragment() {
                                 mVotesDone = true
                                 commitBatch()
                             }
+                        }
+
+                        if (result.documents.size == 0) {
+                            mVotesDone = true
+                            commitBatch()
                         }
                     }
                 }

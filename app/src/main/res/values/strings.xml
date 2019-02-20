@@ -93,7 +93,6 @@
     <string name="years_short">y</string>
     <string name="add_comment">Add comment</string>
     <string name="add_vote">Add vote</string>
-    <string name="add_suggestion">Add suggestion</string>
     <string name="subject">Subject</string>
     <string name="comment_successful">Comment added successfully!</string>
     <string name="vote_successful">Vote added successfully!</string>
@@ -168,9 +167,9 @@
     <!--Notifications-->
     <string name="notification_vote_added">Someone just added a vote in %1$s event.</string>
     <string name="notification_comment_added">Someone just added a comment in %1$s event.</string>
-    <string name="notification_vote_channel">Votes notifications</string>
-    <string name="notification_comment_channel">Comments notifications</string>
-    <string name="notification_reminder_channel">Event reminders</string>
+    <string name="notification_vote_channel" translatable="false">Votes notifications</string>
+    <string name="notification_comment_channel" translatable="false">Comments notifications</string>
+    <string name="notification_reminder_channel" translatable="false">Event reminders</string>
     <string name="your_event_starts">Your event starts in</string>
     <string name="event_you_liked">Event you liked starts in</string>
 
