@@ -32,6 +32,7 @@ class EventCommentsAdapter(val context: Context, val fragment: BaseFragment) : B
     inner class ViewHolder(itemView: View) : BaseRecyclerAdapter.ViewHolder(itemView) {
 
         private lateinit var item: Comment
+        private lateinit var mUser: User
         private lateinit var mStorageRef: StorageReference
         private val mUsersRef: CollectionReference = FirebaseFirestore.getInstance().collection("users")
 
@@ -42,6 +43,7 @@ class EventCommentsAdapter(val context: Context, val fragment: BaseFragment) : B
                 when {
                     it.isSuccessful -> {
                         it.result?.toObject(User::class.java)?.let { user ->
+                            mUser = user
                             itemView.eventComment_text_title.text = user.username
                             if (user.profilePicPath.isNotEmpty()) {
                                 mStorageRef = FirebaseStorage.getInstance().getReference(user.profilePicPath)
@@ -61,10 +63,12 @@ class EventCommentsAdapter(val context: Context, val fragment: BaseFragment) : B
             itemView.eventComment_text_time.text = longToStringAgo(item.postedTime)
 
             itemView.setOnClickListener {
-                if (fragment is EventFragment) {
-                    val dialog = AddFeedbackDialogFragment.newInstance(AddFeedbackDialogType.COMMENT, item, null)
-                    dialog.setTargetFragment(fragment, REQUEST_TARGET_EVENT_FRAGMENT)
-                    dialog.show((context as MainActivity).supportFragmentManager, TAG_ADD_FEEDBACK_COMMENT_FILLED)
+                safeLet(LoggedUser, mUser) { loggedUser, user ->
+                    if (fragment is EventFragment && loggedUser.uid == user.uid) {
+                        val dialog = AddFeedbackDialogFragment.newInstance(AddFeedbackDialogType.COMMENT, item, null)
+                        dialog.setTargetFragment(fragment, REQUEST_TARGET_EVENT_FRAGMENT)
+                        dialog.show((context as MainActivity).supportFragmentManager, TAG_ADD_FEEDBACK_COMMENT_FILLED)
+                    }
                 }
             }
             itemView.eventComment_image_profile.setOnClickListener { (context as MainActivity).showFragment(ProfileFragment.newInstance(item.commentAuthorUid)) }

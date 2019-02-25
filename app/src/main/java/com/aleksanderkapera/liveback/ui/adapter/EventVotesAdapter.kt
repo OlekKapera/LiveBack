@@ -81,6 +81,7 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val fragment
     inner class ViewHolder(itemView: View) : BaseRecyclerAdapter.ViewHolder(itemView) {
 
         private lateinit var item: Vote
+        private lateinit var mUser: User
         private lateinit var mStorageRef: StorageReference
         private lateinit var mVoteRef: DocumentReference
         private val mUsersRef = FirebaseFirestore.getInstance().collection("users")
@@ -107,6 +108,7 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val fragment
                 when {
                     it.isSuccessful -> {
                         it.result?.toObject(User::class.java)?.let { user ->
+                            mUser = user
                             user.profilePicPath.let {
                                 if (it.isNotEmpty()) {
                                     mStorageRef = FirebaseStorage.getInstance().getReference(it)
@@ -138,9 +140,13 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val fragment
             }
 
             itemView.setOnClickListener {
-                val dialog = DeleteDialogFragment.newInstance(DeleteDialogType.VOTE, item.voteUid)
-                dialog.setTargetFragment(fragment, REQUEST_TARGET_DELETE_FRAGMENT)
-                dialog.show((context as MainActivity).supportFragmentManager, TAG_VOTE_DELETE)
+                safeLet(LoggedUser, mUser) { loggedUser, user ->
+                    if (loggedUser.uid == user.uid) {
+                        val dialog = DeleteDialogFragment.newInstance(DeleteDialogType.VOTE, item.voteUid)
+                        dialog.setTargetFragment(fragment, REQUEST_TARGET_DELETE_FRAGMENT)
+                        dialog.show((context as MainActivity).supportFragmentManager, TAG_VOTE_DELETE)
+                    }
+                }
             }
 
             itemView.eventVote_button_upVote.setOnClickListener { upVote() }

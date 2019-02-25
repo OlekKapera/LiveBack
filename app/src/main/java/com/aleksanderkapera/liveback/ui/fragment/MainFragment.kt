@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.bus.EventsReceivedEvent
@@ -14,6 +15,7 @@ import com.aleksanderkapera.liveback.ui.activity.MainActivity
 import com.aleksanderkapera.liveback.ui.adapter.EventsRecyclerAdapter
 import com.aleksanderkapera.liveback.ui.base.BaseFragment
 import com.aleksanderkapera.liveback.ui.widget.BottomOffsetDecoration
+import com.aleksanderkapera.liveback.ui.widget.EmptyScreenView
 import com.aleksanderkapera.liveback.util.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -169,7 +171,23 @@ class MainFragment : BaseFragment() {
         }
 
         mAdapter.replaceData(filteredEvents)
+        switchEmptyView(filteredEvents as MutableList<Any>, main_recycler_events, main_view_emptyScreen)
         main_layout_swipe.isRefreshing = false
+    }
+
+    /**
+     * Switches between visibilities of recycler and empty view based on list's size
+     */
+    private fun switchEmptyView(list: MutableList<Any>?, recycler: RecyclerView, emptyView: EmptyScreenView) {
+        list?.let {
+            if (it.isNotEmpty()) {
+                recycler.visibility = View.VISIBLE
+                emptyView.visibility = View.GONE
+            } else {
+                recycler.visibility = View.GONE
+                emptyView.visibility = View.VISIBLE
+            }
+        }
     }
 
     @Subscribe
