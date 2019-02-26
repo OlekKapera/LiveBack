@@ -20,7 +20,7 @@ class EventVoteFragment : BaseFragment() {
 
     var votes = mutableListOf<Vote>()
     private var mEventUid = ""
-    lateinit var votesAdapter: EventVotesAdapter
+    var votesAdapter: EventVotesAdapter? = null
 
     companion object {
         fun newInstance(votes: List<Vote>?, eventUid: String): EventVoteFragment {
@@ -49,7 +49,7 @@ class EventVoteFragment : BaseFragment() {
     private fun initAdapter() {
         context?.let {
             votesAdapter = EventVotesAdapter(it, mEventUid, parentFragment as EventFragment)
-            votesAdapter.replaceData(votes.sortedByDescending { vote -> vote.upVotes.size - vote.downVotes.size })
+            votesAdapter?.replaceData(votes.sortedByDescending { vote -> vote.upVotes.size - vote.downVotes.size })
             val layout = LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
             eventVote_recycler_votes.layoutManager = layout
             eventVote_recycler_votes.adapter = votesAdapter
@@ -63,7 +63,7 @@ class EventVoteFragment : BaseFragment() {
      * Add newly added vote to the end of a list
      */
     fun addData(vote: Vote) {
-        votesAdapter.addItem(votes.size-1, vote)
+        votesAdapter?.addItem(votes.size-1, vote)
         votes.add(vote)
     }
 }

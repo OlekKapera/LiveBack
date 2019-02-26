@@ -276,7 +276,7 @@ class DeleteDialogFragment : DialogFragment() {
                         }
                     }
 
-                    (targetFragment as EventFragment).votesFragment.votesAdapter.replaceData(votes)
+                    (targetFragment as EventFragment).votesFragment.votesAdapter?.replaceData(votes)
                     (targetFragment as EventFragment).switchEmptyView(votes as MutableList<Any>, (targetFragment as EventFragment).eventVote_recycler_votes, (targetFragment as EventFragment).eventVote_view_emptyScreen)
                 }
                 else -> Toast.makeText(context, deleteVoteFail, Toast.LENGTH_SHORT).show()

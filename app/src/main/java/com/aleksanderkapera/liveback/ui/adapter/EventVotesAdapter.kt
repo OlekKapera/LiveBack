@@ -2,10 +2,8 @@ package com.aleksanderkapera.liveback.ui.adapter
 
 import android.content.Context
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.Toast
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.model.User
@@ -162,48 +160,50 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val fragment
          * Add or remove user's uid to the up votes list, but first remove it from down votes list
          */
         private fun upVote() {
-            fragment.event_view_load.show()
-            mVoteRef.update("downVotes", FieldValue.arrayRemove(LoggedUser.uid)).addOnCompleteListener {
-                if (it.isSuccessful) {
-                    item.downVotes.remove(LoggedUser.uid)
-                    mDownVoted = false
+            if (LoggedUser.uid.isNotEmpty()) {
+                fragment.event_view_load.show()
+                mVoteRef.update("downVotes", FieldValue.arrayRemove(LoggedUser.uid)).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        item.downVotes.remove(LoggedUser.uid)
+                        mDownVoted = false
 
-                    if (!mUpVoted) {
-                        mVoteRef.update("upVotes", FieldValue.arrayUnion(LoggedUser.uid)).addOnCompleteListener {
-                            when {
-                                it.isSuccessful -> {
-                                    mUpVoted = true
-                                    item.upVotes.add(LoggedUser.uid)
-                                    itemView.eventVote_button_upVote.setColorFilter(mButtonColorRed)
-                                    itemView.eventVote_button_downVote.setColorFilter(mButtonColorDefault)
-                                    itemView.eventVote_text_votes.text = convertVotesDifference(item.upVotes.size, item.downVotes.size)
+                        if (!mUpVoted) {
+                            mVoteRef.update("upVotes", FieldValue.arrayUnion(LoggedUser.uid)).addOnCompleteListener {
+                                when {
+                                    it.isSuccessful -> {
+                                        mUpVoted = true
+                                        item.upVotes.add(LoggedUser.uid)
+                                        itemView.eventVote_button_upVote.setColorFilter(mButtonColorRed)
+                                        itemView.eventVote_button_downVote.setColorFilter(mButtonColorDefault)
+                                        itemView.eventVote_text_votes.text = convertVotesDifference(item.upVotes.size, item.downVotes.size)
+                                    }
+                                    else -> {
+                                        Toast.makeText(context, mUpVoteString, Toast.LENGTH_SHORT).show()
+                                    }
                                 }
-                                else -> {
-                                    Toast.makeText(context, mUpVoteString, Toast.LENGTH_SHORT).show()
-                                }
+                                fragment.event_view_load.hide()
                             }
-                            fragment.event_view_load.hide()
+                        } else {
+                            item.upVotes.remove(LoggedUser.uid)
+                            mVoteRef.update("upVotes", FieldValue.arrayRemove(LoggedUser.uid)).addOnCompleteListener {
+                                when {
+                                    it.isSuccessful -> {
+                                        mUpVoted = false
+                                        item.upVotes.remove(LoggedUser.uid)
+                                        itemView.eventVote_button_upVote.setColorFilter(mButtonColorDefault)
+                                        itemView.eventVote_text_votes.text = convertVotesDifference(item.upVotes.size, item.downVotes.size)
+                                    }
+                                    else -> {
+                                        Toast.makeText(context, mUpVoteString, Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                                fragment.event_view_load.hide()
+                            }
                         }
                     } else {
-                        item.upVotes.remove(LoggedUser.uid)
-                        mVoteRef.update("upVotes", FieldValue.arrayRemove(LoggedUser.uid)).addOnCompleteListener {
-                            when {
-                                it.isSuccessful -> {
-                                    mUpVoted = false
-                                    item.upVotes.remove(LoggedUser.uid)
-                                    itemView.eventVote_button_upVote.setColorFilter(mButtonColorDefault)
-                                    itemView.eventVote_text_votes.text = convertVotesDifference(item.upVotes.size, item.downVotes.size)
-                                }
-                                else -> {
-                                    Toast.makeText(context, mUpVoteString, Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                            fragment.event_view_load.hide()
-                        }
+                        fragment.event_view_load.hide()
+                        Toast.makeText(context, mUpVoteString, Toast.LENGTH_SHORT).show()
                     }
-                } else {
-                    fragment.event_view_load.hide()
-                    Toast.makeText(context, mUpVoteString, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -212,47 +212,49 @@ class EventVotesAdapter(val context: Context, val eventUid: String, val fragment
          * Add or remove user's uid to the down votes list, but first remove it from add votes list
          */
         private fun downVote() {
-            fragment.event_view_load.show()
-            mVoteRef.update("upVotes", FieldValue.arrayRemove(LoggedUser.uid)).addOnCompleteListener {
-                if (it.isSuccessful) {
-                    item.upVotes.remove(LoggedUser.uid)
-                    mUpVoted = false
+            if (LoggedUser.uid.isNotEmpty()) {
+                fragment.event_view_load.show()
+                mVoteRef.update("upVotes", FieldValue.arrayRemove(LoggedUser.uid)).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        item.upVotes.remove(LoggedUser.uid)
+                        mUpVoted = false
 
-                    if (!mDownVoted) {
-                        mVoteRef.update("downVotes", FieldValue.arrayUnion(LoggedUser.uid)).addOnCompleteListener {
-                            when {
-                                it.isSuccessful -> {
-                                    mDownVoted = true
-                                    item.downVotes.add(LoggedUser.uid)
-                                    itemView.eventVote_button_downVote.setColorFilter(mButtonColorRed)
-                                    itemView.eventVote_button_upVote.setColorFilter(mButtonColorDefault)
-                                    itemView.eventVote_text_votes.text = convertVotesDifference(item.upVotes.size, item.downVotes.size)
+                        if (!mDownVoted) {
+                            mVoteRef.update("downVotes", FieldValue.arrayUnion(LoggedUser.uid)).addOnCompleteListener {
+                                when {
+                                    it.isSuccessful -> {
+                                        mDownVoted = true
+                                        item.downVotes.add(LoggedUser.uid)
+                                        itemView.eventVote_button_downVote.setColorFilter(mButtonColorRed)
+                                        itemView.eventVote_button_upVote.setColorFilter(mButtonColorDefault)
+                                        itemView.eventVote_text_votes.text = convertVotesDifference(item.upVotes.size, item.downVotes.size)
+                                    }
+                                    else -> {
+                                        Toast.makeText(context, mDownVoteString, Toast.LENGTH_SHORT).show()
+                                    }
                                 }
-                                else -> {
-                                    Toast.makeText(context, mDownVoteString, Toast.LENGTH_SHORT).show()
-                                }
+                                fragment.event_view_load.hide()
                             }
-                            fragment.event_view_load.hide()
+                        } else {
+                            mVoteRef.update("downVotes", FieldValue.arrayRemove(LoggedUser.uid)).addOnCompleteListener {
+                                when {
+                                    it.isSuccessful -> {
+                                        mDownVoted = false
+                                        item.downVotes.remove(LoggedUser.uid)
+                                        itemView.eventVote_button_downVote.setColorFilter(mButtonColorDefault)
+                                        itemView.eventVote_text_votes.text = convertVotesDifference(item.upVotes.size, item.downVotes.size)
+                                    }
+                                    else -> {
+                                        Toast.makeText(context, mDownVoteString, Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                                fragment.event_view_load.hide()
+                            }
                         }
                     } else {
-                        mVoteRef.update("downVotes", FieldValue.arrayRemove(LoggedUser.uid)).addOnCompleteListener {
-                            when {
-                                it.isSuccessful -> {
-                                    mDownVoted = false
-                                    item.downVotes.remove(LoggedUser.uid)
-                                    itemView.eventVote_button_downVote.setColorFilter(mButtonColorDefault)
-                                    itemView.eventVote_text_votes.text = convertVotesDifference(item.upVotes.size, item.downVotes.size)
-                                }
-                                else -> {
-                                    Toast.makeText(context, mDownVoteString, Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                            fragment.event_view_load.hide()
-                        }
+                        fragment.event_view_load.hide()
+                        Toast.makeText(context, mDownVoteString, Toast.LENGTH_SHORT).show()
                     }
-                } else {
-                    fragment.event_view_load.hide()
-                    Toast.makeText(context, mDownVoteString, Toast.LENGTH_SHORT).show()
                 }
             }
         }

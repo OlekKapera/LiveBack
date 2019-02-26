@@ -334,21 +334,21 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
 
                     if (mTabsAdapter == null)
                         setupTabs()
-                    else {
+                    else votesFragment.votesAdapter?.let { adapter ->
                         var changedVote: Vote? = null
                         var originalVote: Vote? = null
 
                         if (it.documentChanges.size == 1) {
                             changedVote = (it.documentChanges.toList()[0]).document.toObject(Vote::class.java)
-                            originalVote = votesFragment.votesAdapter.getVoteByUid(changedVote.voteUid)
+                            originalVote = adapter.getVoteByUid(changedVote.voteUid)
                         }
 
                         safeLet(changedVote, originalVote) { changedVote, originalVote ->
                             if (changedVote.downVotes.size != originalVote.downVotes.size || changedVote.upVotes.size != originalVote.upVotes.size)
-                                votesFragment.votesAdapter.changeItem(originalVote, changedVote)
+                                adapter.changeItem(originalVote, changedVote)
                         }
                         if (originalVote == null)
-                            changedVote?.let { votesFragment.addData(it)}
+                            changedVote?.let { votesFragment.addData(it) }
                     }
                 }
             }
@@ -496,7 +496,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                         showToast(mVoteSuccString)
                         mVotes?.let {
                             it.add(0, vote)
-                            votesFragment.votesAdapter.replaceData(it)
+                            votesFragment.votesAdapter?.replaceData(it)
                         }
                         event?.let {
                             it.votes++
@@ -512,7 +512,7 @@ class EventFragment : BaseFragment(), AddFeedbackDialogFragment.FeedbackSentList
                                     break
                                 }
                             }
-                            votesFragment.votesAdapter.replaceData(votes)
+                            votesFragment.votesAdapter?.replaceData(votes)
                         }
                     }
                 }
