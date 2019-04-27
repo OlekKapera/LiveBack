@@ -32,15 +32,19 @@
             android:id="@+id/event_layout_header"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingBottom="36dp"
             android:paddingTop="?android:attr/actionBarSize"
+            android:paddingBottom="36dp"
             app:layout_collapseMode="parallax">
 
             <TextView
                 android:id="@+id/event_text_eventName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing48"
+                android:layout_marginTop="@dimen/spacing24"
+                android:layout_marginEnd="@dimen/spacing48"
                 android:fontFamily="@string/font_family_black"
+                android:textAlignment="center"
                 android:textColor="@color/bgColor"
                 android:textSize="@dimen/text24"
                 android:textStyle="bold"
@@ -50,7 +54,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="packed"
-                tools:text="The Glossary of Telescopes" />
+                tools:text="The Glossary of Telescopes in your town baby" />
 
             <ImageView
                 android:id="@+id/event_image_profile"
@@ -73,8 +77,8 @@
             <ImageView
                 android:id="@+id/event_image_share"
                 style="@style/AppTheme.Toolbar.Button"
-                android:visibility="gone"
                 android:layout_gravity="end"
+                android:visibility="gone"
                 app:srcCompat="@drawable/ic_share" />
 
             <ImageView

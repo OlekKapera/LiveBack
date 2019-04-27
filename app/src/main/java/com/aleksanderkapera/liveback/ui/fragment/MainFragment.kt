@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.View
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.bus.EventsReceivedEvent
@@ -31,7 +32,7 @@ import java.util.concurrent.TimeUnit
  */
 class MainFragment : BaseFragment() {
 
-    private var mEvents = listOf<Event>()
+    private var mEvents = mutableListOf<Event>()
     private lateinit var mEndlessScrollListener: EndlessScrollListener
     private lateinit var mAdapter: EventsRecyclerAdapter
     private var mFilter: Filter? = null
@@ -163,7 +164,8 @@ class MainFragment : BaseFragment() {
 
         mEvents.forEach {
             mFilter?.let { filter ->
-                if (((it.date >= filter.timeFrom && it.date <= filter.timeTo) || filter.timeTo == 0L)
+                if (((it.date >= filter.timeFrom && it.date <= filter.timeTo) || (filter.timeTo == 0L && it.date >= filter.timeFrom) ||
+                                (filter.timeFrom == 0L && it.date <= filter.timeTo))
                         && it.likes.size >= filter.likesFrom && (it.likes.size <= filter.likesTo || filter.likesTo == filterLikesTo)) {
                     filteredEvents.add(it)
                 }
@@ -171,8 +173,11 @@ class MainFragment : BaseFragment() {
         }
 
         mAdapter.replaceData(filteredEvents)
+        main_recycler_events.scrollToPosition(main_recycler_events.scrollY + 1)
+
         switchEmptyView(filteredEvents as MutableList<Any>, main_recycler_events, main_view_emptyScreen)
         main_layout_swipe.isRefreshing = false
+
     }
 
     /**
@@ -192,7 +197,11 @@ class MainFragment : BaseFragment() {
 
     @Subscribe
     fun onEventsReceivedEvent(event: EventsReceivedEvent) {
-        mEvents = event.events
+        mEvents.clear()
+        event.events.forEach {
+            if(!mEvents.contains(it))
+                mEvents.add(it)
+        }
 
         if (!event.loadMore) {
             main_recycler_events.smoothScrollToPosition(0)

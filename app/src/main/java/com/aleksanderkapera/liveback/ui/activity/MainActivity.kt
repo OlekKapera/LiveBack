@@ -64,7 +64,7 @@ class MainActivity : FragmentActivity() {
     private var mUser: User? = null
     private var mStorageRef: StorageReference? = null
     private var isAnonymousUser = false
-    private val mEventsPerPage = 5
+    private val mEventsPerPage = 8
     private lateinit var mOrderString: String
     private lateinit var mOrderDirection: Query.Direction
 
@@ -250,8 +250,8 @@ class MainActivity : FragmentActivity() {
         mEventsCol?.let { eventsCol ->
             lastDocument?.let {
                 eventsCol.orderBy(mOrderString, mOrderDirection)
-                        .limit(mEventsPerPage.toLong())
                         .startAfter(it)
+                        .limit(mEventsPerPage.toLong())
                         .get().addOnCompleteListener {
                             when {
                                 it.isSuccessful -> {
