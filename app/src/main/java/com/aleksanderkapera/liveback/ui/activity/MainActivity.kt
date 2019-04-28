@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -248,9 +249,9 @@ class MainActivity : FragmentActivity() {
             lastDocument = null
 
         mEventsCol?.let { eventsCol ->
-            lastDocument?.let {
+            lastDocument?.let {lastDocument ->
                 eventsCol.orderBy(mOrderString, mOrderDirection)
-                        .startAfter(it)
+                        .startAfter(lastDocument)
                         .limit(mEventsPerPage.toLong())
                         .get().addOnCompleteListener {
                             when {
@@ -274,7 +275,7 @@ class MainActivity : FragmentActivity() {
                                 it.isSuccessful -> {
                                     it.result?.let {
                                         mEvents = it.toObjects(Event::class.java)
-                                        sendEvents(it, false)
+                                        sendEvents(it, true)
                                     }
                                 }
                                 else -> Toast.makeText(this, mGenericErrorString, Toast.LENGTH_SHORT).show()

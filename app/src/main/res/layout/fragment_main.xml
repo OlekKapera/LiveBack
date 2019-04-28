@@ -45,7 +45,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/spacing8"
                 android:layout_marginEnd="@dimen/spacing8"
-                android:overScrollMode="never"
+                android:overScrollMode="always"
                 android:visibility="visible" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v4.widget.SwipeRefreshLayout>

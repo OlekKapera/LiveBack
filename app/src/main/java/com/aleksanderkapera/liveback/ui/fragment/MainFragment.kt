@@ -85,7 +85,9 @@ class MainFragment : BaseFragment() {
             main_toolbar_title.visibility = View.GONE
         }
 
-        main_layout_swipe.setOnRefreshListener { (activity as MainActivity).getEvents(mFilter?.sortBy, mFilter?.directionAsc) }
+        main_layout_swipe.setOnRefreshListener {
+            (activity as MainActivity).getEvents(mFilter?.sortBy, mFilter?.directionAsc, true)
+        }
         main_toolbar_filter.setOnClickListener {
             val dialog = FilterDialogFragment.newInstance(mFilter)
             dialog.setTargetFragment(this, REQUEST_TARGET_MAIN_FRAGMENT)
@@ -199,7 +201,7 @@ class MainFragment : BaseFragment() {
     fun onEventsReceivedEvent(event: EventsReceivedEvent) {
         mEvents.clear()
         event.events.forEach {
-            if(!mEvents.contains(it))
+            if (!mEvents.contains(it))
                 mEvents.add(it)
         }
 
@@ -208,10 +210,10 @@ class MainFragment : BaseFragment() {
             mEndlessScrollListener.resetPaging()
         }
 
-        if (mFilter != null)
-            filter()
-        else
+        if (mFilter == Filter() || mFilter == null)
             mAdapter.replaceData(mEvents)
+        else
+            filter()
 
         main_layout_swipe.isRefreshing = false
     }
