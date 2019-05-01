@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -25,10 +24,14 @@ import com.aleksanderkapera.liveback.ui.fragment.MainFragment
 import com.aleksanderkapera.liveback.ui.fragment.SortType
 import com.aleksanderkapera.liveback.ui.widget.NavigationViewHelper
 import com.aleksanderkapera.liveback.util.*
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
+import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import org.greenrobot.eventbus.EventBus
@@ -58,6 +61,7 @@ class MainActivity : FragmentActivity() {
 
     lateinit var mAuth: FirebaseAuth
     private lateinit var mFireStoreRef: FirebaseFirestore
+    private lateinit var mFirebaseFunctions: FirebaseFunctions
     private var mEventsCol: CollectionReference? = null
     private lateinit var mEvents: MutableList<Event>
 
@@ -78,6 +82,7 @@ class MainActivity : FragmentActivity() {
 
         mAuth = FirebaseAuth.getInstance()
         mFireStoreRef = FirebaseFirestore.getInstance()
+        mFirebaseFunctions = FirebaseFunctions.getInstance()
         val settings = FirebaseFirestoreSettings.Builder()
                 .setTimestampsInSnapshotsEnabled(true)
                 .build()
@@ -249,7 +254,7 @@ class MainActivity : FragmentActivity() {
             lastDocument = null
 
         mEventsCol?.let { eventsCol ->
-            lastDocument?.let {lastDocument ->
+            lastDocument?.let { lastDocument ->
                 eventsCol.orderBy(mOrderString, mOrderDirection)
                         .startAfter(lastDocument)
                         .limit(mEventsPerPage.toLong())
@@ -371,6 +376,21 @@ class MainActivity : FragmentActivity() {
             }
             mNavigationDrawer.updateViews(mUser, mStorageRef)
         }
+    }
+
+    /**
+     * Retrieve filtered events via FireSQL
+     */
+    fun getFilteredEvents(filter: Filter): Task<List<Event>> {
+        val request = filter.toString()
+
+        return mFirebaseFunctions.getHttpsCallable("filter")
+                .call(request)
+                .continueWith{task ->
+                    val gson = GsonBuilder().setPrettyPrinting().create()
+                    val events: List<Event> = gson.fromJson(task.result?.data.toString(),  object : TypeToken<List<Event>>() {}.type)
+                    events
+                }
     }
 
     /**

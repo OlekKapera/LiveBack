@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import com.aleksanderkapera.liveback.R
 import com.aleksanderkapera.liveback.bus.EventsReceivedEvent
 import com.aleksanderkapera.liveback.model.Event
@@ -36,6 +37,8 @@ class MainFragment : BaseFragment() {
     private lateinit var mEndlessScrollListener: EndlessScrollListener
     private lateinit var mAdapter: EventsRecyclerAdapter
     private var mFilter: Filter? = null
+
+    private val mEventsError = R.string.events_error.asString()
 
     companion object {
         fun newInstance(): BaseFragment {
@@ -162,24 +165,36 @@ class MainFragment : BaseFragment() {
      * limitations it has to be client-side.
      */
     private fun filter() {
-        val filteredEvents = mutableListOf<Event>()
+        var filteredEvents = listOf<Event>()
 
-        mEvents.forEach {
-            mFilter?.let { filter ->
-                if (((it.date >= filter.timeFrom && it.date <= filter.timeTo) || (filter.timeTo == 0L && it.date >= filter.timeFrom) ||
-                                (filter.timeFrom == 0L && it.date <= filter.timeTo))
-                        && it.likes.size >= filter.likesFrom && (it.likes.size <= filter.likesTo || filter.likesTo == filterLikesTo)) {
-                    filteredEvents.add(it)
+//        mEvents.forEach {
+//            mFilter?.let { filter ->
+//                if (((it.date >= filter.timeFrom && it.date <= filter.timeTo) || (filter.timeTo == 0L && it.date >= filter.timeFrom) ||
+//                                (filter.timeFrom == 0L && it.date <= filter.timeTo))
+//                        && it.likes.size >= filter.likesFrom && (it.likes.size <= filter.likesTo || filter.likesTo == filterLikesTo)) {
+//                    filteredEvents.add(it)
+//                }
+//            }
+//        }
+
+        mFilter?.let {
+            (activity as MainActivity).getFilteredEvents(it).addOnCompleteListener{
+                when{
+                    it.isSuccessful -> {
+                        it.result?.let {
+                            Log.e("TTAAGG", it[0].eventUid)
+                            filteredEvents = it
+                        }
+                    } else -> Toast.makeText(context, mEventsError,Toast.LENGTH_SHORT).show()
                 }
+
+                mAdapter.replaceData(filteredEvents)
+                main_recycler_events.scrollToPosition(main_recycler_events.scrollY + 1)
+
+//                switchEmptyView(filteredEvents as MutableList<Any>, main_recycler_events, main_view_emptyScreen)
+                main_layout_swipe.isRefreshing = false
             }
         }
-
-        mAdapter.replaceData(filteredEvents)
-        main_recycler_events.scrollToPosition(main_recycler_events.scrollY + 1)
-
-        switchEmptyView(filteredEvents as MutableList<Any>, main_recycler_events, main_view_emptyScreen)
-        main_layout_swipe.isRefreshing = false
-
     }
 
     /**

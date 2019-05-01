@@ -10,7 +10,7 @@ import kotlinx.android.parcel.Parcelize
  */
 @Parcelize
 data class Filter(var sortBy: SortType = SortType.DATE,
-                  var directionAsc: Boolean = true,
+                  var directionAsc: Boolean = false,
                   var likesFrom: Int = 0,
                   var likesTo: Int = filterLikesTo,
                   var timeFrom: Long = 0L,

@@ -35,7 +35,7 @@ class FilterDialogFragment : DialogFragment(), TimePickerDialogFragment.TimePick
     private var mDateTime: DateTime? = null
 
     private var mSortType = SortType.DATE
-    private var mDirectionAsc = true
+    private var mDirectionAsc = false
     private var mLikesFrom = 0
     private var mLikesTo = filterLikesTo
     private var mTimeFrom = 0L
