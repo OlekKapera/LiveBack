@@ -182,7 +182,6 @@ class MainFragment : BaseFragment() {
                 when{
                     it.isSuccessful -> {
                         it.result?.let {
-                            Log.e("TTAAGG", it[0].eventUid)
                             filteredEvents = it
                         }
                     } else -> Toast.makeText(context, mEventsError,Toast.LENGTH_SHORT).show()

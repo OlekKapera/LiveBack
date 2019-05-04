@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -30,6 +31,7 @@ import com.google.firebase.firestore.*
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
@@ -382,7 +384,9 @@ class MainActivity : FragmentActivity() {
      * Retrieve filtered events via FireSQL
      */
     fun getFilteredEvents(filter: Filter): Task<List<Event>> {
-        val request = filter.toString()
+        var gson = Gson()
+        val request = gson.toJson(filter)
+        Log.e("OLO", request)
 
         return mFirebaseFunctions.getHttpsCallable("filter")
                 .call(request)
